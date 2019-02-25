@@ -1,0 +1,22 @@
+<view class="wrap">
+    <view class="logo">
+        <image src="../../image/logo.jpg" class="image" mode="aspectFit"/>
+    </view>
+    <view class="bindCardMain">
+        <view class="cardNoArea">
+            <label class="card_label">卡号</label>
+            <text id="scanQRCode" class="icon-saoyisao"></text>
+            <view class='card_wrap'>
+                <input type="text" id="card_no" placeholder="请输入流量卡号" confirm-type='search' bindblur="search"/>
+            </view>
+
+        </view>
+        <view class="FuzzySearch" style="display: none;">
+            <ul class="list">
+                <li class="card"></li>
+            </ul>
+        </view>
+        <button id="bindCard">查询 </button>
+        <view class="tips">点击输入卡号右侧 "扫一扫" 图标，可直接扫码查询</view>
+    </view>
+</view>

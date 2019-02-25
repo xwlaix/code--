@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../common/css/freeCard.css">
+    <title>在线购卡</title>
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/mobileCommon.js"></script>
+    <script>
+        if(!sessionStorage.getItem("needobtain")){
+            if (window.location.search.indexOf("code") == -1) {
+                // 转授权链接
+                $post('?r=home/setting/change-url', {url: document.location.href, id: getUrlParam('id')}, function (res) {
+                    if (res.code == 0) {
+                        return
+                    }
+//                    window.location.href = res.data.url
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="weui-cells weui-cells_form">
+    <div class="weui-cells weui-cells_radio kindCard">
+        <label class="weui-label weui-cell kindCardLabel">卡种类：</label>
+        <!--<label class="weui-cell weui-check__label active" for="x11">-->
+        <!--<div class="weui-cell__ft">-->
+        <!--<input type="radio" class="weui-check" name="radio1" id="x11" checked="checked">-->
+        <!--<span class="weui-icon-checked"></span>-->
+        <!--</div>-->
+        <!--<div class="weui-cell__bd">-->
+        <!--<p data-bind="1">移动</p>-->
+        <!--</div>-->
+        <!--</label>-->
+        <!--<label class="weui-cell weui-check__label" for="x12">-->
+        <!--<div class="weui-cell__ft">-->
+        <!--<input type="radio" name="radio1" class="weui-check" id="x12">-->
+        <!--<span class="weui-icon-checked"></span>-->
+        <!--</div>-->
+        <!--<div class="weui-cell__bd">-->
+        <!--<p data-bind="2">电信</p>-->
+        <!--</div>-->
+        <!--</label>-->
+        <label class="weui-cell weui-check__label active kind" for="x13">
+            <div class="weui-cell__bd">
+                <p data-bind="3">联通</p>
+            </div>
+            <div class="weui-cell__ft">
+                <input type="radio" name="radio1" class="weui-check" id="x13">
+                <!--<span class="weui-icon-checked"></span>-->
+            </div>
+        </label>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">推荐ID：</label></div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" type="text" id="ID" placeholder="ID号" readonly>
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">收货人姓名：</label></div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" type="text" id="name" placeholder="请输入收货人姓名">
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">收货人手机：</label></div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" type="number" id="phone" pattern="[0-9]*" placeholder="请输入收货人手机号码">
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label" for="city-picker">省市区：</label></div>
+        <div class="weui-cell__bd">
+            <input type="text" class="weui-input" id='city-picker' placeholder="请选择省、市、区"/>
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">详细地址：</label></div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" type="text" id="detailArea" placeholder="请输入详细地址">
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">金额：</label></div>
+        <div class="weui-cell__bd">
+            <span class="number">¥ 8</span>（快递费）
+        </div>
+    </div>
+    <div class="weui-panel weui-panel_access">
+        <div class="weui-panel__bd">
+            <div class="weui-media-box weui-media-box_text">
+                
+                <h4 class="weui-media-box__title textCenter">流量随易充，随用随充，1G最低4元钱</h4>
+            </div>
+        </div>
+        <div class="weui-panel__bd">
+            <div class="weui-media-box weui-media-box_text">
+                <p class="weui-media-box__desc textCenter">
+                    备注：移动流量不支持部分小米，OPPO手机，购买前务必联系客服确认手机型号
+                </p>
+            </div>
+        </div>
+        <a href="javascript:" class="weui-btn pay">提交申请，开始支付</a>
+    </div>
+</div>
+<script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+<script src="../../common/js/jquery-weui/js/city-picker.min.js"></script>
+<script>
+    var city,addFlag=0;
+    $('#ID').val(getUrlParam('aid')!='null'?getUrlParam('aid'):'');
+    $("#city-picker").cityPicker({
+        title: "请选择收货地址",
+        onChange: function (picker, values, displayValues) {
+            city = displayValues
+        }
+    });
+    if (getUrlParam("aid")!='null'&&getUrlParam("orderid")) {
+        $.alert("支付成功", "", function () {
+            location.href = 'cardList.html?id='+getUrlParam("orderid")
+        });
+    }else if(getUrlParam("orderid")){
+        $.alert("注册成为代理商", "", function () {
+            location.href = 'conf.html'
+        });
+    }
+
+    $(document).click(function (e) {
+        var _con = $('.weui-dialog--visible');   // 设置目标区域
+        if (!_con.is(e.target) && _con.has(e.target).length === 0) {
+            $.closeModal();
+        }
+    });
+    $('.weui-check__label').click(function () {
+        $(this).addClass('active').siblings().removeClass("active")
+    });
+    $(".pay").click(function () {
+        var type = $.trim($('.active').find("p").data('bind')), ID = $("#ID").val(), name = $("#name").val(),
+            phone = $("#phone").val(), detailArea = $("#detailArea").val(), data = {};
+        if (!type) {
+            $.toptip('请选择运营商类型', 2000, 'error');
+            return
+        }
+        if (!name) {
+            $.toptip('请输入收货人姓名', 2000, 'error');
+            return
+        }
+        if (!phone) {
+            $.toptip('请输入收货人手机', 2000, 'error');
+            return
+        }
+        var reg = /^1[3|4|5|7|8][0-9]\d{4,8}$/;
+        if (!reg.test(phone)) {
+            $.toptip('手机号码格式不对!', 2000, 'error');
+            return false;
+        }
+        if (!city) {
+            $.toptip('请选择省市区', 2000, 'error');
+            return
+        }
+        if (!detailArea) {
+            $.toptip('请输入详细地址', 2000, 'error');
+            return
+        }
+        if(addFlag==1){
+            $.toptip('请不要重复提交订单', 2000, 'error');
+            return false
+        }
+        data = {
+            operator: type,
+            aid: ID,
+            sname: name,
+            sphone: phone,
+            money: 8,
+            province: city[0],
+            city: city[1],
+            area: city[2],
+            address: detailArea,
+            uid: getUrlParam('id'),
+            code: getUrlParam('code')
+        };
+        $(".pay").text('提交中。。。');
+        $post('?r=wms/extension/add-card', data, function (res) {
+            if (res.code == 1) {
+                addFlag=1;
+                sessionStorage.setItem("pay", 'false');
+                window.location.href = urlPrl + '/coolfish/pay/?id=' + res.data.id + "&type=" + res.data.type
+            } else {
+                $.toptip(res.msg, 2000, 'error');
+            }
+        })
+
+    })
+</script>
+</body>
+</html>

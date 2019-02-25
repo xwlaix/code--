@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>查询余额</title>
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../static/css/wxMobile.css">
+
+
+</head>
+<body ontouchstart>
+<div class="TotalContentBox">
+    <!--上拉刷新开始-->
+    <div class="weui-pull-to-refresh__layer">
+        <div class='weui-pull-to-refresh__arrow'></div>
+        <div class='weui-pull-to-refresh__preloader'></div>
+        <div class="down">下拉刷新</div>
+        <div class="up">释放刷新</div>
+        <div class="refresh">正在刷新</div>
+    </div>
+    <!--上拉刷新结束-->
+    <!--标题开始-->
+    <div class="content">
+        <div class="weui-panel__bd">
+            <div class="weui-media-box weui-media-box_appmsg">
+                <div class="weui-media-box__hd">
+                    <img class="weui-media-box__thumb" src="../../static/css/img/1185208.png" alt="查询余额">
+                </div>
+                <div class="weui-media-box__bd">
+                    <h4 class="weui-media-box__title text-center wx-title">查询余额</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--标题结束-->
+    <!--搜索开始-->
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cell" id="mobile">
+            <div class="weui-cell__hd">
+                <label class="weui-label">卡号</label>
+            </div>
+            <div class="weui-cell__bd weui-cell_primary">
+                <input class="weui-input" id="sstmobile" type="number" pattern="[0-9]*" placeholder="请输入卡号" name="cardid">
+            </div>
+            <div class="weui-cell__ft">
+                <i class="weui_icon_warn"></i>
+            </div>
+        </div>
+    </div>
+    <div class="weui-btn-area">
+        <input class="weui-btn weui-btn_primary" type="submit" id="sec" value="搜索">
+    </div>
+    <!--搜索结束-->
+    <!--列表详情开始-->
+    <div class="weui-cells margin_top hidden" id="template">
+        <div class="weui-cell">
+            <div class="weui-cell__bd">
+                <p class="text-center amount"></p>
+            </div>
+            <div class="weui-cell__bd ">
+                <p class="text-center data"></p>
+            </div>
+        </div>
+    </div>
+    <div class="weui-cells margin_top " id="list">
+        <div class="weui-cell"  >
+            <div class="weui-cell__bd">
+                <p class="text-center type"></p>
+            </div>
+            <div class="weui-cell__bd">
+                <p class="text-center addtime"></p>
+            </div>
+            <div class="weui-cell__bd ">
+                <p class="text-center money"></p>
+            </div>
+        </div>
+    </div>
+
+    <!--列表详情结束-->
+    <!--列表详情结束-->
+</div>
+
+
+<script src="../../common/js/jquery-3.1.1.min.js"></script>
+<script src="../../common/js/transparency.min.js"></script>
+<script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+<script src="../../static/js/mobileCommon.js"></script>
+<script>
+    var card = $("#sstmobile"),
+        cardval;
+    $(document.body).pullToRefresh().on("pull-to-refresh", function () {
+        cardval = card.val() ? card.val() : 0;
+        $post("?r=wms/agent/get-card-money",
+            {card: cardval},
+            function (res) {
+                $(document.body).pullToRefreshDone();
+                if (res.code==1) {
+                    $.toptip(res.msg, 'success');
+                    $(".amount").text("余额");
+                    if (res.data!=[]) {
+                        $('#template').render(res).removeClass('hidden');
+                    }
+                } else {
+                    $.toptip(res.msg, 'error');
+                }
+            },
+            function () {
+                $(document.body).pullToRefreshDone();
+                $.toptip('操作失败', 'error');
+            }
+        )
+    });
+    $("#sec").click(function () {
+        cardval = card.val() ? card.val() : 0;
+        $.showLoading();
+        $post("?r=wms/agent/get-card-money",
+            {card: cardval},
+            function (res) {
+                if (res.code==1) {
+                    $.toptip(res.msg, 'success');
+                    $(".amount").text("余额");
+                    $('#template').render(res).removeClass('hidden');
+                    $post("?r=wms/agent/get-card-account", {card: cardval}, function (res) {
+                            if (res.code==1) {
+                                $.hideLoading();
+                                $.each(res.data, function (i, data) {
+                                    if (data.type == 1) {
+                                        data.type = '充值'
+                                    } else {
+                                        data.type = '扣费'
+                                    }
+                                });
+                                $('#list').render(res.data);
+                                if(!res.data.length){
+                                    $('#list').hide()
+                                }
+                            } else {
+                                $.hideLoading();
+                                $('#list').hide()
+                            }
+                        },
+                        function () {
+                            $.hideLoading();
+                            $.toptip('操作失败', 'error');
+                        })
+                } else {
+                    $.hideLoading();
+                    $.toptip(res.msg, 'error');
+                }
+            },
+            function () {
+                $.hideLoading();
+                $.toptip("操作失败", 'error');
+            }
+        )
+    });
+
+</script>
+</body>
+</html>

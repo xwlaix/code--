@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../static/css/mtV2.css"/>
+    <link rel="stylesheet" href="../../static/css/wxMobileV2.css"/>
+    <link rel="stylesheet" href="../../static/css/record.css"/>
+    <title> 订单记录 </title>
+
+</head>
+<body class="record">
+<!--上拉刷新开始-->
+<div class="weui-pull-to-refresh__layer">
+    <div class='weui-pull-to-refresh__arrow'></div>
+    <div class='weui-pull-to-refresh__preloader'></div>
+    <div class="down">下拉刷新</div>
+    <div class="up">释放刷新</div>
+    <div class="refresh">正在刷新</div>
+</div>
+<!--上拉刷新结束-->
+<!--列表开始-->
+<div id="template">
+    <div class="weui-cells detail ">
+        <div class="weui-cell ">
+            <div class="weui-cell__bd info ">
+                <p class="text-center ">总佣金：<span class="sum"></span>元</p>
+            </div>
+            <div class="weui-cell__bd info">
+                <p class="text-center ">剩余佣金：<span class="rest"></span>元</p>
+            </div>
+        </div>
+    </div>
+    <div class="weui-cells detail ">
+        <div class="weui-cell ">
+            <div class="weui-cell__bd">
+                <p class="text-center info">变动时间</p>
+            </div>
+            <div class="weui-cell__bd">
+                <p class="text-center info">佣金金额</p>
+            </div>
+            <div class="weui-cell__bd ">
+                <p class="text-center ">卡号</p>
+            </div>
+        </div>
+    </div>
+    <div class="weui-cells margin_top" id="rows">
+
+    </div>
+</div>
+<!--标题开始-->
+<div class="weui-loadmore">
+    <i class="weui-loading"></i>
+    <span class="weui-loadmore__tips">正在加载</span>
+</div>
+<!--标题结束-->
+<div class="content hidden">
+    <div class="weui-panel__bd">
+        <div class="weui-media-box weui-media-box_appmsg">
+            <div class="weui-media-box__bd">
+                <h4 class="weui-media-box__title text-center wx-title">暂无订单记录</h4>
+            </div>
+        </div>
+    </div>
+</div>
+<!--列表结束-->
+</body>
+<script type="text/html" id="normal">
+    {{each rows as value index}}
+    <div class="weui-cell">
+        <div class="weui-cell__bd ">
+            <p class="text-center addtime">{{value.addtime}}</p>
+        </div>
+        <div class="weui-cell__bd">
+            <p class="text-center "><span class="money">{{value.money}}</span></p>
+        </div>
+        <div class="weui-cell__bd ">
+            <p class="text-center remarks">{{value.remarks}}</p>
+        </div>
+    </div>
+    {{/each}}
+</script>
+<script src="../../common/js/jquery-3.1.1.min.js"></script>
+<script src="../../static/js/mobileCommon.js"></script>
+<script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+<script src="../../common/js/artTemplate.js"></script>
+
+<script type="text/javascript">
+    var page = 1, seeId = sessionStorage.getItem("id"), sum = 0, amount = getUrlParam("amount"), flag = 0;
+    var loading = false;
+    $(".amount").text(amount);
+    $(document.body).infinite(200).on("infinite", function () {
+        if (flag == 1) {
+            $(document.body).destroyInfinite();
+            return false
+        }
+        if (loading) return;
+        loading = true;
+        page += 1;
+        $(".weui-loadmore").removeClass('hidden');
+        $post("?r=wms/agent/get-agent-commission", {pageSize: 10, pageNumber: 1 * page},
+            function (res) {
+                loading = false;
+                if (res.code == 1) {
+                    for (i = 0; i < res.data.data.rows.length; i++) {
+                        res.data.data.rows[i].addtime = /\d{4}-\d{1,2}-\d{1,2}/g.exec(res.data.data.rows[i].addtime)[0];
+                    }
+                    $("#rows").append($(template('normal', res.data.data)));
+                    $(".weui-loadmore").addClass('hidden');
+                    if (res.data.data.total <= 10 * page) {
+                        flag = 1;
+                        $(".content").addClass('hidden');
+                        $(".weui-loadmore").addClass('hidden');
+                    }
+                }
+            },
+            function () {
+                $(".weui-loadmore").addClass('hidden');
+                $(document.body).destroyInfinite()
+            }
+        )
+
+    }).pullToRefresh().on("pull-to-refresh", function () {
+        if (flag == 1) {
+            $(document.body).pullToRefreshDone();
+            return false
+        }
+        page += 1;
+        $(".weui-loadmore").removeClass('hidden');
+        $post("?r=wms/agent/get-agent-commission", {pageSize: 10, pageNumber: 1 * page},
+            function (res) {
+                $(document.body).pullToRefreshDone();
+                if (res.code == 1) {
+                    for (i = 0; i < res.data.data.rows.length; i++) {
+                        res.data.data.rows[i].addtime = /\d{4}-\d{1,2}-\d{1,2}/g.exec(res.data.data.rows[i].addtime)[0];
+                    }
+                    $("#rows").append($(template('normal', res.data.data)));
+                    $(".weui-loadmore").addClass('hidden');
+                    if (res.data.data.total <= 10 * page) {
+                        flag = 1;
+                        $(".content").addClass('hidden');
+                        $(".weui-loadmore").addClass('hidden');
+                    }
+                }
+            },
+            function () {
+                $(".weui-loadmore").addClass('hidden');
+                $(document.body).pullToRefreshDone();
+            }
+        )
+    });
+    $post("?r=wms/agent/get-agent-commission", {pageSize: 10, pageNumber: 1},
+        function (res) {
+            $(".content").removeClass('hidden');
+            if (res.code == 0) {
+                return false
+            }
+            $(".rest").text(parseFloat(res.data.nowAc).toFixed(2));
+            $(".sum").text(parseFloat(res.data.sumAc).toFixed(2));
+            for (i = 0; i < res.data.data.rows.length; i++) {
+                res.data.data.rows[i].addtime = /\d{4}-\d{1,2}-\d{1,2}/g.exec(res.data.data.rows[i].addtime)[0];
+            }
+            $("#rows").append($(template('normal', res.data.data)));
+            $(".weui-loadmore").addClass('hidden');
+            if (res.data.data.total > 10) {
+                $('.wx-title').text("加载更多");
+            } else {
+                flag = 1;
+            }
+        },
+        function () {
+            $.toptip('操作失败', 'error');
+        }
+    )
+
+</script>
+</html>

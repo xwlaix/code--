@@ -1,0 +1,398 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+ol,ul {
+    list-style: none;
+}
+h1,h2,h3,h4,h5,h6 {
+    font-weight: normal;
+}
+::-webkit-input-placeholder {
+    color: #fff;
+}
+:-moz-placeholder {
+    color: #fff;
+}
+::-moz-placeholder {
+    color: #fff;
+}
+:-ms-input-placeholder {
+    color: #fff;
+}
+.sumFlow,.sunTime{
+    margin-top: 20px;
+    display: block;
+}
+.left .text{
+    color: #F43530;
+}
+.cardNoArea div.bound{
+    margin: 0 40px 0 95px;
+}
+.weui-dialog__bd .yzm{
+    font-family: 微软雅黑;
+    width: 20%;
+    color: #424242;
+    background: #e3e3e3;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    padding-bottom: 3px;
+    border-color: #c8c8c8;
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+    height: 30px;
+    line-height: 30px;
+    position: absolute;
+    right:10%;
+}
+body {
+    color: #4d4d4d;
+    font-size: 14px;
+    font-family: "Hiragino Sans GB",STHeiTi,"微软雅黑", Helvetica,  sans-serif;
+    background: #f0f1f3;
+}
+html,body {
+    width: 100%;
+    height: 100%;
+    font-family: "微软雅黑", "Microsoft YaHei";
+}
+input[type=text],
+input[type=button],
+input[type=password] {
+    outline: none;
+    border: none;
+    background: transparent;
+}
+a {
+    text-decoration: none;
+}
+.fl {
+    float: left;
+}
+.fr {
+    float: right;
+}
+.clearfix:after {
+    content: " ";
+    display: block;
+    clear: both;
+    height: 0;
+}
+
+.clearfix {
+    zoom: 1;
+}
+#bindCardPage {
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    background: url("img/bg2.png");
+    background-size: contain;
+}
+#bindCardPage .logo {
+    padding: 17% 0 19%;
+    text-align: center;
+}
+#bindCardPage .logo_padding {
+    padding: 50% 0 19%;
+    text-align: center;
+}
+#bindCardPage .logo_padding.bound {
+    padding: 32% 0 19%!important;
+    text-align: center;
+}
+#bindCardPage .logo img {
+    width: 22%;
+}
+.bindCardMain {
+    width: 96%;
+    margin: 0 auto;
+}
+.cardNoArea {
+    padding-bottom: 8px;
+    border-bottom: 1px solid #d4d4d4;
+}
+.cardNoArea label {
+    float: left;
+    color: #fff;
+}
+#cardNo::-webkit-input-placeholder{
+    color: #fff;}    /* 使用webkit内核的浏览器 */
+#cardNo:-moz-placeholder{ color: #fff;}                  /* Firefox版本4-18 */
+#cardNo::-moz-placeholder{ color: #fff;}                  /* Firefox版本19+ */
+#cardNo:-ms-input-placeholder{ color: #fff;}           /* IE浏览器 */
+.cardNoArea span {
+    float: right;
+}
+#scanQRCode{
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    color: #fff;
+}
+.cardNoArea div {
+    margin: 0 40px 0 60px;
+}
+.exchange{
+    float: right;
+    margin-right: 5%;
+    margin-top: 5%;
+}
+#bindCard {
+    display: block;
+    width: 100%;
+    height: 40px;
+    color: #fff;
+    margin: 30px auto 0;
+    text-align: center;
+    border-radius: 4px;
+    background: -webkit-linear-gradient(left, #32a3ef , #43d4ff);
+}
+.tips {
+    font-size: 10px;
+    margin-top: 16px;
+    text-align: center;
+    color: #fff;
+}
+
+
+/******酷易充*******/
+#cardInfoPage {
+    width: 100%;
+    height: 100%;
+}
+.cardInfo {
+    padding: 10px 2% 0;
+    margin-bottom: 8px;
+    background: #fff;
+    border-bottom: 1px solid #e7e7e8;
+}
+.basicInfo {
+    color: #959595;
+    font-size: 12px;
+}
+.basicInfoLeft {
+    float: left;
+    position: relative;
+    width: 100px;
+}
+.basicInfoLeft img {
+    width: 100%;
+    vertical-align: top;
+}
+.logo_img{
+    padding: 20%;
+    font-size: 25px;
+    color: #fff;
+}
+.basicInfoLeft div {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    color: #fff;
+    text-align: center;
+    background: #fdaa42;
+}
+.basicInfoRight {
+    margin-left: 116px;
+    padding-top: 10px;
+}
+#cardNo {
+    font-size: 14px;
+    margin-bottom: 3px;
+    color: #32a3ef;
+}
+#card_no {
+    font-size: 14px;
+    margin-bottom: 3px;
+    color: #fff;
+    width: 100%;
+}
+.bound #phone,.bound #fPassword,.bound #yzm,.bound #password,.bound #name {
+    font-size: 14px;
+    margin-bottom: 3px;
+    color: #fff;
+    width: 71%;
+}
+.cardNoArea .yzm_btn {
+    font-family: 微软雅黑;
+    color: #424242;
+    background: #e3e3e3;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    padding-bottom: 3px;
+    border-color: #c8c8c8;
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+    line-height: 28px;
+    width: 25%;
+    height: 28px;
+    float: right;
+    margin-top: 2px;
+}
+#lastMoney, #cardStatus, #lastDay {
+    color: #32a3ef;
+}
+#cardStatus {
+    margin-right: 1.5em;
+}
+.basicInfoRight label {
+    display: inline-block;
+    margin-top: 6px;
+}
+.fluxInfo {
+    height: 120px;
+    color: #fff;
+    padding: 0 16px 0 10px;
+    margin: 20px 0 15px;
+    border-radius: 6px;
+    background: -webkit-linear-gradient(left, #32a3ef , #43d4ff);
+}
+.fluxInfo .line1 label {
+    line-height: 80px;
+}
+.fluxInfo .line1 div{
+    margin-left: 100px;
+    text-align: right;
+    height: 60px;
+    padding-top: 6px;
+}
+#lastFlux {
+    font-size: 36px;
+}
+.packageInfo {
+    padding: 4px 2%;
+    background: #fff;
+    border-top: 1px solid #e7e7e8;
+    border-bottom: 1px solid #e7e7e8;
+    padding-bottom: 80px;
+}
+.packageInfo .packagename {
+    color: #33a2f1;
+    font-size: 15px;
+}
+.packageInfo h4 {
+    color: #4d4d4d;
+    font-size: 14px;
+}
+.packageInfo .packageDetail {
+    font-size: 12px;
+    line-height: 1.5em;
+}
+.packageFlow{
+    display: inline-block;
+    margin-right: 30px;
+}
+
+.goPage {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+#viewRechargeRecord {
+    float: right;
+    color: #32a4ed;
+    margin-bottom: 10px;
+}
+#goRecharge {
+    height: 48px;
+    width: 100%;
+    color: #fff;
+    background: -webkit-linear-gradient(left, #32a3ef , #43d4ff);
+}
+
+/******消费充值记录******/
+.recordList li {
+    line-height: 60px;
+    padding: 0 8px;
+    background: #fff;
+    border-bottom: 1px solid #e7e7e7;
+}
+.recordList .type {
+    float: left;
+}
+.recordList .time {
+    text-align: center;
+}
+/*******充值*******/
+.rechargeSingleMonthPage ul li{
+    height: 40px;
+    padding: 10px 6px;
+    background: #fff;
+    border-bottom: 1px solid #e7e7e7;
+}
+.rechargeSingleMonthPage ul li .right {
+    float: right;
+    width: 10em;
+}
+.rechargeSingleMonthPage ul li .right div {
+    display: inline-block;
+    width: 8em;
+    text-align: center;
+}
+.rechargeSingleMonthPage ul li .left {
+    line-height: 40px;
+    color: #3cc51f;
+    text-indent: 5%;
+    white-space: nowrap;
+}
+.rightArrow {
+    line-height: 40px;
+    vertical-align: top;
+    position: relative;
+    left: -2em;
+}
+.saleAfter {
+    font-size: 15px;
+    color: #32a3ef;
+}
+.saleBefore {
+    font-size: 13px;
+    color: #999;
+    text-decoration: line-through;
+}
+
+/*****弹窗****/
+.shadow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: 0.6;
+    z-index: 10;
+}
+.header {
+    background: #32a3ef;
+    color: #fff;
+    font-size: 16px;
+    padding: 15px 0;
+    text-align: center;
+    width: 100%;
+    position: relative;
+}
+.return {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    -webkit-border-radius: 50%;
+    color: #fff;
+    text-align: center;
+    line-height: 30px;
+    left: 10px;
+    transform:rotate(90deg);
+    -ms-transform:rotate(90deg); 	/* IE 9 */
+    -moz-transform:rotate(90deg); 	/* Firefox */
+    -webkit-transform:rotate(90deg); /* Safari 和 Chrome */
+    -o-transform:rotate(90deg); 	/* Opera */
+}
+.hidden{
+    display: none!important;
+}

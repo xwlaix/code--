@@ -1,0 +1,7 @@
+/*定义样式*/
+/*只能作用于当前文件*/
+text{
+	font-size: 12px;
+	color: red;
+	background-color: #000;
+}

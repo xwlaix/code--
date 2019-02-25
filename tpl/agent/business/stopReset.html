@@ -1,0 +1,264 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>停复机</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+</head>
+
+
+<body>
+<!--中间部分start!-->
+<div class="main-box">
+    <div class="msgWrap form">
+        <div class="card-group clearfix">
+            <div class="form-group">
+                <label for="accessNumber">卡号:</label>
+                <input id="accessNumber" class="form-control" name="accessNumber" type="text"/>
+                <button class="btn btn-primary btn-sm keydownBtn" id="Sec" title="搜索">搜索</button>
+                <button class=" btn btn-danger btn-sm" id="stop" title="停机">停机</button>
+                <button class=" btn btn-info btn-sm" id="reset" title="复机">复机</button>
+            </div>
+        </div>
+        <div id="tool_bar" class="clearfix">
+            <span class="emptyCard text-sum"></span>
+        </div>
+        <table id="tb_dept" data-bind="myBootstrapTable:$root">
+        </table>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var accessNumber = null;
+
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.Sec();
+            this.stop();
+            this.reset();
+            this.DepartmentModel = {
+                uid: ko.observable(),
+                name: ko.observable(),
+                ID: ko.observable(),
+                number: ko.observable()
+            };
+        },
+        //搜素
+        Sec: function () {
+            $('#Sec').on('click', function () {
+                accessNumber = $.trim($("#accessNumber").val());
+                if (!accessNumber) {
+                    layer.msg("请输入卡号", {time: 1000});
+                    return false
+                }
+                loadStatus();
+                load(true)
+            })
+        },
+        //停机
+        stop: function () {
+            $("#stop").on('click', function () {
+                var index = layer.load(2,  {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                });
+                $post(urlPrefix + "?r=ems/business/main/update-status",
+                    {card: accessNumber, status: 1},
+                    function (res) {
+                        layer.msg(res.msg,
+                            {time: 1000});
+                        layer.close(index);
+                        if(res.code==1){ loadStatus();load();}
+                    }, function () {
+                        layer.msg("操作失败", {time: 1000});
+                        layer.close(index);
+                    })
+            })
+        },
+        //复机
+        reset: function () {
+            $("#reset").on('click', function () {
+                var index = layer.load(2, {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                });
+                $post(urlPrefix + '?r=ems/business/main/update-status',
+                    {card: accessNumber, status: 2},
+                    function (res) {
+                        layer.msg(res.msg,
+                            {time: 1000});
+                        layer.close(index);
+                        if(res.code==1){ loadStatus();load();}
+                    }, function () {
+                        layer.msg("操作失败", {time: 1000});
+                        layer.close(index);
+                    })
+            })
+        }
+    };
+    function loadStatus(){
+        $post(urlPrefix + "?r=ems/card/get-all", {card:accessNumber},function(res){
+            if(res.data.total!=0){$("#tool_bar").show()} else {
+                $("#tool_bar").hide();
+                return
+            }
+            var card_status;
+            switch (res.data.rows["0"].card_status) {
+                case '1':
+                    card_status = '待激活';
+                    break;
+                case '2':
+                    card_status = '正常';
+                    break;
+                case '3':
+                    card_status = '单向停机';
+                    break;
+                case '4':
+                    card_status = '停机';
+                    break;
+                case '5':
+                    card_status = '预销号';
+                    break;
+                case '6':
+                    card_status = '销号';
+                    break;
+                case '7':
+                    card_status = '过户';
+                    break;
+                case '8':
+                    card_status = '休眠';
+                    break;
+                case '9':
+                    card_status = '未知状态';
+                    break;
+                default: card_status = '未知状态';
+                    break;
+            }
+            $(".emptyCard").text("卡片状态："+card_status).removeClass("hidden")
+        });
+    }
+    function load(flag){
+        $post(urlPrefix + "?r=ems/business/main/get-all-status",
+            {card: accessNumber,pageSize:10,pageNumber:1},
+            function (res) {
+                if (res.code == 1) {
+                    tableInit.myViewModel.load(res.data);
+                }
+                if(flag){
+                    layer.msg(res.msg,{time:2000})
+                }
+            })
+    }
+    function queryParams(params) {
+        queryData = {
+            pageSize: params.pageSize,
+            pageNumber: params.pageNumber,
+            card: $.trim($("#accessNumber").val())
+        };
+        return queryData;
+    }
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+
+        //2、注册增删改事件
+        operate.operateInit();
+
+
+    });
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                search: false,
+                queryParams: queryParams,//传递参数（*）
+                method: "post",
+                url: urlPrefix + '?r=ems/business/main/get-all-status',
+                onRefresh:function(){
+                    $("#accessNumber").val("")
+                },
+                toolbar:'#tool_bar',
+                columns: [{
+                    field: 'id',
+                    title: 'id'
+                }, {
+                    field: 'card',
+                    title: '卡号'
+                }, {
+                    field: 'type',
+                    title: '操作类型',
+                    formatter: operateFortype
+                }, {
+                    field: 'addtime',
+                    title: '操作时间'
+                }, {
+                    field: 'status',
+                    title: '状态',
+                    formatter: operateFormatter
+                }, {
+                    field: 'result',
+                    title: '返回内容'
+                }]
+            });
+//            card：卡号
+//            result：接口返回值
+//            status： 状态；1未成功，2成功
+//            remarks：备注
+//            source：来源
+//            Serial_number：流水号，针对电信
+//            addtime：时间
+//            operator_name：供应商名
+//            type: 停复机 2 开机 1 关机
+            function operateFortype(value, row, index) {
+                var str = row.type == 2 ? "开机" : "关机";
+                return [
+                    str
+                ].join('');
+            }
+
+            function operateFormatter(value, row, index) {
+                if (row.status == 1) {
+                    return [
+                        '<span class="text-danger">未成功</span>'
+                    ].join('');
+                } else {
+                    return [
+                        '<span class="text-success">成功</span>'
+                    ].join('');
+                }
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>

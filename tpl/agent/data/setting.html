@@ -1,0 +1,406 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../static/css/homeAgent.css">
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../static/js/provinceCity.js"></script>
+
+</head>
+<body>
+<div class="l-tab-content_tab">
+    <div class="l-tab-content-item" tabid="index">
+        <div class="home_tab">
+            <div class="home-charts panel">
+                <div class="header">
+                    <div class="title left">
+                        <div class="tab">
+                            <ul>
+                                <li id="0" class="cur">我的资料</li>
+                                <li id="1">修改密码</li>
+                                <li id="2">API文档</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="home-myCharts" >
+                    <div class="home-stock">
+                        <div class="home-stock-warp" style="padding-top: 35px">
+                            <div class="change-box personal">
+                                <div class="form-group  ">
+                                    <label for="name">代理商名称:</label>
+                                    <input type="text" name="name" data-bind="value:name" class="form-control"
+                                           id="name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">代理商电话:</label>
+                                    <input type="text" name="phone" data-bind="value:phone" class="form-control"
+                                           id="phone">
+                                </div>
+                                <div class="form-group from-agentRadio">
+                                    <label>代理商类型:</label>
+                                    <input type="radio" name="accountType" data-bind="1" id="industry" style="margin-left: 28px!important;">
+                                    <label for="industry" style="width: 55px;">行业用户</label>
+                                    <input type="radio" name="accountType" data-bind="2" id="channel">
+                                    <label for="channel" style="width: 55px!important;">渠道用户</label>
+                                </div>
+                                <div class="form-group pay">
+                                    <label>代理商支付类型：</label>
+                                    <input type="radio" name="payType" data-bind="1" id="mini">
+                                    <label for="mini" style="width: 75px!important;">当前平台支付</label>
+                                    <input type="radio" name="payType" data-bind="0" id="me">
+                                    <label for="me" style="width: 65px!important;">公众号支付</label>
+                                    <input type="radio" name="payType" data-bind="2" id="other">
+                                    <label for="other" style="width: 65px!important;">其它平台支付</label>
+                                </div>
+                                <div class="form-group pay_link pay">
+                                    <label for="website_name">其他平台名称:</label>
+                                    <input type="text" name="website_name" data-bind="value:website_name" class="form-control"
+                                           id="website_name" placeholder="请输入其他平台名称">
+                                </div>
+                                <div class="form-group pay_self">
+                                    <label for="wechat_name" class="wechat_name">微信公众号名称:</label>
+                                    <input type="text" tabindex="1" name="wechat_name" data-bind="value:appid"
+                                           class="form-control setting"
+                                           id="wechat_name" style="margin-right: 15px" placeholder="微信公众号名称">
+                                </div>
+                                <div class="form-group pay_link pay">
+                                    <label for="link">收费链接：</label>
+                                    <input type="text" name="link" data-bind="value:link" class="form-control"
+                                           id="link" placeholder="请输入收费链接">
+                                </div>
+                                <div class="form-group pay_link pay">
+                                    <label for="link">请求方式：</label>
+                                    <span>post</span>
+                                    <span>传值：</span>
+                                    <span>orderID；</span>
+                                    <span>接受回调：</span>
+                                    <span>API密钥key值。</span>
+                                </div>
+                                <div class="form-group pay_link pay">
+                                    <label for="link">回调链接：</label>
+                                    <label>http://wx.szcoolfish.com/?r=home/pay-back/website-order</label>
+                                </div>
+                                <div class="form-group pay_link pay">
+                                    <label for="link">请求方式：</label>
+                                    <span>post</span>
+                                    <span>传值：</span>
+                                    <span>orderID（与上面的对应，方便找到对应订单）；</span>
+                                    <span>API密钥key值和status（1表示支付成功，2表示支付失败）。</span>
+                                </div>
+                                <div class="form-group pay_self pay">
+                                    <label for="appid" class="secret">微信公众号AppId:</label>
+                                    <input type="text" tabindex="1" name="appid" data-bind="value:appid"
+                                           class="form-control setting"
+                                           id="appid" style="margin-right: 15px" placeholder="微信公众号AppId">
+                                </div>
+                                <div class="form-group pay_self pay">
+                                    <label for="secret" class="secret">微信公众号AppSecret:</label>
+                                    <input type="text" tabindex="1" name="secret" data-bind="value:secret"
+                                           class="form-control setting" id="secret" placeholder="微信公众号AppSecret">
+                                </div>
+                                <div class="form-group pay_self pay">
+                                <label for="mchid">微信支付商户MCHID:</label>
+                                <input type="text" name="apikey" data-bind="value:mchid" class="form-control setting"
+                                       id="mchid"
+                                       placeholder="请填写微信支付商户MCHID">
+                            </div>
+                            <div class="form-group pay_self pay">
+                                <label for="key">商户秘钥PartnerKey:</label>
+                                <input type="text" name="key" class="form-control setting" data-bind="value:key"
+                                       id="key"
+                                       placeholder="请填写商户秘钥PartnerKey">
+                            </div>
+                                <div class="form-group">
+                                    <label for="province">代理商地区:</label>
+                                    <select id="province" name="province" data-bind="value:province"></select>
+                                    <label for="city" style="width: 10px">--</label>
+                                    <select id="city" name="city" data-bind="value:city"></select>
+                                    <button type="button" id="btn_submit" class="btn btn-primary btn-sm"><span
+                                            class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-stock" style="display: none;">
+                        <div class="home-stock-warp" style="padding-top: 35px">
+                            <div class="change-box" >
+                                <div class="msgWrap form changepsw">
+                                    <div class="form-group">
+                                        <label for="oldpsw">旧密码:</label>
+                                        <input id="oldpsw" class="form-control" name="oldpsw" type="text"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="newpsw1">新密码:</label>
+                                        <input id="newpsw1" class="form-control" name="newpsw1" type="text"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="newpsw2">确认密码:</label>
+                                        <input id="newpsw2" class="form-control" name="newpsw2" type="text"/>
+                                        <button id="savePassword" class="btn btn-primary">保存</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-stock" style="display: none;">
+                        <div class="home-stock-warp" style="padding-top: 35px">
+                            <div class="change-box" >
+                                <div class="form-group ">
+                                    <label>API密钥key值:</label>
+                                    <span class="APIkey"></span>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-primary " id="bsubmit">
+                                        API文档下载
+                                    </button>
+                                    <a class="a_button" href="http://wx.szcoolfish.com/upload/pdf/API_V2.0.1.pdf" target="_blank">API文档在线</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/html" id="test">
+    <div class="form-group per-inline">
+        <label>酷鱼{{name}}:</label>
+        <label>返点比例{{value}}</label>
+
+    </div>
+</script>
+<script type="text/javascript">
+    $get(urlPrefix + "?r=ems/agent/get-key", function (res) {
+        $(".APIkey").text(res.msg)
+    });
+    $(function () {
+        $("#bsubmit").click(function () {
+            openDownloadDialog("http://wx.szcoolfish.com/upload/pdf/API_V2.0.1.pdf")
+        });
+    });
+    var $change = $("#savePassword");
+
+    $change.click(function () {
+        var oldpsw = $("#oldpsw").val(),
+            newpsw1 = $("#newpsw1").val(),
+            newpsw2 = $("#newpsw2").val();
+        if (!oldpsw) {
+            layer.msg('请输入旧密码', {time: 2000});
+            return
+        }
+        if (!newpsw1) {
+            layer.msg('请输入新密码', {time: 2000});
+            return
+        }
+        if (!newpsw2) {
+            layer.msg('请确认密码', {time: 2000});
+            return
+        }
+        if (newpsw1 == newpsw2) {
+
+            $post(urlPrefix + "?r=ems/agent/change-password", {password: newpsw2, opassword: oldpsw},
+                function (res) {
+                    if (res.code == 1) {
+                        layer.msg("操作成功", {time: 2000});
+                    } else {
+                        layer.msg(res.msg, {time: 2000});
+                    }
+                },
+                function () {
+                    layer.msg('操作失败', {time: 2000});
+                })
+        } else {
+            layer.msg('两次输入的密码不一致', {time: 2000});
+        }
+    });
+    var id;
+    $get(urlPrefix + "?r=ems/agent/get-info", function (res) {
+        if(res.code==0){return}
+        id=res.data.id;
+        if(res.data.type!=1){
+            $('.pay').remove()
+        }
+        $("#name").val(res.data.name);
+        $("#phone").val(res.data.phone ? res.data.phone : '');
+        var pay_link = res.data.pay_link;
+        var appid = res.data.appid;
+        if (pay_link=='0'||!pay_link) {
+            $('#mini').attr('checked', true);
+            $(".pay_link").hide();
+            $(".pay_self").hide()
+        } else if (pay_link=='/coolfish/agent_pay/') {
+            $(".pay_link").hide();
+            $(".pay_self").show();
+            $('#appid').val(appid);
+            $('#me').attr('checked', true);
+            $('#secret').val(res.data.secret);
+            $('#key').val(res.data.key);
+            $('#mchid').val(res.data.mchid);
+            $('#wechat_name').val(res.data.wechat_name);
+        } else{
+            $(".pay_link").show();
+            $(".pay_self").hide();
+            $('#link').val(res.data.pay_link);
+            $('#website_name').val(res.data.website_name);
+            $('#other').attr('checked', true);
+        }
+        if (res.data.accountType == 1) {
+            $('#industry').prop('checked', true);
+        } else {
+            $('#channel').prop('checked', true);
+        }
+        $("input[type='radio']").each(function(){
+            $(this).attr("disabled",true);
+        });
+        if (res.data.province) {
+            $("#province").val(res.data.province);
+            loadCity();
+        }
+    });
+
+    //加载省市二级数据
+    function area() {
+        var pro = document.getElementById("province");
+        for (var p in cities) {
+            var op = new Option(p, p);
+            pro.add(op);
+        }
+        loadCity();
+        pro.onchange = function () {
+            loadCity();
+        };
+    }
+
+    $('input[name="payType"]').change(function () {
+        var payType = $('input[name="payType"]:checked').data('bind');
+        if (payType == 1) {
+            $(".pay_link").hide();
+            $(".pay_self").hide()
+        } else if (payType == 0) {
+            $(".pay_link").hide();
+            $(".pay_self").show()
+        } else if (payType == 2) {
+            $(".pay_link").show();
+            $(".pay_self").hide()
+        }
+    });
+    area();
+    //加载table数据
+    $get(urlPrefix + "?r=ems/business/operator/get-per", function (res) {
+        if (res.code == 0||res.data==0) {
+            return false
+        }
+        var datas = binTu(JSON.parse(res.data));
+        var html = "";
+        if(res.data==1){
+            html = '<div style="color: red">暂未设置比例,请联系上级设置</div>'
+        }
+        for (d in datas) {
+            if(!datas[d].value){
+                delete(datas[d])
+            }else{
+                html += template('test', datas[d]);
+            }
+        }
+        $(".personal").append(html)
+    });
+    $("#btn_submit").click(function () {
+        var name = $("#name").val();
+        var phone = $("#phone").val();
+        var kind = $('input[name="accountType"]:checked').data('bind');
+        var province = $("#province").val();
+        var city = $("#city").val();
+        var pay_link = $("#link").val();
+        var appid = $("#appid").val();
+        var secret = $("#secret").val();
+        var key = $("#key").val();
+        var mchid = $("#mchid").val();
+        var wechat_name = $("#wechat_name").val();
+        var website_name = $("#website_name").val();
+        var payType = $('input[name="payType"]:checked').data('bind');
+        if (payType == 2) {
+            appid = '';
+            secret = '';
+            key = '';
+            mchid = '';
+            wechat_name = '';
+            if (!pay_link) {
+                layer.msg('选择其它平台支付请填写支付链接', {time: 2000});
+                return
+            }
+            if (!website_name) {
+                layer.msg('选择其它平台支付请填写平台名称', {time: 2000});
+                return
+            }
+        } else if (payType == 0) {
+            pay_link = '';
+            website_name = '';
+            if (!wechat_name) {
+                layer.msg('公众号支付请填写微信公众号名称', {time: 2000});
+                return
+            }
+            if (!appid) {
+                layer.msg('公众号支付请填写微信公众号AppId', {time: 2000});
+                return
+            }
+            if (!secret) {
+                layer.msg('公众号支付请填写微信公众号AppSecret', {time: 2000});
+                return
+            }
+            if (!key) {
+                layer.msg('公众号支付请填写微信支付商户MCHID', {time: 2000});
+                return
+            }
+            if (!mchid) {
+                layer.msg('公众号支付请填写商户秘钥PartnerKey', {time: 2000});
+                return
+            }
+        } else if (payType == 1) {
+            appid = '';
+            website_name = '';
+            wechat_name = '';
+            secret = '';
+            key = '';
+            mchid = '';
+            pay_link = '';
+        }
+
+        $post(urlPrefix + "?r=ems/agent/update",
+            {
+                id: id,
+                name: name,
+                phone: phone,
+                accountType: kind,
+                province: province,
+                city: city,
+                pay_link: pay_link,
+                appid: appid,
+                wechat_name: wechat_name,
+                website_name: website_name,
+                mchid: mchid,
+                key: key,
+                secret: secret
+            },
+            function (res) {
+                layer.msg(res.msg, {time: 2000})
+            })
+    });
+    $(".tab ul li").click(function () {
+        var This = $(this);
+        This.addClass('cur').siblings().removeClass('cur');
+        $(".home-myCharts").children().eq(This.attr("id")).show().siblings().hide();
+    });
+</script>

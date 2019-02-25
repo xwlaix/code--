@@ -1,0 +1,1128 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../static/css/homeAgent.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/information.css">
+    <link rel="stylesheet" href="../../static/css/wxhome.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/echarts.js"></script>
+    <script src="../../common/js/china.js"></script>
+
+</head>
+<body>
+<div class="title_tab">
+    <div class="header_info">
+        <div class="monthNum"><span class="title">本月充值:</span><span class="monthMoney"></span>元</div>
+        <div class="monthTimes"> <span class="title">本月次数:</span><span class="monthTime"></span>次</div>
+        <div class="monthNum"><span class="title">上月充值:</span><span class="prevMonthMoney"></span>元</div>
+        <div class="monthTimes"><span class="title">上月次数:</span><span class="prevMonthTime"></span>次</div>
+        <div class="num"><span class="title">卡片总数: </span><span id="cardNum"></span>张</div>
+        <div class="num"><span class="title">电信: </span><span id="ctccNum"></span>张</div>
+        <div class="num"><span class="title">移动: </span><span id="cmccNum"></span>张</div>
+        <div class="num"><span class="title">联通: </span><span id="cuccNum"></span>张</div>
+        <div class="num"><span class="title">正常数: </span><span id="normalNum"></span>张</div>
+        <div class="num"><span class="title">停机数: </span><span id="haltNum"></span>张</div>
+        <div class="num"><span class="title">待激活数: </span><span id="toActivateNum"></span>张</div>
+    </div>
+</div>
+<div class="l-tab-content_tab">
+    <div class="l-tab-content-item">
+        <div class="home_tab cf">
+            <div class="home-charts panel">
+                <div class="header cf moveHidden">
+                    <div class="title left">
+
+                        <div class="tab">
+                            <ul class="list">
+                                <li id="0" class="cur ">卡片数据</li>
+                                <li id="1">财务数据</li>
+                                <li id="2">代理商数据</li>
+                                <li id="3">微信粉丝数据</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="home-myCharts">
+                    <div class="home-stock">
+                        <div class="content">
+                            <div class="RightContent">
+                                <div class="ConWrap">
+                                    <div class="basicinform">
+                                        <span class="picard"></span>
+                                        <p>基本信息</p><span class="underline2"></span>
+                                        <div id="map" style="height: 500px;"></div>
+                                    </div>
+                                    <div id="GPRScard">
+                                        <span class="picard2"></span>
+                                        <p>激活率</p><span class="underline2"></span>
+                                        <div id="openCardRate" style="height: 400px; width: 45%;float: left"></div>
+                                        <div id="recharge" style="width: 45%;height:400px; float: left"></div>
+                                        <div id="openCardcmcc" style="height: 400px; width: 33%;float: left"></div>
+                                        <div id="openCardctcc" style="height: 400px; width: 33%;float: left"></div>
+                                        <div id="openCardcucc" style="height: 400px; width: 33%;float: left"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-stock moveHidden" style="display: none;">
+                        <div class="content">
+                            <div class="RightContent">
+
+                                <div class="ConWrap">
+                                    <div class="basicinform">
+                                        <span class="picard"></span>
+                                        <p>基本信息</p><span class="underline2"></span>
+                                        <div id="recharges" style="width: 100%;height:400px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-stock moveHidden" style="display: none;">
+                        <div class="content">
+                            <div class="RightContent">
+                                <div class="ConWrap">
+                                    <div class="basicinform">
+                                        <span class="picard"></span>
+                                        <p>基本信息</p><span class="underline2"></span>
+                                        <div id="agentNum">
+                                            <div id="agentNumChart" style="width: 100%;height:400px;"></div>
+                                        </div>
+                                        <div id="agentArea">
+                                            <div id="agentAreaChart" style="width: 100%;height:400px;"></div>
+                                        </div>
+                                        <div id="agentType">
+                                            <div id="agentTypeChart" style="width: 100%;height:400px;"></div>
+                                        </div>
+                                    </div>
+                                    <div id="messagecard">
+                                        <span id="picard3"></span>
+                                        <p>充值次数</p><span class="underline2"></span>
+                                        <div id="rechargeTime" style="width: 100%;height:400px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-stock moveHidden" style="display: none;">
+                        <div id="contain-box">
+                            <!--中间部分_左侧start!-->
+                            <div id="main" style="">
+                                <div class="main-box">
+                                    <div id="main-box-index">
+                                        <div id="tips">
+                                            <div id="tips-text">
+                                                <button type="button" class="close" data-dismiss="alert">×</button>
+                                                <strong>提示信息</strong>
+                                                <div>微信官方授权登录正式上线欢迎使用！</div>
+                                            </div>
+                                        </div>
+                                        <div id="main-box-head">
+                                            <ul id="today">
+                                                <li id="today-fans">
+                                                    <a>
+                                                        <span class="t-count">
+                                                            <i class="t-icon fans"></i>
+                                                            <em class="t-num t-num-fans">0</em>
+                                                            <strong class="t-title">新粉丝</strong>
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                            <ul id="all">
+                                                <li id="all-fans">
+                                                    <a>
+                                                        <span class="t-count">
+                                                            <i class="t-icon allfans"></i>
+                                                            <em class="t-num t-fans">0</em>
+                                                            <strong class="t-title">粉丝总数</strong>
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="function-box main-box-info">
+                                            <div class="title-box">
+                                                <span>
+                                                     新增粉丝
+                                                </span>
+                                            </div>
+                                            <div class="content-box">
+                                                <div class="content-box-item info-detail">
+                                                    <div id="echart" style="height: 300px;width: 100%;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    /**
+     * 处理带平均值折线图数据
+     * @param legend 图例数据
+     * @param seriesName    系列名称
+     * @param url        请求接口地址
+     * @param title      图表标题
+     * @param Chart      图表id
+     */
+    function loadZxt(legend,seriesName,url,title,Chart){
+        var Zxtoption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            legend: {
+                data: [legend],
+                orient: 'vertical',
+                right: '5%',
+                top: 0
+            },
+            grid: {
+            left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: []
+            },
+            yAxis: {
+                type: 'value',
+                axisLabel: {
+                    formatter: '{value} '
+                }
+            },
+            series: [
+                {
+                    name: seriesName,
+                    type: 'line',
+                    data: [],
+                    markPoint: {
+                        data: [
+                            {type: 'max', name: '最大值'},
+                            {type: 'min', name: '最小值'}
+                        ]
+                    },
+                    markLine: {
+                        data: [
+                            {type: 'average', name: '平均值'}
+                        ]
+                    }
+                }
+
+            ]
+        };
+        $get(urlPrefix + url,
+            function (data) {
+                data = zhexianTu(data.data);
+                // 填入数据
+                Chart.setOption({
+                    title: {
+                        text: title
+                    },
+                    xAxis: {
+                        data: data[0]
+                    },
+                    series: [{
+                        // 根据名字对应到相应的系列
+                        data: data[1]
+                    }]
+                });
+            }).setOption(Zxtoption);
+    }
+
+    /**
+     *  处理卡状态
+     * @param data   传值
+     * @param operator_type  标志位
+     */
+    function load(data,operator_type){
+        if(operator_type){
+            var num = 0;
+            for (var i in data.data) {
+                num += data.data[i]
+            }
+            $("#cardNum").text(num);
+            if (data.data["2"]) {
+                $("#normalNum").text(data.data["2"]);
+            } else {
+                $("#normalNum").text("0");
+            }
+
+            if (data.data["3"]) {
+                if (data.data["4"]) {
+                    $("#haltNum").text(data.data["3"] + data.data["4"]);
+                } else {
+                    $("#haltNum").text(data.data["3"]);
+                }
+            } else {
+                if (data.data["4"]) {
+                    $("#haltNum").text(data.data["4"]);
+                } else {
+                    $("#haltNum").text("0");
+                }
+            }
+            if (data.data["1"]) {
+                $("#toActivateNum").text(data.data["1"]);
+            } else {
+                $("#toActivateNum").text("0");
+            }
+            data.data["9"] = data.data["0"] + data.data["9"];
+            delete (data.data["0"]);
+        }
+    }
+
+    /**
+     *  处理折饼图数据
+     * @param title    图表标题
+     * @param url      请求接口地址
+     * @param pData     传值
+     * @param Mtype     返回数据处理
+     * @param chart      图表id
+     * @param operator_type 标志位
+     */
+    function loadBt(title,url,pData,Mtype,chart,operator_type){
+        Btoption = {
+            title: {
+                text: title,
+                x: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%) "
+            },
+            color: ['#66cc66', '#009765', '#0099cc','#77bf5a', '#ffbb32', '#36dea9', '#f67565', '#e698a3', '#6391ef', '#f8825a', '#ff9800','#009765', '#0099cc', '#5b8fd4', '#47c056', '#f8bb39', '#c23531', "#fc8556", '#f2cca2', '#cccccc', '#ff9999'],
+            legend: {
+                type: 'scroll',
+                orient: 'horizontal',
+                left: "15%",
+                bottom: "0",
+                itemGap: 25,
+                data: [],
+                tooltip: {
+                    show: true
+                }
+            },
+            series: [
+                {
+                    name: title,
+                    type: 'pie',
+                    radius: ['50%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        normal: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            show: true,
+                            textStyle: {
+                                fontSize: '30',
+                                fontWeight: 'bold'
+                            }
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: false
+                        }
+                    },
+                    data: []
+                }
+            ]
+        };
+        chart.setOption(Btoption);
+        $post(urlPrefix + url,
+            pData,
+            function (data) {
+            load(data,operator_type);
+                // 填入数据
+                var res = binTu(data.data, Mtype);
+                chart.setOption({
+                    legend: [{
+                        data: res
+                    }],
+                    series: [{
+                        // 根据名字对应到相应的系列
+                        data: res
+                    }]
+                });
+            });
+
+    }
+
+    /**
+     * 处理带折线图数据
+     * @param url      请求接口地址
+     * @param data    传值
+     * @param Chart   图表id
+     * @param name    系列名称
+     * @param Mtype    返回数据处理
+     */
+    function loadTime(url,data,Chart, name, Mtype) {
+        $post(urlPrefix + url,
+            data, function (data) {
+                var res = zhexianTu(data.data,Mtype);
+                // 填入数据
+                Chart.setOption({
+                    xAxis: {
+                        data: res[0]
+                    },
+                    series: [
+                        {
+                            name: name,
+                            // 根据名字对应到相应的系列
+                            data: res[1]
+                        }
+                    ]
+                });
+            })
+    }
+
+    /**
+     *  渲染运营商折线图
+     * @param title   图表标题
+     * @param type    折线名称
+     */
+    function loadMore(title,type){
+         rOption = {
+             title: {
+                 text: title,
+                 x: 'center'
+             },
+             tooltip: {
+                 trigger: 'axis',
+                 axisPointer: {
+                     type: 'cross',
+                     label: {
+                         backgroundColor: '#6a7985'
+                     }
+                 }
+
+             },
+             legend: {
+                 data: ['移动', '电信', '联通'],
+                 orient: 'vertical',
+                 right: '5%',
+                 top: 0
+             },
+             grid: {
+                 left: '3%',
+                 right: '4%',
+                 bottom: '3%',
+                 containLabel: true
+             },
+
+             xAxis: {
+                 type: 'category',
+                 boundaryGap: false,
+                 data: []
+             },
+             yAxis: {
+                 type: 'value'
+             },
+             series: [
+                 {
+                     name: '移动',
+                     type: 'line',
+                     areaStyle: {normal: {}},
+                     stack: type,
+                     data: []
+                 },
+                 {
+                     name: '电信',
+                     type: 'line',
+                     areaStyle: {normal: {}},
+                     stack: type,
+                     data: []
+                 },
+                 {
+                     name: '联通',
+                     type: 'line',
+                     areaStyle: {normal: {}},
+                     stack: type,
+                     data: []
+                 }
+             ]
+         };
+
+
+     }
+    
+    var agent_flag = 0, fans_flag = 0, recharge_flag = 0;
+    $(".tab ul li").click(function () {
+        var This = $(this);
+        This.addClass('cur').siblings().removeClass('cur');
+        $(".home-myCharts").children().eq(This.attr("id")).show().siblings().hide();
+        if (This.attr("id") == 3) {
+            if (fans_flag == 1) {
+                return
+            }
+            $get(urlPrefix + "?r=sms/data/get-fans-count", function (res) {
+                $(".t-num-fans").text(res.data.new);
+                $(".t-fans").text(res.data.count)
+            });
+            var myChart = echarts.init(document.getElementById('echart'));
+            // 显示标题，图例和空的坐标轴
+            loadZxt("粉丝增加数","粉丝增加数",'?r=sms/data/get-fans-add-count',"粉丝增加数",myChart);
+            fans_flag = 1;
+            setTimeout(function () {
+                window.onresize = function () {
+                    myChart.resize();
+                }
+            }, 2000);
+        }
+        if (This.attr("id") == 2) {
+            // 显示标题，图例和空的坐标轴
+            if (agent_flag == 1) {
+                return
+            }
+            var agentTypeChart = echarts.init(document.getElementById('agentTypeChart'));
+            var agentNumChart = echarts.init(document.getElementById('agentNumChart'));
+            var agentAreaChart = echarts.init(document.getElementById('agentAreaChart'));
+            var rechargeTime = echarts.init(document.getElementById('rechargeTime'));
+            var agentUrl =  '?r=sms/data/get-agent-count';
+            var cardUrl =  '?r=sms/data/get-card-account-count';
+            loadBt('代理商区域',agentUrl,{'type': 'province'},{"": '暂未选择'},agentAreaChart);
+            loadBt('代理商类型',agentUrl,{'type': 'accountType'},{1: '行业用户', 2: '渠道用户',0:'未知'},agentTypeChart);
+            loadBt('代理商总数',agentUrl,{'type': 'type'},{1: '一级代理商', 2: '二级代理商', 3: '三级代理商'},agentNumChart);
+            loadMore('充值次数','次数');
+            loadTime(cardUrl, {value: "count", data: "month", operator_type: 1},rechargeTime, '移动');
+            loadTime(cardUrl, {value: "count", data: "month", operator_type: 2},rechargeTime,  '电信');
+            loadTime(cardUrl, {value: "count", data: "month", operator_type: 3},rechargeTime,  '联通');
+            rechargeTime.setOption(rOption);
+
+            agent_flag = 1;
+            setTimeout(function () {
+                window.onresize = function () {
+                    agentTypeChart.resize();
+                    agentNumChart.resize();
+                    agentAreaChart.resize();
+                    rechargeTime.resize();
+                }
+            }, 2000);
+        }
+        if (This.attr("id") == 1) {
+            // 显示标题，图例和空的坐标轴
+            if (recharge_flag == 1) {
+                return
+            }
+            var recharge = echarts.init(document.getElementById('recharges'));
+            var url = '?r=sms/data/get-card-account-count';
+            loadMore('充值详情','总量');
+            loadTime(url, {value: "money", data: "month", operator_type: 1},recharge, '移动');
+            loadTime(url, {value: "money", data: "month", operator_type: 2},recharge,  '电信');
+            loadTime(url, {value: "money", data: "month", operator_type: 3},recharge,  '联通');
+            recharge.setOption(rOption);
+            recharge_flag = 1;
+            setTimeout(function () {
+                window.onresize = function () {
+                    recharge.resize();
+                }
+            }, 2000);
+        }
+    });
+    $post(urlPrefix + '?r=sms/data/get-card-account-count',
+        {value: "money", data: "month"},
+        function (data) {
+            $(".monthMoney").text(data.data[month + 1 + '月']);
+            $(".prevMonthMoney").text(data.data[month + '月']);
+        });
+    var myDate = new Date();
+    var month = myDate.getMonth(); //获取当前月份(0-11,0代表1月)
+    $post(urlPrefix + '?r=sms/data/get-card-account-count', {value: 'count', data: 'month'}, function (data) {
+        $(".monthTime").text(data.data[month + 1 + '月']);
+        $(".prevMonthTime").text(data.data[month + '月']);
+    });
+    // 基于准备好的dom，初始化echarts实例
+    var openCardRate = echarts.init(document.getElementById('openCardRate'));
+    var openCardcmcc = echarts.init(document.getElementById('openCardcmcc'));
+    var openCardcucc = echarts.init(document.getElementById('openCardcucc'));
+    var openCardctcc = echarts.init(document.getElementById('openCardctcc'));
+    // 显示标题，图例和空的坐标轴
+    $post(urlPrefix + '?r=sms/data/get-card-count', {type: "operator_type"}, function (data) {
+        if (data.data["1"]) {
+            $("#cmccNum").text(data.data["1"]);
+        } else {
+            $("#cmccNum").text(0);
+        }
+        if (data.data["2"]) {
+            $("#ctccNum").text(data.data["2"]);
+        } else {
+            $("#ctccNum").text(0);
+        }
+        if (data.data["3"]) {
+            $("#cuccNum").text(data.data["3"]);
+        } else {
+            $("#cuccNum").text(0);
+        }
+        if (data.data["4"]) {
+            $("#otherNum").text(data.data["4"]);
+        } else {
+            $("#otherNum").text(0);
+        }
+    });
+    //异步加载数据
+    var rateUrl =  '?r=sms/data/get-card-count' ;
+    var type =  {
+                    1: "待激活",
+                    2: "正常",
+                    3: "单向停机",
+                    4: "停机",
+                    5: "预销号",
+                    6: "销号",
+                    7: "过户",
+                    8: "休眠",
+                    9: "未知状态"
+                };
+    var Mtype = {
+            1: '一月', 2: '二月', 3: '三月', 4: '四月', 5: '五月', 6: '六月',
+            7: '七月', 8: '八月', 9: '九月', 10: '十月', 11: '十一月', 12: '十二月'
+        };
+    var url = '?r=sms/data/get-card-use-count';
+    loadBt('激活率',rateUrl,{type: "card_status",operator_type:''},type,openCardRate,1);
+    loadBt('电信激活率',rateUrl,{type: "card_status",operator_type:1},type,openCardctcc);
+    loadBt('联通激活率',rateUrl,{type: "card_status",operator_type:2},type,openCardcucc);
+    loadBt('移动激活率',rateUrl,{type: "card_status",operator_type:3},type,openCardcmcc);
+
+
+    var recharge = echarts.init(document.getElementById('recharge'));
+    loadMore('每月激活数','总量');
+
+    loadTime(url,{operator_type: 1},recharge,'移动',Mtype);
+    loadTime(url,{operator_type: 2},recharge,'电信',Mtype);
+    loadTime(url,{operator_type: 3},recharge,'联通',Mtype);
+    recharge.setOption(rOption);
+
+    var data = [
+        {name: '海门', value: 9},
+        {name: '鄂尔多斯', value: 12},
+        {name: '招远', value: 12},
+        {name: '舟山', value: 12},
+        {name: '齐齐哈尔', value: 14},
+        {name: '盐城', value: 15},
+        {name: '赤峰', value: 16},
+        {name: '青岛', value: 18},
+        {name: '乳山', value: 18},
+        {name: '金昌', value: 19},
+        {name: '泉州', value: 21},
+        {name: '莱西', value: 21},
+        {name: '日照', value: 21},
+        {name: '胶南', value: 22},
+        {name: '南通', value: 23},
+        {name: '拉萨', value: 24},
+        {name: '云浮', value: 24},
+        {name: '梅州', value: 25},
+        {name: '文登', value: 25},
+        {name: '攀枝花', value: 25},
+        {name: '威海', value: 25},
+        {name: '承德', value: 25},
+        {name: '厦门', value: Math.ceil((1 + Math.random()) * 150)},
+        {name: '汕尾', value: 26},
+        {name: '潮州', value: 26},
+        {name: '丹东', value: 27},
+        {name: '太仓', value: 27},
+        {name: '曲靖', value: 27},
+        {name: '烟台', value: 28},
+        {name: '瓦房店', value: 30},
+        {name: '即墨', value: 30},
+        {name: '抚顺', value: 31},
+        {name: '玉溪', value: 31},
+        {name: '张家口', value: 31},
+        {name: '阳泉', value: 31},
+        {name: '莱州', value: 32},
+        {name: '湖州', value: 32},
+        {name: '汕头', value: 32},
+        {name: '昆山', value: 33},
+        {name: '宁波', value: 33},
+        {name: '湛江', value: 33},
+        {name: '荣成', value: 34},
+        {name: '连云港', value: 35},
+        {name: '葫芦岛', value: 35},
+        {name: '常熟', value: 36},
+        {name: '东莞', value: 36},
+        {name: '河源', value: 36},
+        {name: '淮安', value: 36},
+        {name: '泰州', value: 36},
+        {name: '南宁', value: 37},
+        {name: '营口', value: 37},
+        {name: '惠州', value: 37},
+        {name: '江阴', value: 37},
+        {name: '蓬莱', value: 37},
+        {name: '韶关', value: 38},
+        {name: '嘉峪关', value: 38},
+        {name: '广州', value: Math.ceil((1 + Math.random()) * 150)},
+        {name: '延安', value: 38},
+        {name: '太原', value: 39},
+        {name: '清远', value: 39},
+        {name: '中山', value: 39},
+        {name: '昆明', value: 39},
+        {name: '寿光', value: 40},
+        {name: '盘锦', value: 40},
+        {name: '长治', value: 41},
+        {name: '珠海', value: 42},
+        {name: '宿迁', value: 43},
+        {name: '咸阳', value: 43},
+        {name: '铜川', value: 44},
+        {name: '平度', value: 44},
+        {name: '佛山', value: Math.ceil((1 + Math.random()) * 150)},
+        {name: '海口', value: 44},
+        {name: '江门', value: 45},
+        {name: '章丘', value: 45},
+        {name: '肇庆', value: 46},
+        {name: '大连', value: 47},
+        {name: '临汾', value: 47},
+        {name: '吴江', value: 47},
+        {name: '石嘴山', value: 49},
+        {name: '沈阳', value: 50},
+        {name: '苏州', value: 50},
+        {name: '茂名', value: 50},
+        {name: '嘉兴', value: 51},
+        {name: '长春', value: 51},
+        {name: '胶州', value: 52},
+        {name: '银川', value: 52},
+        {name: '张家港', value: 52},
+        {name: '三门峡', value: 53},
+        {name: '锦州', value: 54},
+        {name: '南昌', value: 54},
+        {name: '柳州', value: 54},
+        {name: '三亚', value: 54},
+        {name: '自贡', value: 56},
+        {name: '吉林', value: 56},
+        {name: '阳江', value: 57},
+        {name: '泸州', value: 57},
+        {name: '西宁', value: 57},
+        {name: '宜宾', value: 58},
+        {name: '呼和浩特', value: 58},
+        {name: '大同', value: 58},
+        {name: '镇江', value: 59},
+        {name: '桂林', value: 59},
+        {name: '张家界', value: 59},
+        {name: '宜兴', value: 59},
+        {name: '北海', value: 60},
+        {name: '西安', value: 61},
+        {name: '金坛', value: 62},
+        {name: '东营', value: 62},
+        {name: '牡丹江', value: 63},
+        {name: '遵义', value: 63},
+        {name: '绍兴', value: 63},
+        {name: '扬州', value: 64},
+        {name: '常州', value: 64},
+        {name: '潍坊', value: 65},
+        {name: '台州', value: 67},
+        {name: '南京', value: 67},
+        {name: '滨州', value: 70},
+        {name: '贵阳', value: 71},
+        {name: '无锡', value: 71},
+        {name: '本溪', value: 71},
+        {name: '克拉玛依', value: 72},
+        {name: '渭南', value: 72},
+        {name: '马鞍山', value: 72},
+        {name: '宝鸡', value: 72},
+        {name: '焦作', value: 75},
+        {name: '句容', value: 75},
+        {name: '徐州', value: 79},
+        {name: '衡水', value: 80},
+        {name: '包头', value: 80},
+        {name: '绵阳', value: 80},
+        {name: '乌鲁木齐', value: 84},
+        {name: '枣庄', value: 84},
+        {name: '杭州', value: 84},
+        {name: '淄博', value: 85},
+        {name: '鞍山', value: 86},
+        {name: '溧阳', value: 86},
+        {name: '库尔勒', value: 86},
+        {name: '安阳', value: 90},
+        {name: '开封', value: 90},
+        {name: '济南', value: 92},
+        {name: '德阳', value: 93},
+        {name: '温州', value: 95},
+        {name: '九江', value: 96},
+        {name: '邯郸', value: 98},
+        {name: '临安', value: 99},
+        {name: '兰州', value: 99},
+        {name: '沧州', value: 100},
+        {name: '临沂', value: 103},
+        {name: '南充', value: 104},
+        {name: '富阳', value: 106},
+        {name: '泰安', value: 112},
+        {name: '诸暨', value: 112},
+        {name: '郑州', value: 113},
+        {name: '哈尔滨', value: 114},
+        {name: '聊城', value: 116},
+        {name: '芜湖', value: 117},
+        {name: '唐山', value: 119},
+        {name: '平顶山', value: 119},
+        {name: '邢台', value: 119},
+        {name: '德州', value: 120},
+        {name: '济宁', value: 120},
+        {name: '荆州', value: 127},
+        {name: '宜昌', value: 130},
+        {name: '义乌', value: 132},
+        {name: '丽水', value: 133},
+        {name: '秦皇岛', value: 136},
+        {name: '株洲', value: 143},
+        {name: '石家庄', value: 147},
+        {name: '莱芜', value: 148},
+        {name: '常德', value: 152},
+        {name: '保定', value: 153},
+        {name: '湘潭', value: 110},
+        {name: '廊坊', value: 150},
+        {name: '金华', value: 118},
+        {name: '岳阳', value: 110},
+        {name: '衢州', value: 110},
+        {name: '成都', value: Math.ceil((1 + Math.random()) * 150)},
+        {name: '武汉', value: Math.ceil((1 + Math.random()) * 150)},
+        {name: '福州', value: Math.ceil((1 + Math.random()) * 150)},
+        {name: '洛阳', value: Math.ceil((1 + Math.random()) * 150)},
+        {name: '深圳', value: Math.ceil((1 + Math.random()) * 150)},
+        {name: '长沙', value: Math.ceil((1 + Math.random()) * 150)},
+        {name: '揭阳', value: Math.ceil((1 + Math.random()) * 150)},
+        {name: '重庆', value: Math.ceil((1 + Math.random()) * 150)},
+        {name: '上海', value: Math.ceil((1 + Math.random()) * 150)},
+        {name: '北京', value: Math.ceil((1 + Math.random()) * 150)}
+    ];
+    var geoCoordMap = {
+        '海门': [121.15, 31.89],
+        '鄂尔多斯': [109.781327, 39.608266],
+        '招远': [120.38, 37.35],
+        '舟山': [122.207216, 29.985295],
+        '齐齐哈尔': [123.97, 47.33],
+        '盐城': [120.13, 33.38],
+        '赤峰': [118.87, 42.28],
+        '青岛': [120.33, 36.07],
+        '乳山': [121.52, 36.89],
+        '金昌': [102.188043, 38.520089],
+        '泉州': [118.58, 24.93],
+        '莱西': [120.53, 36.86],
+        '日照': [119.46, 35.42],
+        '胶南': [119.97, 35.88],
+        '南通': [121.05, 32.08],
+        '拉萨': [91.11, 29.97],
+        '云浮': [112.02, 22.93],
+        '梅州': [116.1, 24.55],
+        '文登': [122.05, 37.2],
+        '上海': [121.48, 31.22],
+        '攀枝花': [101.718637, 26.582347],
+        '威海': [122.1, 37.5],
+        '承德': [117.93, 40.97],
+        '厦门': [118.1, 24.46],
+        '汕尾': [115.375279, 22.786211],
+        '潮州': [116.63, 23.68],
+        '丹东': [124.37, 40.13],
+        '太仓': [121.1, 31.45],
+        '曲靖': [103.79, 25.51],
+        '烟台': [121.39, 37.52],
+        '福州': [119.3, 26.08],
+        '瓦房店': [121.979603, 39.627114],
+        '即墨': [120.45, 36.38],
+        '抚顺': [123.97, 41.97],
+        '玉溪': [102.52, 24.35],
+        '张家口': [114.87, 40.82],
+        '阳泉': [113.57, 37.85],
+        '莱州': [119.942327, 37.177017],
+        '湖州': [120.1, 30.86],
+        '汕头': [116.69, 23.39],
+        '昆山': [120.95, 31.39],
+        '宁波': [121.56, 29.86],
+        '湛江': [110.359377, 21.270708],
+        '揭阳': [116.35, 23.55],
+        '荣成': [122.41, 37.16],
+        '连云港': [119.16, 34.59],
+        '葫芦岛': [120.836932, 40.711052],
+        '常熟': [120.74, 31.64],
+        '东莞': [113.75, 23.04],
+        '河源': [114.68, 23.73],
+        '淮安': [119.15, 33.5],
+        '泰州': [119.9, 32.49],
+        '南宁': [108.33, 22.84],
+        '营口': [122.18, 40.65],
+        '惠州': [114.4, 23.09],
+        '江阴': [120.26, 31.91],
+        '蓬莱': [120.75, 37.8],
+        '韶关': [113.62, 24.84],
+        '嘉峪关': [98.289152, 39.77313],
+        '广州': [113.23, 23.16],
+        '延安': [109.47, 36.6],
+        '太原': [112.53, 37.87],
+        '清远': [113.01, 23.7],
+        '中山': [113.38, 22.52],
+        '昆明': [102.73, 25.04],
+        '寿光': [118.73, 36.86],
+        '盘锦': [122.070714, 41.119997],
+        '长治': [113.08, 36.18],
+        '深圳': [114.07, 22.62],
+        '珠海': [113.52, 22.3],
+        '宿迁': [118.3, 33.96],
+        '咸阳': [108.72, 34.36],
+        '铜川': [109.11, 35.09],
+        '平度': [119.97, 36.77],
+        '佛山': [113.11, 23.05],
+        '海口': [110.35, 20.02],
+        '江门': [113.06, 22.61],
+        '章丘': [117.53, 36.72],
+        '肇庆': [112.44, 23.05],
+        '大连': [121.62, 38.92],
+        '临汾': [111.5, 36.08],
+        '吴江': [120.63, 31.16],
+        '石嘴山': [106.39, 39.04],
+        '沈阳': [123.38, 41.8],
+        '苏州': [120.62, 31.32],
+        '茂名': [110.88, 21.68],
+        '嘉兴': [120.76, 30.77],
+        '长春': [125.35, 43.88],
+        '胶州': [120.03336, 36.264622],
+        '银川': [106.27, 38.47],
+        '张家港': [120.555821, 31.875428],
+        '三门峡': [111.19, 34.76],
+        '锦州': [121.15, 41.13],
+        '南昌': [115.89, 28.68],
+        '柳州': [109.4, 24.33],
+        '三亚': [109.511909, 18.252847],
+        '自贡': [104.778442, 29.33903],
+        '吉林': [126.57, 43.87],
+        '阳江': [111.95, 21.85],
+        '泸州': [105.39, 28.91],
+        '西宁': [101.74, 36.56],
+        '宜宾': [104.56, 29.77],
+        '呼和浩特': [111.65, 40.82],
+        '成都': [104.06, 30.67],
+        '大同': [113.3, 40.12],
+        '镇江': [119.44, 32.2],
+        '桂林': [110.28, 25.29],
+        '张家界': [110.479191, 29.117096],
+        '宜兴': [119.82, 31.36],
+        '北海': [109.12, 21.49],
+        '西安': [108.95, 34.27],
+        '金坛': [119.56, 31.74],
+        '东营': [118.49, 37.46],
+        '牡丹江': [129.58, 44.6],
+        '遵义': [106.9, 27.7],
+        '绍兴': [120.58, 30.01],
+        '扬州': [119.42, 32.39],
+        '常州': [119.95, 31.79],
+        '潍坊': [119.1, 36.62],
+        '重庆': [106.54, 29.59],
+        '台州': [121.420757, 28.656386],
+        '南京': [118.78, 32.04],
+        '滨州': [118.03, 37.36],
+        '贵阳': [106.71, 26.57],
+        '无锡': [120.29, 31.59],
+        '本溪': [123.73, 41.3],
+        '克拉玛依': [84.77, 45.59],
+        '渭南': [109.5, 34.52],
+        '马鞍山': [118.48, 31.56],
+        '宝鸡': [107.15, 34.38],
+        '焦作': [113.21, 35.24],
+        '句容': [119.16, 31.95],
+        '北京': [116.46, 39.92],
+        '徐州': [117.2, 34.26],
+        '衡水': [115.72, 37.72],
+        '包头': [110, 40.58],
+        '绵阳': [104.73, 31.48],
+        '乌鲁木齐': [87.68, 43.77],
+        '枣庄': [117.57, 34.86],
+        '杭州': [120.19, 30.26],
+        '淄博': [118.05, 36.78],
+        '鞍山': [122.85, 41.12],
+        '溧阳': [119.48, 31.43],
+        '库尔勒': [86.06, 41.68],
+        '安阳': [114.35, 36.1],
+        '开封': [114.35, 34.79],
+        '济南': [117, 36.65],
+        '德阳': [104.37, 31.13],
+        '温州': [120.65, 28.01],
+        '九江': [115.97, 29.71],
+        '邯郸': [114.47, 36.6],
+        '临安': [119.72, 30.23],
+        '兰州': [103.73, 36.03],
+        '沧州': [116.83, 38.33],
+        '临沂': [118.35, 35.05],
+        '南充': [106.110698, 30.837793],
+        '富阳': [119.95, 30.07],
+        '泰安': [117.13, 36.18],
+        '诸暨': [120.23, 29.71],
+        '郑州': [113.65, 34.76],
+        '哈尔滨': [126.63, 45.75],
+        '聊城': [115.97, 36.45],
+        '芜湖': [118.38, 31.33],
+        '唐山': [118.02, 39.63],
+        '平顶山': [113.29, 33.75],
+        '邢台': [114.48, 37.05],
+        '德州': [116.29, 37.45],
+        '济宁': [116.59, 35.38],
+        '荆州': [112.239741, 30.335165],
+        '宜昌': [111.3, 30.7],
+        '义乌': [120.06, 29.32],
+        '丽水': [119.92, 28.45],
+        '洛阳': [112.44, 34.7],
+        '秦皇岛': [119.57, 39.95],
+        '株洲': [113.16, 27.83],
+        '石家庄': [114.48, 38.03],
+        '莱芜': [117.67, 36.19],
+        '常德': [111.69, 29.05],
+        '保定': [115.48, 38.85],
+        '湘潭': [112.91, 27.87],
+        '金华': [119.64, 29.12],
+        '岳阳': [113.09, 29.37],
+        '长沙': [113, 28.21],
+        '衢州': [118.88, 28.97],
+        '廊坊': [116.7, 39.53],
+        '菏泽': [115.480656, 35.23375],
+        '合肥': [117.27, 31.86],
+        '武汉': [114.31, 30.52],
+        '大庆': [125.03, 46.58]
+    };
+
+
+    var convertData = function (data) {
+        var res = [];
+        for (var i = 0; i < data.length; i++) {
+            var geoCoord = geoCoordMap[data[i].name];
+            if (geoCoord) {
+                res.push({
+                    name: data[i].name,
+                    value: geoCoord.concat(data[i].value)
+                });
+            }
+        }
+        return res;
+    };
+
+    mapOtion = {
+        title: {
+            text: '卡片分布图',
+            left: 'center',
+            textStyle: {
+                color: '#0084cd'
+            }
+        },
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            orient: 'vertical',
+            right: '20%',
+            top: '10%',
+            data: ['卡片分布'],
+            textStyle: {
+                color: '#0084cd'
+            }
+        },
+        geo: {
+            map: 'china',
+            label: {
+                emphasis: {
+                    show: false
+                }
+            },
+            roam: false,
+            itemStyle: {
+                normal: {
+                    areaColor: '#323c48',
+                    borderColor: '#111'
+                },
+                emphasis: {
+                    areaColor: '#2a333d'
+                }
+            }
+        },
+        series: [
+            {
+                name: '卡片分布',
+                type: 'scatter',
+                coordinateSystem: 'geo',
+                data: convertData(data),
+                symbolSize: function (val) {
+                    return val[2] / 10;
+                },
+                label: {
+                    normal: {
+                        formatter: '{b}',
+                        position: 'right',
+                        show: false
+                    },
+                    emphasis: {
+                        show: true
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color: '#ddb926'
+                    }
+                }
+            },
+            {
+                name: 'Top 10',
+                type: 'effectScatter',
+                coordinateSystem: 'geo',
+                data: convertData(data.sort(function (a, b) {
+                    return b.value - a.value;
+                }).slice(0, 10)),
+                symbolSize: function (val) {
+                    return val[2] / 10;
+                },
+                showEffectOn: 'render',
+                rippleEffect: {
+                    brushType: 'stroke'
+                },
+                hoverAnimation: true,
+                label: {
+                    normal: {
+                        formatter: '{b}',
+                        position: 'right',
+                        show: true
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color: '#f4e925',
+                        shadowBlur: 10,
+                        shadowColor: '#333'
+                    }
+                },
+                zlevel: 1
+            }
+        ]
+    };
+    var map = echarts.init(document.getElementById('map'));
+    $('.close').on('click', function () {
+        $('#tips').hide()
+    });
+
+    map.setOption(mapOtion);
+    setTimeout(function () {
+        window.onresize = function () {
+            recharge.resize();
+            openCardRate.resize();
+            map.resize();
+        }
+    }, 2000);
+</script>

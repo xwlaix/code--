@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>代理商充值</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/jquery.validate.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+
+</head>
+
+<body>
+<div class="main-box" style="width:95%">
+    <div class="from-groups clearfix">
+        <div class="form-group">
+            <label for="orderID">订单号:</label>
+            <input type="text" id="orderID">
+            <button type="button" id="search" class="btn  btn-sm btn-primary search ">搜索</button>
+            <button type="button" id="recharge" class="btn  btn-sm btn-info ">充值</button>
+        </div>
+    </div>
+    <table id="tb_dept" data-bind="myBootstrapTable:$root">
+    </table>
+    <div id="toolbar" class="clearfix">
+        <span class="emptyCard text-sum"></span>
+    </div>
+</div>
+</body>
+
+
+<script>
+    //根据url获取参数，把相应的参数填到输入框
+    var names = getUrlParam('name'),
+        aid = getUrlParam('id'),
+        flag = 1;
+    $get(urlPrefix + "?r=ems/agent/get-info", function (res) {
+        $(".emptyCard").text('账户余额：' + res.data.money);
+    });
+
+    $("input[name='names']").val(names);
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateSec();
+            this.recharge();
+            this.DepartmentModel = {
+                name: ko.observable()
+            };
+        },
+        //搜索
+        recharge: function () {
+            $("#recharge").on('click', function () {
+                layer_open('账户充值','../business/recharge.html')
+            })
+        },
+        operateSec: function () {
+            $("#search").on('click', function () {
+                var This = $(this);
+                orderID = $.trim($("#orderID").val());
+                if (!orderID) {
+                    layer.msg("请输入订单号", {time: 2000});
+                    return false
+                }
+                var datas = {orderID: orderID, pageSize: 10, pageNumber: 1};
+                var index = layer.load(1, {shade: [0.1, '#fff']});//0.1透明度的白色背景
+                This.addClass('disabled');
+                var flag = 0;
+                $post(urlPrefix + "?r=ems/agent/account/get-all",
+                    datas,
+                    function (res) {
+                        This.removeClass('disabled');
+                        layer.close(index);
+                        if (res.code == 1) {
+                            tableInit.myViewModel.load(res.data);
+                            $get(urlPrefix + "?r=ems/agent/get-info", function (res) {
+                                $(".emptyCard").text('账户余额：' + res.data.money);
+                            });
+                        }
+                        else {
+                            layer.msg(res.msg, {time: 2000});
+                        }
+                    });
+            })
+        }
+    };
+    window.operateEvents = {
+        'click #jumpWX': function (e, value, row, index) {
+            layer_open('订单查询', 'orderManagement.html?orderID=' + row.orderID + "&name=" + row.aname)
+        }
+    };
+
+    function queryParams(params) {
+        queryData = {
+            pageSize: params.pageSize,
+            pageNumber: params.pageNumber,
+            name: $.trim($("#names").val())
+        };
+        return queryData;
+    }
+
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+
+        //2、注册增删改事件
+        operate.operateInit();
+
+
+    });
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                url: urlPrefix + '?r=ems/agent/account/get-all',
+                queryParams: queryParams,//传递参数（*）
+                method: "post",
+                onRefresh: function () {
+                    $("#names").val("");
+                    aid = '';
+                    $get(urlPrefix + "?r=ems/agent/get-info", function (res) {
+                        $(".emptyCard").text('账户余额：' + res.data.money);
+                    });
+                },
+                columns: [{
+                    field: 'id',
+                    title: 'id',
+                    formatter: indexFormatter
+                }, {
+                    field: 'orderID',
+                    title: '订单号',
+                    formatter: orderID,
+                    events: operateEvents
+                }, {
+                    field: 'addtime',
+                    title: '充值时间',
+                    order: 'desc'
+                }, {
+                    field: 'operate',
+                    title: '充值类型',
+                    align: 'center',
+                    formatter: operateType
+                }, {
+                    field: 'ago_amount',
+                    title: '扣费之前的余额'
+                }, {
+                    field: 'amount',
+                    title: '套餐扣费',
+                    formatter: amount
+                }]
+
+            });
+
+            function indexFormatter(value, row, index) {
+                return index + 1;
+            }
+
+            //处理td数据
+            function operateType(value, row, index) {
+                var type = row.type;
+                if (type == '1') {
+                    return ['<span class="text-success" >充值</span>'].join('');
+                } else {
+                    return ['<span class="text-danger" >扣费</span>'].join('');
+                }
+            }
+
+            function orderID(value, row, index) {
+                var type = row.type;
+                if (type != '1') {
+                    if (row.orderID) {
+                        return ['<a href="javascript:void(0);" id="jumpWX">' + row.orderID +
+                        '</a>'].join('');
+                    }
+                } else {
+                    return [row.orderID ].join('');
+                }
+            }
+
+            function operator_type(value, row, index) {
+                var operator_type;
+                if (row.operator_type == 1) {
+                    operator_type = '移动'
+                } else if (row.operator_type == 2) {
+                    operator_type = '电信'
+                } else if (row.operator_type == 3) {
+                    operator_type = '联通'
+                }
+                return [
+                    operator_type
+                ].join('');
+            }
+
+            //处理td数据
+            function amount(value, row, index) {
+                var type = row.type;
+                if (type == '1') {
+                    return ['<span class="text-success" >' + Math.abs(row.amount) +
+                    '</span>'].join('');
+                } else {
+                    return ['<span class="text-danger" >' + (-Math.abs(row.amount)) +
+                    '</span>'].join('');
+                }
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+    //操作
+
+</script>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <title>流量套餐详情</title>
+    <link rel="stylesheet" href="../../static/css/mtV2.css?v1.0">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <style>
+        .weui-toast.weui_loading_toast.weui-toast--visible{
+            margin-left:0;
+            top:50%;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap cardInfoPage ">
+    <div class="cardInfo">
+        <div class="basicInfo clearfix">
+            <div class="basicInfoLeft">
+                <img class="operator_log">
+                <!--<div id="real_status">实名已认证</div>-->
+            </div>
+            <div class="basicInfoRight" style="padding: 5%;">
+                <ul class="list">
+                    <li>卡号：<span id="tel" data-bind="tel">  </span></li>
+                    <li>卡状态：<span id="cardStatus" data-bind="card_status">  </span></li>
+                    <li class="daoqi daoqi_">到期日期:<span data-bind="endday"> </span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="fluxInfo">
+            <div class="clearfix line1 flow hidden">
+                <span class="last">剩余流量</span>
+                <span id="lastFlux"><span class="unit">MB</span></span>
+            </div>
+            <div class="clearfix line2 flow hidden">
+                <div class="fl"><span>总流量：</span><span id="sumFlux"></span></div>
+                <div class="fr"><span>已用：</span><span id="usedFlux"></span></div>
+            </div>
+            <div class="clearfix line1 time hidden">
+                <span class="shengyu last">倒计时:</span>
+                <span class="fr" id="colockbox1">
+                    <span><span class="day"></span>天</span>
+                    <span><span class="hour"></span>时</span>
+                    <span><span class="minute"></span>分</span>
+                    <span><span class="second"></span>秒</span>
+                </span>
+            </div>
+            <div class="clearfix line2 time hidden">
+                <span class="fl"><span>套餐到期时间：</span></span>
+                <span class="fr" id="endtime"></span>
+            </div>
+        </div>
+        <div class="hengxian"></div>
+    </div>
+    <div class="content-renzheng ">
+        <!--当前套餐-->
+        <div class="content-dangqian">
+            <div class="content-dangqian-list">
+                <div class="content-renzheng-title">当前套餐</div>
+
+                <div class="packageInfo hidden" style="margin: 5px 0;">
+                    <div class=" packagename titleBOX" data-bind="packagename"></div>
+                    <!--<div style="color: #959595; font-size: 13px;" class="titleBOX">-->
+                    <!--本套餐流量适用于国内2G/3G/4G网络流量（不含港澳台地区），当月开通一次到账，月底清零，次月从账户中扣取套餐费。可叠加。-->
+                    <!--</div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="../../common/js/jquery-3.1.1.min.js"></script>
+<script src="../../static/js/mobileCommon.js"></script>
+<script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+<script src="../../common/js/transparency.min.js"></script>
+<script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+<script type="text/javascript">
+    $.showLoading();
+    var data = {},
+        cardNo=sessionStorage.getItem("cardNo"),
+        card_status=sessionStorage.getItem("card_status"),
+        real_status=sessionStorage.getItem("real_status"),
+        operator_type=sessionStorage.getItem("operator_type");
+
+    //倒计时显示
+    function countDown(time,id){
+        var day_elem = $(id).find('.day');
+        var hour_elem = $(id).find('.hour');
+        var minute_elem = $(id).find('.minute');
+        var second_elem = $(id).find('.second');
+        var arr = time.split(/[- : \/]/),
+            end_time = new Date(arr[0], arr[1]-1, arr[2], arr[3], arr[4], arr[5]).getTime(),
+            sys_second = (end_time-new Date().getTime())/1000;
+        var timer = setInterval(function(){
+            if (sys_second > 1) {
+                sys_second -= 1;
+                var day = Math.floor((sys_second / 3600) / 24);
+                var hour = Math.floor((sys_second / 3600) % 24);
+                var minute = Math.floor((sys_second / 60) % 60);
+                var second = Math.floor(sys_second % 60);
+                day_elem && $(day_elem).text(day);//计算天
+                $(hour_elem).text(hour<10?"0"+hour:hour);//计算小时
+                $(minute_elem).text(minute<10?"0"+minute:minute);//计算分钟
+                $(second_elem).text(second<10?"0"+second:second);//计算秒杀
+            } else {
+                clearInterval(timer);
+                $(".flow").removeClass('hidden');
+                $(".time").addClass('hidden');
+            }
+        }, 1000);
+    }
+
+    //获取特惠计时套餐列表
+    $get('?r=wms/personal/get-package-flow', function (datas) {
+        if(datas.code==1){
+            $(".time").removeClass('hidden');
+            $("#endtime").text(datas.data.endtime);
+            countDown(datas.data.endtime,"#colockbox1");
+            $get("?r=wms/personal/get-card-info", function (res) {
+                if (res.code == 1) {
+                    $('.packageInfo').render(res.data.flowlist).removeClass('hidden');
+                    data['times'] = res.data.times ? (res.data.times == '未激活' ? res.data.times : res.data.times + '天') : '-';
+                    data['lastFlux'] = (datas.data.flow - datas.data.useflow)/1024;
+                    data['sumFlux'] = datas.data.flow/1024+"M";
+                    data['usedFlux'] = datas.data.useflow/1024+'M';
+                    data['endday'] = res.data.endtime;
+                    $(".cardInfo").render(data);
+                    $.hideLoading();
+                }
+            });
+        } else {
+            $(".flow").removeClass('hidden');
+            $get("?r=wms/personal/get-card-info", function (res) {
+                if (res.code == 1) {
+                    $('.packageInfo').render(res.data.flowlist).removeClass('hidden');
+                    data['times'] = res.data.times ? (res.data.times == '未激活' ? res.data.times : res.data.times + '天') : '-';
+                    if (res.data.restflow) {
+                        data['lastFlux'] = (res.data.restflow).replace('M', "");
+                    }
+                    data['sumFlux'] = res.data.sumflow;
+                    data['usedFlux'] = res.data.useflow;
+                    data['endday'] = res.data.endtime;
+                    $(".cardInfo").render(data);
+                    $.hideLoading();
+                }
+
+            });
+        }
+    });
+    if (operator_type == 1) {
+        $(".operator_log").attr("src", '../../static/css/img/chinaMobile.png')
+    }
+    if (operator_type == 2) {
+        $(".operator_log").attr("src", '../../static/css/img/dianxin.png')
+    }
+    if (operator_type == 3) {
+        $(".operator_log").attr("src", '../../static/css/img/liantong.jpg')
+    }
+    data['tel'] = cardNo;
+    data['card_status'] = card_status;
+    $(".basicInfoRight").render(data);
+</script>
+</html>
+
+

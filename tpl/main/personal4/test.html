@@ -1,0 +1,341 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no" />
+    <title>变更套餐</title>
+    <link rel="stylesheet" href="http://wx.kuyichong.com/./tpl/static/wapwei/common/css/common.css">
+    <link rel="stylesheet" href="http://wx.kuyichong.com/./tpl/static/gzbus/css/main.css">
+    <link rel="stylesheet" href="http://wx.kuyichong.com/./tpl/static/gzbus/css/icomoon/style.css">
+    <link rel="stylesheet" href="http://wx.kuyichong.com/./tpl/static/wapwei/lib/mui/css/mui.min.css">
+    <link rel="stylesheet" href="http://wx.kuyichong.com/./tpl/static/wapwei/lib/mui/css/app.css">
+    <script type="text/javascript" src="http://wx.kuyichong.com/./tpl/static/wapwei/common/rem/rem.js"></script>
+    <style type="text/css">
+        .notice{
+            text-align: center;
+            background: #099fde;
+            color: #fff;
+            padding: 0.1175rem 0.20rem;
+            font-size:0.15rem;
+        }
+        .wrap .item{
+            width: -webkit-calc(33.333333% - 6.6666666666px);
+            float: left;
+            text-align: center;
+            border: 1px solid #b1b0b5;
+            box-sizing: border-box;
+            background: #fff;
+            border-radius: 3px;
+            height: 55px;
+            font-size: 15px;
+            margin-bottom: 10px;
+            color: #4d4d4d;
+            margin-right: 10px;
+            padding-top: 5px;
+        //line-height:48px;
+        }
+        .wrap .item:nth-child(3n){
+            margin-right: 0;
+        }
+        .wrap .item{
+            border:solid 1px #3abef9;
+            color: #3abef9;
+        }
+        .f13{
+            font-size: 13px;
+        }
+        .buyFare-btns{
+            margin: 0.15rem;
+            background: #ff9a14;
+            color: #fff;
+            border-radius: 0.05rem;
+            font-size: 0.15rem;
+            height: 0.45rem;
+            line-height: 0.45rem;
+            text-align: center;
+        }
+        #tips{
+            background: #fff;
+            padding: 12px;
+            color: #099fde;
+        }
+
+    </style>
+</head>
+<body style="background: #efefef;">
+<div class="notice" >变更套餐</div>
+<div class="buyFare-content-list">
+    <div class="content-list-Box ub">
+        <div class="left">卡号</div>
+        <div class="right ub-f1 w1">
+            <input type="input" placeholder="请输入卡号(接入号)" class="yzmPro" style="margin-top:3px;" id="iccid"  />
+        </div>
+    </div>
+    <div class="content-list-Box ub">
+        <div class="left">联系人</div>
+        <div class="right ub-f1 w1">
+            <input type="input" placeholder="请与实名认证的保持一致" class="yzmPro" style="margin-top:3px;" id="name"  />
+        </div>
+    </div>
+    <div class="content-list-Box ub">
+        <div class="left">手机号码</div>
+        <div class="right ub-f1 w1">
+            <input type="tel" placeholder="请与实名认证的保持一致" class="yzmPro" style="margin-top:3px;" id="phone"  />
+        </div>
+    </div>
+</div>
+<div class="mui-content">
+    <div class="buyFare-header">
+        <div class="mb10">套餐类型</div>
+        <div class="buyFare-list">
+            <div class="wrap buyFare-list-Box rows-grid">
+                <ul id="type1">
+                    <li class="item" data-id="9">11G包月</li><li class="item" data-id="6">3G包月</li><li class="item" data-id="8">6G包月</li><li class="item" data-id="7">4G包月</li><li class="item" data-id="10">1G包月</li><li class="item" data-id="11">500M包月</li><li class="item" data-id="12">700M包月</li><li class="item" data-id="13">2G包月</li><li class="item" data-id="14">电信99元不限量</li>                </ul>
+            </div>
+        </div>
+
+        <div >
+            <div style="margin: 5px;">备注</div>
+            <div><textarea name="remarks" id="remarks" cols="30" rows="4" placeholder="修改套餐仅限包月卡，一月仅一次，本月修改次月生效（电信99元不限量套餐仅限电信用户升级）。"></textarea></div>
+
+        </div>
+    </div>
+</div>
+<div class="buyFare-btn">提交</div>
+<div class="buyFare-btns">我的订单</div>
+
+</div>
+<style>
+    .wrap .item.active{
+        background:#3abef9;
+        color: #fff;
+        border:none;
+    }
+</style>
+</body>
+</html>
+<script src="/tpl/static/wapweiui/media/js/jquery-1.11.1.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+
+<script type="text/javascript">
+    var shareTitle='';
+    var imgUrl="";
+    var descContent="";
+    var shareUrl= 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx7c2bb40d6406df91&redirect_uri=http%3A%2F%2Fwx.kuyichong.com%2F%2FHome%2FAuth%2Fshare%2Ftoken%2F745115f2653a9bf8ea4e6ee251a0ee60%2Fopenid%2FosEKKxEJutjFi4u9JPe1JH5ZxDxg%2Fjump_url%2FJTJGaW5kZXgucGhwJTNGZyUzRFdhcCUyNm0lM0RLeXJlJTI2YSUzRG5leHRJbmRleCUyNnRva2VuJTNENzQ1MTE1ZjI2NTNhOWJmOGVhNGU2ZWUyNTFhMGVlNjA%3D&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect';
+    var _config = {};
+
+    $(function() {
+        var config = {};
+        if(typeof(shareConfig) == 'function'){
+            config = shareConfig();
+        }
+
+        config = $.extend({}, {
+            'descContent' : $('title').text() ? $('title').text() : "",
+            'shareTitle'  : $('title').text() ? $('title').text() : "",
+            'imgUrl'      : '',
+            'shareUrl'	  : 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx7c2bb40d6406df91&redirect_uri=http%3A%2F%2Fwx.kuyichong.com%2F%2FHome%2FAuth%2Fshare%2Ftoken%2F745115f2653a9bf8ea4e6ee251a0ee60%2Fopenid%2FosEKKxEJutjFi4u9JPe1JH5ZxDxg%2Fjump_url%2FJTJGaW5kZXgucGhwJTNGZyUzRFdhcCUyNm0lM0RLeXJlJTI2YSUzRG5leHRJbmRleCUyNnRva2VuJTNENzQ1MTE1ZjI2NTNhOWJmOGVhNGU2ZWUyNTFhMGVlNjA%3D&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect'
+        }, config);
+
+        shareTitle = config.shareTitle;
+        imgUrl     = config.imgUrl;
+        descContent= config.descContent;
+        shareUrl	= config.shareUrl;
+        _config = config;
+    });
+
+    wx.config({
+        debug: false,
+        appId: "wx7c2bb40d6406df91",
+        timestamp: 1510717207,
+        nonceStr: "NZbblDztOHkqUOS8",
+        signature: "378510b32477bf7044f1cee0e299b0d74ca4dbea",
+        jsApiList: [
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',// 所有要调用的 API 都要加到这个列表中
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'scanQRCode',
+            'hideMenuItems',
+            'chooseImage',
+            'uploadImage',
+            'downloadImage',
+            'chooseWXPay',
+            'onVoicePlayEnd',
+            'startRecord',
+            'stopRecord',
+            'translateVoice',
+            'playVoice',
+            'downloadVoice',
+            'uploadVoice',
+        ]
+    });
+
+    wx.ready(function () {
+        if(typeof(wxready) == 'function'){
+            wxready();
+        }
+        console.log('=================');
+        console.log(shareUrl);
+        console.log('=================');
+        if (shareUrl) {
+            _share_(shareTitle, descContent, shareUrl, imgUrl);
+        }
+    });
+
+    function _share_(conf){
+        conf = typeof(conf) == 'undefined' ? {} : conf;
+        var _shareTitle = typeof(conf.shareTitle) == 'undefined' ? _config.shareTitle : conf.shareTitle;
+        var _shareUrl = typeof(conf.shareUrl) == 'undefined' ? _config.shareUrl : conf.shareUrl;
+        var _descContent = typeof(conf.descContent) == 'undefined' ? _config.descContent : conf.descContent;
+        var _imgUrl = typeof(conf.imgUrl) == 'undefined' ? _config.imgUrl: conf.imgUrl;
+        // 在这里调用 API
+        wx.onMenuShareTimeline({
+            title: _shareTitle, // 分享标题
+            link: _shareUrl, // 分享链接
+            imgUrl: _imgUrl, // 分享图标
+            success: function () {
+                if(typeof(shareSuccess) == 'function'){
+                    shareSuccess('onMenuShareTimeline');
+                }
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+
+        wx.onMenuShareAppMessage({
+            title: _shareTitle, // 分享标题
+            desc: _descContent, // 分享描述
+            link: _shareUrl, // 分享链接
+            imgUrl: _imgUrl, // 分享图标
+            type: '', // 分享类型,music、video或link，不填默认为link
+            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+            success: function () {
+                if(typeof(shareSuccess) == 'function'){
+                    shareSuccess('onMenuShareAppMessage');
+                }
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+
+        wx.onMenuShareQQ({
+            title: _shareTitle, // 分享标题
+            desc: _descContent, // 分享描述
+            link: _shareUrl, // 分享链接
+            imgUrl: _imgUrl, // 分享图标
+            success: function () {
+                // 用户确认分享后执行的回调函数
+                if(typeof(shareSuccess) == 'function'){
+                    shareSuccess('onMenuShareQQ');
+                }
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+
+        wx.onMenuShareWeibo({
+            title: _shareTitle, // 分享标题
+            desc: _descContent, // 分享描述
+            link: _shareUrl, // 分享链接
+            imgUrl: _imgUrl, // 分享图标
+            success: function () {
+                // 用户确认分享后执行的回调函数
+                if(typeof(shareSuccess) == 'function'){
+                    shareSuccess('onMenuShareWeibo');
+                }
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+
+        wx.onMenuShareQZone({
+            title: _shareTitle, // 分享标题
+            desc: _descContent, // 分享描述
+            link: _shareUrl, // 分享链接
+            imgUrl: _imgUrl, // 分享图标
+            success: function () {
+                if(typeof(shareSuccess) == 'function'){
+                    shareSuccess('onMenuShareQZone');
+                }
+                // 用户确认分享后执行的回调函数
+            },
+            cancel: function () {
+                // 用户取消分享后执行的回调函数
+            }
+        });
+    }
+
+</script><!-- <script type="text/javascript" src="http://wx.kuyichong.com/./tpl/static/wapwei/common/jquery/jquery-1.11.2.min.js"></script> -->
+<script type="text/javascript" src="http://wx.kuyichong.com/./tpl/static/wapwei/lib/mui/js/mui.min.js"></script>
+<script type="text/javascript" src="http://wx.kuyichong.com/./tpl/static/wapwei/common/form/form.js"></script>
+<script type="text/javascript" src="http://wx.kuyichong.com/./tpl/static/wapwei/common/msg/msg.js"></script>
+<script type="text/javascript" src="http://wx.kuyichong.com/./tpl/static/wapwei/lib/mui/js/mui.animate.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $('.buyFare-btns').touch(function(){
+            location.href = "/index.php?g=Wap&m=Kyre&a=nextList&token=745115f2653a9bf8ea4e6ee251a0ee60";
+        })
+
+
+        $('.wrap .item').click(function(){
+            $(this).addClass('active').siblings().removeClass('active');
+
+        })
+
+        //验证
+        var form = new validate();
+        $('.buyFare-btn').touch(function(){
+            $(this).text('提交中...');
+            var This = $(this);
+            var iccid = $("#iccid").val();
+            var packageID = $('.wrap .item.active').attr('data-id');
+            var remarks = $("#remarks").val();
+            var name = $("#name").val();
+            var phone = $("#phone").val();
+            //alert(packageID);
+            if(!iccid){
+                This.text("提交");
+                return msg.alert('请输入卡号',1000);
+            }else{
+                if(isNaN(iccid)){
+                    This.text("订购");
+                    return msg.alert('请输入正确的卡号',1000);
+                }
+            }
+            if(!name) return msg.alert('请输入联系人',1000);
+            if(!form.checkTelphone(phone)) return msg.alert('请输入正确的手机号码',1000);
+            if(!packageID){
+                This.text("提交");
+                return msg.alert('请选择套餐类型',1000);
+            }
+            var data = {
+                cardIC  		:iccid,
+                packageID	    :packageID,
+                base		    :remarks,
+                name		    :name,
+                phone		    :phone
+            }
+            var url = "/index.php?g=Wap&m=Kyre&a=changepackage&token=745115f2653a9bf8ea4e6ee251a0ee60";
+            if(This.hasClass('active')) return false;
+            This.addClass('active');
+            $.post(url,data,function(res){
+                console.log(res);
+                This.removeClass('active');
+                This.text("提交");
+                return msg.alert(res.info,2000,function(){
+                    location.href = "";
+                });
+
+            },'json')
+        })
+        //短信
+
+    })
+</script>

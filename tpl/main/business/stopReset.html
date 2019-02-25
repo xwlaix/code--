@@ -1,0 +1,337 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>停复机</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+</head>
+
+
+<body>
+<!--中间部分start!-->
+<div class="main-box">
+    <div class="msgWrap form">
+        <div class="card-group clearfix">
+            <div class="form-group">
+                <label for="accessNumber">卡号:</label>
+                <input id="accessNumber" class="form-control" name="accessNumber" type="text"/>
+                <button class="btn btn-primary btn-sm keydownBtn" id="Sec" title="搜索">搜索</button>
+                <button class=" btn btn-danger btn-sm 361" id="stop" title="停机">停机</button>
+                <button class=" btn btn-danger btn-sm hidden 361" id="stopGprs" title="停机">Gprs停机</button>
+                <button class=" btn btn-info btn-sm 361" id="reset" title="复机">复机</button>
+                <button class=" btn btn-info btn-sm hidden 361" id="resetGprs" title="复机">Gprs复机</button>
+            </div>
+        </div>
+        <div id="toolbar" class="clearfix">
+            <span class="emptyCard text-sum"></span>
+        </div>
+        <table id="tb_dept" data-bind="myBootstrapTable:$root">
+        </table>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var accessNumber = getUrlParam('card')==null?'':getUrlParam('card');
+ 	var noArr = [];
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if(res.code==0){return}
+        tableInit.Init();
+        operate.operateInit();
+        if(res.data.id == res.data.uid){
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (!nodes[b]["children"][a]["children"][c]["checked"]) {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (var e in noArr) {
+            if (noArr[e] == 361) {
+                $("." + noArr[e]).remove();
+            }
+        }
+    });
+    $("#accessNumber").val(accessNumber);
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.Sec();
+            this.stop();
+            this.reset();
+            this.stopGprs();
+            this.resetGprs();
+            this.DepartmentModel = {
+                uid: ko.observable(),
+                name: ko.observable(),
+                ID: ko.observable(),
+                number: ko.observable()
+            };
+        },
+        //搜素
+        Sec: function () {
+            $('#Sec').on('click', function () {
+                accessNumber = $.trim($("#accessNumber").val());
+                if (!accessNumber) {
+                    layer.msg("请输入卡号", {time: 1000});
+                    return false
+                }
+                loadStatus();
+                load(true)
+            })
+        },
+        //停机
+        stop: function () {
+            $("#stop").on('click', function () {
+                changeStatus(1)
+            })
+        },
+        //gprs关机
+        stopGprs: function () {
+            $("#stopGprs").on('click', function () {
+                changeStatus(5)
+            })
+        },
+        //复机
+        reset: function () {
+            $("#reset").on('click', function () {
+                changeStatus(2)
+            })
+        },
+        //gprs关机
+        resetGprs: function () {
+            $("#resetGprs").on('click', function () {
+                changeStatus(6)
+            })
+        }
+    };
+    function changeStatus(status){
+        accessNumber = $.trim($("#accessNumber").val());
+        var index = layer.load(2,  {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        $post(urlPrefix + "?r=sms/business/main/update-status",
+            {cardid: accessNumber, status: status},
+            function (res) {
+                layer.msg(res.msg,
+                    {time: 1000});
+                layer.close(index);
+                loadStatus();
+                if(res.code==1||res.code===0){load()}
+            }, function () {
+                layer.msg("操作失败", {time: 1000});
+                layer.close(index);
+            })
+    }
+    function loadStatus(){
+        $post(urlPrefix + "?r=sms/card/get-all", {card:accessNumber},function(res){
+            var card_status,oname=res.data.rows[0].oname;
+            switch (res.data.rows["0"].card_status) {
+                case '1':
+                    card_status = '待激活';
+                    break;
+                case '2':
+                    card_status = '正常';
+                    break;
+                case '3':
+                    card_status = '单向停机';
+                    break;
+                case '4':
+                    card_status = '停机';
+                    break;
+                case '5':
+                    card_status = '预销号';
+                    break;
+                case '6':
+                    card_status = '销号';
+                    break;
+                case '7':
+                    card_status = '过户';
+                    break;
+                case '8':
+                    card_status = '休眠';
+                    break;
+                case '9':
+                    card_status = '未知状态';
+                    break;
+                default:
+                    break;
+            }
+            $(".emptyCard").text("卡片状态："+card_status).removeClass("hidden");
+            if(oname=='广东揭阳'||oname=='广东揭阳1'||oname=='江门自家'||oname=='江门火林'){
+                $('#stopGprs').removeClass('hidden');
+                $('#resetGprs').removeClass('hidden')
+            }
+        });
+
+
+    }
+    function load(flag){
+        var index = layer.load(2,  {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        $post(urlPrefix + "?r=sms/business/main/get-all-status",
+            {card: accessNumber,pageSize:10,pageNumber:1},
+            function (res) {
+                layer.close(index);
+                if (res.code == 1) {
+                    tableInit.myViewModel.load(res.data);
+                }
+                if(flag){
+                    layer.msg(res.msg,{time:2000})
+                }
+            },function(){
+                layer.close(index);
+            })
+    }
+    function queryParams(params) {
+        queryData = {
+            pageSize: params.pageSize,
+            pageNumber: params.pageNumber,
+            card: $.trim($("#accessNumber").val())
+        };
+        return queryData;
+    }
+    window.operateEvents = {
+        'mouseenter .show': function (e, value, row, index) {
+            var that = this;
+            layer.tips(row.result, that, {
+                tips: 1 //还可配置颜色
+            });
+        }
+    };
+
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                search: false,
+                queryParams: queryParams,//传递参数（*）
+                method: "post",
+                url: urlPrefix + '?r=sms/business/main/get-all-status',
+                onRefresh:function(){
+                    $("#accessNumber").val("");
+                    $('.emptyCard').addClass("hidden")
+                },
+                columns: [{
+                    field: 'id',
+                    title: 'id'
+                }, {
+                    field: 'card',
+                    title: '卡号'
+                }, {
+                    field: 'type',
+                    title: '操作类型',
+                    formatter: operateFortype
+                }, {
+                    field: 'addtime',
+                    title: '操作时间'
+                }, {
+                    field: 'status',
+                    title: '状态',
+                    formatter: operateFormatter
+                }, {
+                    field: 'uname',
+                    title: '操作者'
+                },{
+                    field: 'remarks',
+                    title: '备注'
+                },{
+                    field: 'result',
+                    title: '返回内容',
+                    formatter: forResult,
+                    events: operateEvents
+                }]
+            });
+//            card：卡号
+//            result：接口返回值
+//            status： 状态；1未成功，2成功
+//            remarks：备注
+//            source：来源
+//            Serial_number：流水号，针对电信
+//            addtime：时间
+//            operator_name：供应商名
+//            type: 停复机 2 开机 1 关机
+            function operateFortype(value, row, index) {
+ 
+                if(row.type==1){
+                    str='关机'
+                }
+                if(row.type==2){
+                    str='开机'
+                }
+				if(row.type==3){
+                    str='单独断网'
+                }
+                if(row.type==4){
+                    str='单独复网'
+                }
+                if(row.type==5){
+                    str='GPRS关机'
+                }
+                if(row.type==6){
+                    str='GPRS开机'
+                }
+ 			
+                return [
+                    str
+                ].join('');
+            }
+            function forResult(value, row, index) {
+                return ['<span class="text-success show" >' + cutstr(row.result, 30) +
+                '</span>'].join('');
+            }
+            function operateFormatter(value, row, index) {
+                if (row.status == 1) {
+                    return [
+                        '<span class="text-danger">未成功</span>'
+                    ].join('');
+                } else {
+                    return [
+                        '<span class="text-success">成功</span>'
+                    ].join('');
+                }
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>

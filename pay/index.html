@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>安全支付</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="../tpl/common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../tpl/static/css/kuyuMobile/weiPayPhone.css">
+    <link rel="stylesheet" href="../tpl/common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../tpl/common/js/jquery-weui/lib/weui.min.css">
+
+    <script src="../tpl/common/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="../tpl/static/js/Department.js"></script>
+    <script src="../tpl/common/js/jquery-weui/js/jquery-weui.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+    <img src="../tpl/static/img/logo.jpg" class="center-block"/>
+    <div class="text-center num"><span id="money"></span>元</div>
+    <div class="text">
+        <div class="text-left">订单编号：<span id="orderID"></span></div>
+        <div class="text-left">订单类型： <span id="orderTitle"></span></div>
+    </div>
+    <button id="pay" class="btn btn-block btn-success text-center">微信支付</button>
+</div>
+
+<div class="body-wrap" style="background:white;position: fixed;height: 100%;width: 100%;left: 0;top: 0;"></div>
+
+<script type="text/javascript">
+    var openid, orderID, id, money, uid, order_type, type, func, payFlag = 0, aid;
+    flag = getUrlParam('flag');
+    id = getUrlParam('id');
+    order_type = getUrlParam('order_type');
+    type = getUrlParam('type');
+    uid = sessionStorage.getItem("id");
+    aid = sessionStorage.getItem("aid");
+    sessionStorage.setItem("addFlag", 0);
+    if (uid == 50&&!aid) {
+        $(".center-block").attr("src", "../tpl/static/img/logo.jpg");
+        $("#orderTitle").text("酷易充支付")
+    } else {
+        $(".center-block").attr("src", "../tpl/static/img/wechat.jpg");
+        $("#orderTitle").text("微信支付")
+    }
+    if (flag == 'true') {
+        $("#pay").text("余额支付")
+    } else if (flag != 'false' && flag != null) {
+        $("#pay").text("微信支付  " + flag + "元")
+    } else {
+        $("#pay").text("微信支付")
+    }
+    if (order_type != 'account') {
+        order_type = 'flow';
+        func = 'get'
+    } else {
+        func = 'get-account'
+    }
+    $post(urlPrefix + "?r=home/setting/get-jsapi-conf",
+        {uid: uid, url: document.location.href},
+        function (data) {
+            wx.config({
+                appId: data.data.appId, // 必填，公众号的唯一标识
+                timestamp: data.data.timestamp, // 必填，生成签名的时间戳
+                nonceStr: data.data.nonceStr, // 必填，生成签名的随机串
+                signature: data.data.signature,// 必填，签名，见附录1
+                jsApiList: [] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+            })
+        });
+    if (type == 'obtain') {
+        order_type = type;
+        $post(urlPrefix + "?r=wms/extension/get-order-info",
+            {id: id},
+            function (res) {
+                orderID = res.data.orderid;
+                aid = res.data.aid;
+                money = 8;
+                openid = res.data.openid;
+                uid = res.data.uid;
+                $("#money").text(8);
+                $("#orderID").text(orderID);
+                $(".body-wrap").hide()
+            }
+        );
+    } else {
+        /**
+         * 获取参数
+         */
+        $post(urlPrefix + "?r=home/order/" + func,
+            {id: id},
+            function (res) {
+                orderID = res.data.orderID;
+                money = res.data.money;
+                openid = res.data.openid;
+                uid = res.data.uid;
+                $("#money").text(money);
+                $("#orderID").text(orderID);
+                $(".body-wrap").hide();
+                if (res.data.status==3||res.data.status==2) {
+                    $.alert("这笔订单已经支付完成", function () {
+                        window.location.href = urlPrefix + '/coolfish/tpl/main/personal4/home.html'
+                    });
+                }
+            }
+        );
+    }
+    /**
+     * 支付操作
+     */
+    pay = function () {
+        payFlag = 1;
+        $post(urlPrefix + "?r=home/order/pay", {
+                uid: uid,
+                body: "商品描述",
+                amount: money,
+                openid: openid,
+                orderID: orderID,
+                wx: getUrlParam('wx'),
+                code: getUrlParam('code'),
+                order_type: order_type
+            },
+            function (data) {
+                if (data.code == 1) {
+                    if (data.data = '余额抵扣') {
+                        sessionStorage.setItem("pay", 'true');
+                        $.alert("余额支付成功", function () {
+                            window.location.href = urlPrefix + '/coolfish/tpl/main/personal4/home.html'
+                        });
+                    }
+                    $("#pay").text('支付成功');
+                }else {
+                    payFlag = 0;
+                    $("#pay").text('支付');
+                }
+                jsApiCall(data, urlPrefix + "/coolfish/tpl/main/personal4/home.html", urlPrefix + "/coolfish/tpl/main/extend/freeCard.html?aid=" + aid + "&orderid=" + id)
+            })
+    };
+
+    $("#pay").click(function () {
+        if (payFlag == 1) {
+            $.toptip('请不要重复提交', 2000, 'error');
+            return false
+        }
+        $("#pay").text('支付中...');
+        pay();
+    })
+
+    /**
+     * 申请支付操作
+     * @param      {(Function|string)}  jsApiParameters  The js api parameters
+     * @param      {<type>}             returnurl        The returnurl
+     */
+    jsApiCall = function (jsApiParameters, returnurl, obtainurl) {
+        console.log(jsApiParameters);
+        jsApiParameters = JSON.parse(jsApiParameters);
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            jsApiParameters,
+            function (res) {
+                WeixinJSBridge.log(res.err_msg);
+                if (res.err_msg == 'get_brand_wcpay_request:ok' && order_type == 'obtain') {
+                    sessionStorage.setItem("needobtain", 'true');
+                    window.location.href = obtainurl;
+                    return
+                }
+                if (res.err_msg == 'get_brand_wcpay_request:ok') {
+                    sessionStorage.setItem("pay", 'true');
+                    payFlag = 1;
+                    window.location.href = returnurl;
+                }else{
+                    payFlag = 0;
+                }
+            }
+        );
+    }
+
+</script>
+</body>
+</html>

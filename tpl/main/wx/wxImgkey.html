@@ -1,0 +1,291 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>酷鱼微信公众平台-酷鱼信息科技有限公司</title>
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/ueditor/iphone.css">
+    <link rel="stylesheet" href="../../static/css/addImg.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/ZeroClipboard.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/ajaxfileupload.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/ueditor/ueditor.config.js"></script>
+    <script src="../../common/js/ueditor/ueditor.all.min.js"></script>
+    <script src="../../common/js/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+
+</head>
+<body>
+<div class="main-box" >
+    <div id="main-box-index">
+        <!--中间部分_右侧end!-->
+        <form method="post" action="" enctype="multipart/form-data">
+            <div class="msgWrap form">
+                <table class="userinfoArea" border="0" cellSpacing="0" cellPadding="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th style="width:120px" valign="top"><label for="keyword">关键词：</label></th>
+                        <td>
+                            <input class="px" id="keyword" value="" name="keyword" style="width:300px;" placeholder="例如: 物联互动 ">
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th><label for="title">图文消息标题：</label></th>
+                        <td><input class="px" id="title" value="" name="title" style="width:300px;" placeholder="此处填写微信图文消息标题"></td>
+                    </tr>
+                    <tr>
+                        <th valign="top"><label for="info">简介：</label></th>
+                        <td>
+                            <textarea class="px" id="info" name="text" style="width:300px;  height:100px"></textarea>
+                            <br/>最多输入200个汉字
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th valign="top"><label >封面图片：</label></th>
+
+                        <td> <img src="" id="img" alt="" style="width: 300px;"></td>
+                        <!--./upload/index_img.jpg-->
+                    </tr>
+                    <tr>
+                        <th valign="top"><label>上传图片:</label></th>
+                        <td>
+                            <a href="javascript:" class="a-upload">
+                                <input type="file" name="headimg" id="file1">点击这里上传文件
+                            </a>
+                            <span>推荐尺寸：600 x 275</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th valign="top"><label>详细页是否显示封面：</label></th>
+                        <td>
+                            <input class="radio" type="radio" name="showpic" id="showpic" value="1" checked="checked">
+                            <label for="showpic">是</label>
+                            <input id="show" class="radio" type="radio" name="showpic" value="0">
+                            <label for="show">否</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th valign="top"><label>是否授权：</label></th>
+                        <td>
+                            <input class="radio" type="radio" name="accredit" value="1" checked="checked">
+                            <label for="showpic">是</label>
+                            <input class="radio" type="radio" name="accredit" value="0">
+                            <label for="show">否</label>
+                        </td>
+                    </tr>
+                    <tr class="info1">
+                        <th valign="top"><label for="uEditorUrl">图文详细页内容：</label></th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="hidden" id="uEditorUrl">
+                            <label for="myEditorPro"></label>
+                            <textarea name="info" id="myEditorPro"></textarea>
+                            <div class="tools-fixed" id="J-fixedTools">
+                                <a class="action-a" id="tm_mobileView">
+                                    <span>预览</span>
+                                </a>
+                            </div>
+
+                            <div class="Mask ">
+                                <div class="iphone">
+                                    <div class="iphone-top">
+                                        <span class="camera"></span>
+                                        <span class="sensor"></span>
+                                        <span class="speaker"></span>
+                                        <div class="pb icon-uniE6FA" id="delPro"></div>
+                                    </div>
+                                    <div class="top-bar"></div>
+                                    <div class="iphone-screen">
+                                    </div>
+                                    <div class="buttons">
+                                        <span class="on-off"></span>
+                                        <span class="sleep"></span>
+                                        <span class="up"></span>
+                                        <span class="down"></span>
+                                    </div>
+                                    <div class="bottom-bar"></div>
+                                    <div class="iphone-bottom">
+                                        <span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th valign="top"><label for="url">自定义链接地址：</label></th>
+                        <td>
+                            <label for="url"></label>
+                            <input  class="px" id="url" value="" name="url" style="width:500px;" placeholder="如果填写了图文详细内容，这里请留空，不要设置！">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th valign="top"><label for="orderid">排序号：</label></th>
+                        <td>
+                            <input type="number" class="px" id="orderid" value="" name="orderid" style="width:300px;" placeholder="请填写排序号"><span>提示：可以为负数，数字越小则在前端的同类里面排序越靠前</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th></th>
+                        <td>
+                            <button type="button" id="bsubmit" name="sbmt" class="btn btn-primary">保存
+                            </button>
+                        </td>
+                    </tr>
+                    <tr style="height: 150px;">
+
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+
+<script>
+    //改变上传文件内容后上传
+    $("#file1").change(function () {
+        ajaxFileUpload('?r=sms/wechat/auto-reply/upload-img',"file1",
+            function (res)  //服务器成功响应处理函数
+            {
+                $("#img").attr("src", res.data.url);
+            })
+    });
+
+    var ue = UE.getEditor('myEditorPro');
+    var id = getUrlParam("id"),funName="add";
+    $(function(){
+        var content =$('#daily_content').val();
+        //判断ueditor 编辑器是否创建成功
+        ue.addListener("ready", function () {
+            // editor准备好之后才可以使用
+            if(id){
+                funName = 'update';
+                $post(urlPrefix+'?r=sms/wechat/auto-reply/get-all',{id:id},function(res){
+                    if(res.code==1){
+                        $("#keyword").val(res.data[0].keyword);
+                        $("#title").val(res.data[0].title);
+                        $("#info").val(res.data[0].info);
+                        $("#img").attr('src',res.data[0].img);
+                        $("input[name='showpic']:checked").val();
+                        $("input[name='accredit']:checked").val();
+//        editor.setContent('欢迎使用ueditor')
+                        ue.execCommand('insertHtml', res.data[0].content);
+                        $("#url").val(res.data[0].url);
+                        $("#orderid").val(res.data[0].orderid);
+                    }else{
+                        layer.msg(res.msg,{time:2000})
+                    }
+                });
+            }
+        });
+
+    });
+
+
+    $(function () {
+        $("#bsubmit").click(function () {
+            var keyword = $("#keyword").val(),
+                title = $("#title").val(),
+                info = $("#info").val(),
+                pic = $("#img").attr('src'),
+                showpic = $("input[name='showpic']:checked").val(),
+                accredit = $("input[name='accredit']:checked").val(),
+                type = 0,
+                content = UE.getEditor('myEditorPro').getContent(),
+                url = $("#url").val(),
+                orderid = $("#orderid").val();
+            if (!keyword) {
+                layer.msg("关键词不能为空哦",{time:2000});
+                return false;
+            }
+
+            if (!title) {
+                layer.msg("回复标题不能为空哦",{time:2000});
+                return false;
+            }
+
+            if (!info) {
+                layer.msg("回复简介不能为空哦",{time:2000});
+                return false;
+            }
+
+            if (!pic) {
+                layer.msg("您还没上传封面图片哦",{time:2000});
+                return false;
+            }
+
+
+            if (url === '') {
+                if (content === '') {
+                    layer.msg("详细内容页面不能为空",{time:2000});
+                    return false;
+                }
+            }
+            //上传数据
+            $post(urlPrefix+"?r=sms/wechat/auto-reply/"+funName,
+                {
+                    keyword: keyword,
+                    title: title,
+                    content: content,
+                    type: type,
+                    orderid: orderid,
+                    img: pic,
+                    showpic: showpic,
+                    auth_url: accredit,
+                    info: info,
+                    url: url,
+                    id:id
+                },
+
+                function (res) {
+                    if (res.status === 1) {
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index);
+                        layer.msg(res.msg,{time:2000});
+                    } else {
+                        layer.msg(res.msg,{time:2000});
+                    }
+                });
+
+        });
+    });
+    //定义iphone预览
+    var iphone = {
+        tm_mobileView: $("#tm_mobileView"),
+        Mask: $(".Mask"),
+        del: $("#delPro"),
+        init: function () {
+            this.tm_mobileView.on('click', function () {
+                var html = UE.getEditor('myEditorPro').getPlainTxt();
+                $("body").css("overflow", "hidden");
+                $(".Mask").addClass('is-visible');
+                $(".iphone-screen").html(html);
+            });
+            this.Mask.on('click', function () {
+                $(".Mask").removeClass('is-visible');
+                $("body").css("overflow", "auto");
+            });
+            this.del.on('click', function () {
+                $(".Mask").removeClass('is-visible');
+                $("body").css("overflow", "auto");
+            })
+        }
+    };
+    iphone.init();
+
+
+</script>
+
+</html>

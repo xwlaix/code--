@@ -1,0 +1,117 @@
+body{background-color:#f5f5f5;}
+.u-simcard header{background-color:#fff;margin-bottom:0;}
+.u-simcard header .head-r .simcard-iccid{color:#2088e8;margin-top:5px;display:inline-block;font-size:18px;font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: bold;}
+.simcard-main{padding:5px 10px;margin-bottom:0;}
+.simcard-jh-container .button{height:50px;}
+.simcard-jh-container .button-raised{line-height:48px;}
+.u-simcard footer{position:static;}
+.verifiedTip{
+    box-sizing: border-box;
+    background-color:#fdaa42;
+    padding:15px 8px;
+    color: #ffffff;
+    font-size: 18px;
+    text-align: left;
+    border-radius: 8px;
+    position:relative;
+}
+.icon-verifiedTip{font-size: 22px;position: absolute;left: 8px;top: 12px;}
+.text-verifiedTip{text-indent:10px;}
+.verified{
+    box-sizing: border-box;
+    padding:30px 10px 10px 10px;
+    font-size: 18px;
+    border-radius: 8px;
+}
+#aliVerifiedBtn{
+    width:95%;
+    font-size: 20px;
+    border-radius: 200px;
+    background-color: rgb(50, 163, 239);
+    text-align: center;
+    padding: 5px 20px;
+    color: #fff;
+    margin-top: 20px;
+    border:2px solid rgb(50, 163, 239);
+}
+.u-simcard header .head-l{width:85px;height:87px;}
+#getValidSMS{
+    color:#fff;
+    background-color:rgb(50, 163, 239);
+}
+.tagTip{
+    font-size:12px;
+}
+.successTip{
+    color:#06c806;
+}
+.successTag{
+    display:inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius:50%;
+    color:#fff;
+    background-color:#06c806
+}
+.errorTip{
+    color:red;
+}
+.loadingTip{
+    color:#ff7e16;
+}
+#tipBox .modal-header,#tipBox .modal-body,#tipBox .modal-footer{padding:10px;border:0;}
+#tipBox .modal-header{padding:5px 10px;}
+#tipBox .modal-body{margin-top:10px;}
+#tipBox .modal-body-text{text-align: left;box-sizing: border-box;padding: 0px 10%;font-size: 15px;color: black}
+.btn-right{border:none;background-color:#f0690f;color:#fff;width:100%;padding:10px 20px;box-sizing:border-box;border-radius:5px;font-size: 15px}
+.btn-left{border:1px solid #f0690f;background-color:#fff;color:#f0690f;width:100%;padding:10px 20px;box-sizing:border-box;border-radius:5px;font-size: 15px}
+.input-group-addon,.btn-default{
+    background-color:#fff;
+    border-radius:0px;
+}
+.form-control,.input-group-btn>.btn{
+    border-radius:0px;
+    line-height: 1 !important;
+}
+.m-confirm-bg { position: fixed; z-index: 99; top: 0; left: 0; overflow: hidden; width: 100%; height: 100%; border: 0; background: #000000; filter:alpha(opacity=50); -moz-opacity:0.5; -khtml-opacity: 0.5; opacity: 0.5; display: none; }
+.m-confirm-loading {
+    position: fixed;
+    z-index: 1000;
+    top: 50%;
+    left: 50%;
+    margin-top: -27px;
+    margin-left: -84.5px;
+    width: 167px;
+    height: 52px;
+    border: #ddd 1px solid;
+    border-radius: 5px;
+    background: rgb(229, 229, 229);
+}
+.m-loading-msg { margin-top: 17.5px; margin-left: 50px; }
+/*扫描图标*/
+.icon-scan{color:rgb(50, 163, 239);font-size: 25px;}
+.pad-b-15{padding-bottom:15px;}
+/*视频跳转*/
+.toVerifiedVedio{font-size:16px;color:#ff9932;display:block;width:95%;margin:0 auto;padding:10px 0;}
+.toVerifiedVedio .iconfont{font-size: 20px;margin-right: 3px;}
+a:hover.toVerifiedVedio{color:#e1620c;text-decoration:none;}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+/* 移动端媒体查询像素比 */
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (min-device-pixel-ratio: 2) {
+    .simcard-jh-container{background-image:url(../images/terminal/simopen-bg@2x.png);background-size: 211px auto; }
+}
+@media (max-width:359px){
+    .u-simcard header .head-r .simcard-iccid{font-size:15px;}
+    .input-group-lg>.form-control, .input-group-lg>.input-group-addon, .input-group-lg>.input-group-btn>.btn{padding:10px}
+}
+@media (max-width:320px){
+    .verified{
+        padding:30px 0 10px 0;
+    }
+}

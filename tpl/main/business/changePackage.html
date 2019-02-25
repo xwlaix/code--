@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>变更套餐管理</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/js/Select2/select2.min.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-editable.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-editable.js"></script>
+    <script src="../../common/js/Select2/select2.min.js"></script>
+
+</head>
+<style>
+
+</style>
+<body>
+
+<div class="main-box" style="width:95%">
+    <div id="main-box-index">
+        <div class="msgWrap form">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">添加变更套餐</h4>
+                            <div class="alert">
+                                <strong>提示信息!</strong>
+                                <ol>
+                                    <!--<li>关联关键词和外链url可选填,当您填写完外链url后关联关键词将不能生效</li>-->
+                                    <!--<li>排序为数字，数字越大顺序越靠前，如果不填写将按照添加时间顺序排序</li>-->
+                                </ol>
+                            </div>
+                        </div>
+                        <form class="modal-body bPackage_label" id="signupForm ">
+                            <div class="form-group">
+                                <label for="operator_type">运营商类型:</label>
+                                <select name="operator_type" id="operator_type" data-bind="value:operator_type">
+                                    <option class="operator_type" selected="selected" value="">请选择运营商类型</option>
+                                    <option class="operator_type" value="1">移动</option>
+                                    <option class="operator_type" value="2">电信</option>
+                                    <option class="operator_type" value="3">联通</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="service_type">套餐:</label>
+                                <select name="service_type" id="service_type" data-bind="value:service_type">
+                                    <option class="service_type" selected="selected" value="">请选择变更的套餐</option>
+
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="remake">说明:</label>
+                                <input type="text" id="remake" placeholder="套餐说明">
+                            </div>
+                            <div class="form-group">
+                                <label for="sorts">排序:</label>
+                                <input type="text" id="sorts" placeholder="套餐排序">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal"><span
+                                        class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消
+                                </button>
+                                <button type="button" id="btn_submit" class="btn btn-primary btn-sm"><span
+                                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="from-groups clearfix">
+                <div class="form-group ">
+                    <label for="names">套餐名称:</label>
+                    <input type="text" name="names" class="form-control" id="names">
+                </div>
+                <div class="form-group">
+                    <label for="Sec_operator_type">运营商类型:</label>
+                    <select name="operator_type" id="Sec_operator_type" data-bind="value:Sec_operator_type">
+                        <option class="Sec_operator_type" selected="selected" value="">请选择运营商类型</option>
+                        <option class="Sec_operator_type" value="1">移动</option>
+                        <option class="Sec_operator_type" value="2">电信</option>
+                        <option class="Sec_operator_type" value="3">联通</option>
+                    </select>
+                    <button class=" btn btn-primary btn-sm  321" id="btn_sec" title="搜索套餐">搜索套餐</button>
+                </div>
+            </div>
+            <table id="tb_dept" data-bind="myBootstrapTable:$root">
+            </table>
+            <div id="toolbar">
+                <button class=" btn btn-primary btn-sm  321" id="addProvider" title="添加套餐">添加套餐</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script id="parent" type="text/html">
+    <option value="{{id}}">
+        {{name}}</option>
+</script>
+<script type="text/javascript">
+    var flag = 1;
+    var noArr = [], thrArr = [], flag_btn = 0;
+    $("#names").val(getUrlParam('name'));
+    var pid = getUrlParam('pid');
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if (res.code == 0) {
+            return
+        }
+        tableInit.Init();
+        operate.operateInit();
+        if (res.data.id == res.data.uid) {
+            flag_btn = 1;
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (!nodes[b]["children"][a]["children"][c]["checked"]) {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            } else {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (var e in thrArr) {
+            if (thrArr[e] == 321) {
+                flag_btn = 1
+            }
+        }
+        for (var e in noArr) {
+            if (noArr[e] == 321) {
+                $("." + noArr[e]).remove();
+            }
+        }
+    });
+
+    function package(operator_type) {
+        var service_type = $("#service_type");
+        $('.service_type~option').remove();
+        $post(urlPrefix + '?r=sms/business/package/package-main/get-all',
+            {operator_type: operator_type},
+            function (res) {
+                if(res.data.total==0||res.code==0){
+                    layer.msg("加载套餐失败", {time: 2000});
+                    return
+                }
+                $.each(res.data.rows, function (i, data) {
+                    var parent;
+                    parent = $(template('parent', data));
+                    console.log(parent)
+                });
+                $("#service_type").select2().val(pid).trigger('change');
+            }, function () {
+                layer.msg("加载套餐失败", {time: 2000})
+            });
+    }
+
+
+    function change() {
+        $("#operator_type").change(function () {
+            var operator_type = $("#operator_type").val();
+            if(operator_type){
+                package(operator_type)
+            }
+        })
+    }
+
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateAdd();
+            this.operateSec();
+            this.DepartmentModel = {
+                id: ko.observable(),
+                pid: ko.observable(),
+                sort: ko.observable(),
+                status: ko.observable(),
+                packageid: ko.observable()
+            };
+        },
+        //搜索
+        operateSec: function () {
+            $('#btn_sec').on('click', function () {
+                if (!flag) {
+                    return false
+                }
+                flag = 0;
+                secData();
+                $post(urlPrefix + "?r=sms/business/package/package-operator/get-all",
+                    data,
+                    function (res) {
+                        flag = 1;
+                        if (res.code == 1) {
+                            layer.msg('搜索成功', {time: 2000});
+                            tableInit.myViewModel.load(res.data)
+                        }
+                        else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    })
+            })
+        },
+
+        //新增
+        operateAdd: function () {
+            $('#addProvider').on("click", function () {
+                change();
+
+                $("#myModal").modal().on("shown.bs.modal", function () {
+                    var oEmptyModel = {
+                        id: ko.observable(),
+                        pid: ko.observable(),
+                        sort: ko.observable(),
+                        status: ko.observable(),
+                        packageid: ko.observable(),
+                        ID: 1
+                    };
+                    ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                    ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                    operate.operateSave();
+                }).on('hidden.bs.modal', function () {
+                    ko.cleanNode(document.getElementById("myModal"));
+                });
+
+            });
+        },
+        //保存数据
+        operateSave: function (index) {
+            $('#btn_submit').on("click", function () {
+                if (!flag) {
+                    return false
+                }
+                flag = 0;
+                //取到当前的viewmodel
+                var oViewModel = operate.DepartmentModel;
+                //将Viewmodel转换为数据model
+                var oDataModel = ko.toJS(oViewModel);
+                var is_discount = $("input[name=is_dis]:checked").attr("value");
+                var is_stackable = $("input[name=is_stackable]:checked").attr("value");
+                oDataModel.is_discount = is_discount;
+                oDataModel.is_stackable = is_stackable;
+                oDataModel.discount_start = $('#discount_start').val();
+                oDataModel.discount_end = $('#discount_end').val();
+                oDataModel.packageid = $.trim(oDataModel.packageid);
+                oDataModel.oname = $.trim(oDataModel.oname);
+                oDataModel.pid = pid;
+                var funcName = oDataModel.ID ? "add" : "update";
+                if (funcName == 'add') {
+                    if (!oDataModel.oid) {
+                        layer.msg("请选择供应商", {time: 2000});
+                        flag = 1;
+                        return false
+                    }
+                    if (!oDataModel.price) {
+                        layer.msg("请输入实际价格", {time: 2000});
+                        flag = 1;
+                        return false
+                    }
+                    if (!oDataModel.oname) {
+                        layer.msg("请输入供应商套餐名称", {time: 2000});
+                        flag = 1;
+                        return false
+                    }
+                    if (!oDataModel.packageid) {
+                        layer.msg("请输入供应商套餐ID", {time: 2000});
+                        flag = 1;
+                        return false
+                    }
+                }
+
+                $post(urlPrefix + "?r=sms/business/package/package-operator/" + funcName, oDataModel,
+                    function (res) {
+                        flag = 1;
+                        if (res.code == 1) {
+                            layer.msg(res.msg, {time: 2000});
+                            $("#myModal").modal('hide');
+                            if (funcName == "update") {
+                                tableInit.myViewModel.update(index, oDataModel)
+                            }
+                            else {
+                                tableInit.myViewModel.refresh()
+                            }
+                        }
+                        else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    })
+            })
+        }
+    };
+
+
+    window.operateEvents = {
+        'mouseenter .show': function (e, value, row, index) {
+            var that = this;
+            layer.tips(row.package, that, {
+                tips: 1 //还可配置颜色
+            });
+        },
+        //删除
+        'click #btn_delete': function (e, value, row, index) {
+            layer.confirm('你确定要删除吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=sms/business/package/package-operator/delete",
+                    {id: row.id},
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('删除成功', {time: 2000});
+                            tableInit.myViewModel.remove(row.id);
+                        } else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    });
+            });
+        },
+        //关闭开启
+        'click #btn_status': function (e, value, row, index) {
+            var $btn_turn = $("this"),
+                status = row.status == 1 ? 2 : 1,
+                id = row.id,
+                data = {
+                    id: id,
+                    status: status
+                };
+            var text = status == 1 ? '上架' : "下架";
+            layer.confirm('你确定要' + text + '吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=sms/business/package/package-operator/update",
+                    data,
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('保存成功', {time: 2000});
+                            $("#myModal").modal('hide');
+                            tableInit.myViewModel.update(index, data)
+                        } else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    }
+                )
+            });
+        },
+        //编辑
+        'click #btn_edit': function (e, value, row, index) {
+            $(".form-group:not(.clearfix)").addClass('hidden');
+            $(".from-groups").children(".form-group").removeClass('hidden');
+            $(".hiddens").removeClass('hidden');
+            change();
+            if (row.is_discount == 1) {
+                $('#no_is_dis').prop('checked', true);
+            } else {
+                $('#yes_is_dis').prop('checked', true);
+                $(".time").removeClass("hidden");
+                if(row.discount_start=='0000-00-00 00:00:00'){row.discount_start=''}
+                if(row.discount_end=='0000-00-00 00:00:00'){row.discount_end=''}
+                $("#discount_start").val(row.discount_start);
+                $("#discount_end").val(row.discount_end)
+            }
+            if (row.is_stackable == 1) {
+                $('#no_is_stackable').prop('checked', true);
+            }else{
+                $('#yes_is_stackable').prop('checked', true);
+            }
+            $("#myModal").modal().on("shown.bs.modal", function () {
+                var oEmptyModel = {
+                    id: ko.observable(),
+                    uid: ko.observable(),
+                    pid: ko.observable(),
+                    oid: ko.observable(),
+                    old_price: ko.observable(),
+                    price: ko.observable(),
+                    sort: ko.observable(),
+                    status: ko.observable(),
+                    count: ko.observable(),
+                    oname: ko.observable(),
+                    packageid: ko.observable(),
+                    is_discount: ko.observable(),
+                    is_stackable: ko.observable(),
+                    discount_start: ko.observable(),
+                    discount_end: ko.observable(),
+                    ID: 0
+                };
+                ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                //将选中该行数据有数据Model通过Mapping组件转换为viewmodel
+                ko.utils.extend(operate.DepartmentModel, row);
+                ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                operate.operateSave(index);
+            }).on('hidden.bs.modal', function () {
+                //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                ko.cleanNode(document.getElementById("myModal"));
+            });
+        }
+    };
+
+    function secData() {
+        data = {
+            pageSize: 10,
+            pageNumber: 1,
+            oid: $("#service_type").val(),
+            pid: getUrlParam('pid'),
+            names: $.trim($("#names").val()),
+            is_discount : $("input[name=is_dis]:checked").attr("value"),
+            is_stackable : $("input[name=fixed]:checked").attr("value")
+        };
+    }
+
+    function queryParams(params) {
+        secData();
+        data.pageSize = params.pageSize;
+        data.pageNumber = params.pageNumber;
+        return data;
+    }
+
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                search: false,
+                url: urlPrefix + "?r=sms/",
+                method: "post",
+                queryParams: queryParams,//传递参数（*）
+                onEditableSave: function (field, row, oldValue, $el, index) {
+                    if (!flag_btn) {
+                        layer.msg('没有权限,修改失败',
+                            {time: 2000});
+                        return
+                    }
+                    $post(urlPrefix + "?r=sms/",
+                        {id: row.id, sort: row.sort},
+                        function (res) {
+                            if (res.code == 1) {
+                                layer.msg('保存成功',
+                                    {time: 2000});
+                                tableInit.myViewModel.update(index, row)
+                            } else {
+                                layer.msg(res.msg,
+                                    {time: 2000})
+                            }
+                        }
+                    )
+                },
+                onRefresh: function () {
+                    $("#service_type").val("");
+                    $("#ptype").val("");
+                    $("#infinite").val("");
+                    $("#dis").val("");
+                    $('#yes_dis').prop('checked', false);
+                    $('#no_dis').prop('checked', false);
+                    $('#yes_stackable').prop('checked', false);
+                    $('#no_stackable').prop('checked', false);
+                },
+                columns: [{
+                    field: 'id',
+                    title: 'ID'
+                }, {
+                    field: 'operator_typ',
+                    title: '运营商名称'
+                },{
+                    field: 'pname',
+                    title: '套餐名称'
+                },  {
+                    field: 'status',
+                    title: '状态',
+                    formatter: operateForStatus
+                },  {
+                    field: 'sort',
+                    title: '排序',
+                    editable: true
+                },{
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+
+
+         
+
+            function operateForStatus(value, row, index) {
+                var status = row.status;
+                if (status == 1) {
+                    return [
+                        '<span class="text-success">' + "已上架" +
+                        '</span>'
+                    ].join('');
+                } else {
+                    return [
+                        '<span class="text-danger">' + "已下架" +
+                        '</span>'
+                    ].join('');
+                }
+            }
+
+            function operateFormatter(value, row, index) {
+                if (row.status == 2 && flag_btn) {
+                    return [
+                        '<button id="btn_edit" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>修改' +
+                        '</button>',
+                        '<button id="btn_status" type="button" class="btn btn-sm btn-success " data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>上架' +
+                        '</button>',
+                        '<button id="btn_delete" type="button" class="btn btn-sm btn-danger " data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>删除' +
+                        '</button>'
+                    ].join('');
+                } else if ((row.status == 1 && flag_btn)) {
+                    return [
+                        '<button id="btn_edit" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>修改' +
+                        '</button>',
+                        '<button id="btn_status" type="button" class="btn btn-sm btn-warning " data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>下架' +
+                        '</button>',
+                        '<button id="btn_delete" type="button" class="btn btn-sm btn-danger " data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>删除' +
+                        '</button>'
+                    ].join('');
+                }
+            }
+
+
+            function operateForType(value, row, index) {
+                var package_types = row.package_type;
+                if (package_types == 1) {
+                    return ["移动"].join('');
+                }
+                if (package_types == 2) {
+                    return ['电信'].join('');
+                }
+                if (package_types == 3) {
+                    return ['联通'].join('');
+                }
+            }
+
+            function operateForPackageType(value, row, index) {
+                var type = row.type;
+                if (type == 1) {
+                    return ["月包"].join('');
+                }
+                if (type == 2) {
+                    return ['季包'].join('');
+                }
+                if (type == 3) {
+                    return ['年包'].join('');
+                }
+                if (type == 4) {
+                    return ['基本套餐'].join('');
+                }
+                if (type == 5) {
+                    return ['半年包'].join('');
+                }
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+        }
+
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+    //操作
+</script>
+
+</html>

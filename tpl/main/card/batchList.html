@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>批次列表</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-editable.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-editable.js"></script>
+
+
+</head>
+
+
+<body>
+<!--中间部分start!-->
+<div class="main-box">
+    <div class="msgWrap form">
+        <table id="tb_dept" data-bind="myBootstrapTable:$root">
+        </table>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+
+    //记载table数据
+    function ajaxRequest(params) {
+        $get(urlPrefix + '?r=sms/business/package/package-batch/get-all-main',
+            function (res) {
+                params.success({
+                    data: res.data
+                })
+            }
+        )
+    }
+
+    window.operateEvents = {
+        'click #jumpiccid': function (e, value, row, index) {
+            layer_open('批次套餐管理', 'batch.html?lid=' + row.old_id+"&bid="+row.id);
+        },
+        'click #Card': function (e, value, row, index) {
+            layer_open('批次卡片管理', 'cardBid.html?bid=' + row.id);
+        }
+    };
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+
+
+    });
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                ajax: ajaxRequest,
+                search: true,
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                onEditableSave: function (field, row, oldValue, $el, index) {
+                    $post(urlPrefix + "?r=sms/business/package/package-list/update",
+                        {id: row.id, name: row.name},
+                        function (res) {
+                            if (res.code == 1) {
+                                layer.msg('保存成功',
+                                    {time: 2000});
+                                tableInit.myViewModel.update(index, row)
+                            } else {
+                                layer.msg(res.msg,
+                                    {time: 2000})
+                            }
+                        }
+                    )
+                },
+                columns: [{
+                    field: 'id',
+                    title: 'ID'
+                },{
+                    field: 'lname',
+                    title: '套餐分类'
+                },{
+                    field: 'type',
+                    title: '返点类型',
+                    formatter: type
+                },{
+                    field: 'name',
+                    title: '批次',
+                    editable: true
+                },{
+                    field: 'cardBid',
+                    title: '操作',
+                    formatter: cardBid,
+                    events: operateEvents
+                }]
+            });
+
+
+            function type(value, row, index) {
+                if(row.old_id!=0){
+                    return ['套餐返点'].join('')
+                }else{
+                    return ['比例返点'].join('')
+                }
+            }
+
+            function bid(value, row, index) {
+                return [
+                    '<a href="javascript:void(0);" id="" class="text-success" >' +  +
+                    '</a>'].join('');
+            }
+            function cardBid(value, row, index) {
+                return ['<button id="Card" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                '<span class="" aria-hidden="true"></span>卡片管理' +
+                '</button>','<button id="jumpiccid" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                '<span class="" aria-hidden="true"></span>套餐管理' +
+                '</button>'].join('');
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>

@@ -1,0 +1,270 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>提现审核</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/bootstrap-table/tableExport.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-export.js"></script>
+
+
+</head>
+
+
+<body>
+<!--中间部分start!-->
+
+<div class="main-box">
+    <div class="msgWrap form">
+        <div class="form-group">
+            <label for="names">代理商名称:</label>
+            <input type="text" name="name" data-bind="value:name" class="form-control" id="names"
+                   placeholder="代理商名称" style="width: 180px;">
+            <button type="button" id="search" class="btn btn-sm btn-primary  search keydownBtn">搜索</button>
+        </div>
+        <table id="tb_dept" data-bind="myBootstrapTable:$root">
+        </table>
+
+    </div>
+</div>
+</body>
+<script>
+    var thrArr = [], flag_btn = 0;
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if(res.data.id == res.data.uid){
+            flag_btn = 1;
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (nodes[b]["children"][a]["children"][c]["checked"]) {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (var e in thrArr) {
+            if (thrArr[e] == 431) {
+                flag_btn = 1
+            }
+        }
+    });
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateSec();
+            this.DepartmentModel = {
+                name: ko.observable()
+            };
+        },
+        //搜索
+        operateSec: function () {
+            $('#search').on("click", function () {
+                var name = $("#names").val();
+                $post(urlPrefix + "?r=sms/finance/withdrawals/get-all",
+                    {aname: name},
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('搜索成功',
+                                {time: 1000});
+                            tableInit.myViewModel.load(res.data.rows);
+                        } else {
+                            layer.msg('操作失败',
+                                {time: 1000})
+                        }
+                    })
+            });
+        }
+    };
+
+    //加载table数据
+    function ajaxRequest(params) {
+        $post(urlPrefix + '?r=sms/finance/withdrawals/get-all',
+            {aname: null},
+            function (res) {
+                params.success({
+                    data: res.data.rows
+                });
+                if (res.code == 0) {
+                    layer.msg(res.msg, {time: 2000})
+                }
+            })
+
+    }
+
+    window.operateEvents = {
+        //通过
+        'click #btn_pass': function (e, value, row, index) {
+            layer.confirm('你确定要通过吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=sms/finance/withdrawals/update",
+                    {id: row.id, status: row.status = 2, reason: row.reason},
+                    function (res) {
+                        layer.msg(res.msg, {time: 1000});
+                        if (res.code == 1) {
+                            tableInit.myViewModel.refresh();
+                        }
+                    });
+            });
+        },
+        //拒绝
+        'click #btn_refuse': function (e, value, row) {
+            layer.prompt({
+                    title: '拒绝原因',
+                    formType: 0,
+                    area: ['150px', '30px']
+                }, function (reason, index) {
+                    var data = {
+                        status: row.status = 3,
+                        reason: row.reason = reason,
+                        id: row.id
+                    };
+                    layer.close(index);
+                    $post(urlPrefix + '?r=sms/finance/withdrawals/update',
+                        data,
+                        function (res) {
+                            layer.msg(res.msg, {time: 1000});
+                            if (res.code == 1) {
+                                tableInit.myViewModel.refresh();
+                            }
+                        }
+                    )
+                }
+            )
+        }
+    };
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+
+        //2、注册增删改事件
+        operate.operateInit();
+
+
+    });
+    //初始化表格
+    var tableInit = {
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                ajax: ajaxRequest,
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                columns: [{
+                    field: 'id',
+                    title: 'id'
+                }, {
+                    field: 'aname',
+                    title: '代理商名称'
+                }, {
+                    field: 'addtime',
+                    title: '申请时间'
+                }, {
+                    field: 'amount',
+                    title: '提现金额'
+                }, {
+                    field: 'status',
+                    title: '提现状态',
+                    formatter: operateForstatus
+                }, {
+                    field: 'reason',
+                    title: '拒绝理由'
+                }, {
+                    field: 'approvaltime',
+                    title: '审批时间',
+                    formatter: time
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+            function time(value, row, index) {
+                if (row.approvaltime == "0000-00-00 00:00:00") {
+                    return [
+                        ''
+                    ].join('');
+                }else {
+                    return [row.approvaltime].join('')
+                }
+            }
+            function operateFormatter(value, row, index) {
+                if (row.status == 1 && flag_btn) {
+                    return [
+                        '<button id="btn_pass" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class="" aria-hidden="true"></span>通过' +
+                        '</button>',
+                        '<button id="btn_refuse" type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class="" aria-hidden="true"></span>拒绝' +
+                        '</button>'
+                    ].join('');
+                } else if (row.status == 2) {
+                    return [
+                        '<span class="text-success" aria-hidden="true">已通过</span>'
+                    ].join('');
+                } else if (row.status == 3) {
+                    return [
+                        '<span class="text-danger" aria-hidden="true">已拒绝</span>'
+                    ].join('');
+                }
+            }
+
+            function operateForstatus(value, row, index) {
+                if (row.status == 1) {
+                    return [
+                        '<span class="text-info" aria-hidden="true">未审核</span>'
+                    ].join('');
+                } else if (row.status == 2) {
+                    return [
+                        '<span class="text-success" aria-hidden="true">通过</span>'
+                    ].join('');
+                } else {
+                    return [
+                        '<span class="text-danger" aria-hidden="true">拒绝</span>'
+                    ].join('');
+                }
+
+            }
+
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>

@@ -1,0 +1,252 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>导入卡片</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/js/Select2/select2.min.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/ajaxfileupload.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../common/js/Select2/select2.min.js"></script>
+    <script src="../../common/js/My97DatePicker/WdatePicker.js"></script>
+    <style>
+        .card-group{
+            display: flex;
+        }
+        .form-group{
+            flex: 1;
+        }
+        .time{
+            flex: 2;
+        }
+    </style>
+</head>
+<body>
+<!--中间部分start!-->
+<div class="main-box">
+    <div id="main-box-index">
+        <!--中间部分_右侧end!-->
+        <div class="alert alert_info">
+            <strong>提示信息!</strong>
+            <ol>
+                <li>操作步骤:第一步：选择筛选条件，填写相关参数</li>
+                <li>操作步骤:第二步：下载模板，按模板格式上传</li>
+                <li>操作步骤:第三步：点EXCEL导入</li>
+                <li>操作步骤:第四步：确定导入</li>
+                <li>操作步骤:第五步：返回</li>
+                <li class="text-sum">如果需要生成批次,请先选择代理商</li>
+                <li><a href="javascript:down()">模板格式下载</a></li>
+            </ol>
+        </div>
+        <div class="cLineB">
+            <div id="topTab" class="card-group clearfix">
+                <div class="form-group">
+                    <label for="operator_type">所属运营商:</label>
+                    <select name="operator_type" id="operator_type">
+                        <option class="service_type" selected="selected" value="">请选择所属运营商</option>
+                        <option value="1">移动</option>
+                        <option value="2">电信</option>
+                        <option value="3">联通</option>
+                    </select>
+                    （必填）
+                </div>
+                <div class="form-group">
+                    <label for="service_type">供应商:</label>
+                    <select name="service_type" id="service_type" data-bind="value:service_type">
+                        <option class="service_type" selected="selected" value="">请选择供应商</option>
+
+                    </select>
+                    （必填）
+
+                </div>
+                <div class="form-group">
+                    <label for="card_type">卡片分类:</label>
+                    <select id="card_type">
+                        <option value="1">普通卡</option>
+                        <option value="2">池卡</option>
+                        <option selected="selected" value="3">空卡</option>
+                        <option value="4">行业卡</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="type">套餐分类:</label>
+                    <select id="type">
+                        <option value="1">月套餐</option>
+                        <option value="2">累积套餐</option>
+                        <option value="3">0月租套餐</option>
+                        <option selected="selected" value="4">空卡套餐</option>
+                        <option value="5">当月套餐</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-group clearfix">
+                <div class="form-group">
+                    <label for="pname">基本套餐:</label>
+                    <select id="pname">
+                        <option selected="selected" class="pname" value="">请选择基本套餐</option>
+
+                    </select>
+                </div>
+                <div class="form-group time">
+                    <label for="date_begin" class="span_title" title="时间">时间：</label>
+                    <input id="date_begin" class="Wdate form-control" name="starttime" type="text" placeholder="开始时间"
+                           onFocus="var date_begin=$dp.$('date_end');
+                                   WdatePicker({onpicked:function(){date_end.focus();},
+                                   maxDate:'#F{$dp.$D(\'date_end\')}'})"/>
+                    <label for="date_end" style="display:-moz-inline-box;display:inline-block;width: 8px;text-align:right;">~</label>
+                    <input id="date_end" class="Wdate form-control" name="endtime" type="text" placeholder="结束时间"
+                           onFocus="WdatePicker({minDate:'#F{$dp.$D(\'date_begin\')}'})"/>
+                </div>
+                <div class="form-group">
+                    <label for="agent_name">代理商名称:</label>
+                    <select id="agent_name">
+                        <option selected="selected" value="">请选择代理商名称</option>
+
+                    </select>
+                </div>
+            </div>
+            <div class="card-group clearfix">
+
+
+                <div class="form-group">
+                    <label for="poolNo">流量池号:</label>
+                    <input type="text" id="poolNo" placeholder="请填写流量池号">
+                </div>
+                <div class="form-group">
+                    <label for="batch">批次:</label>
+                    <select id="batch" style="width: auto">
+                        <option selected="selected" value="">请选择批次</option>
+
+                    </select>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="bg-primary excel text-center">
+                    <label for="file1">选择EXCEL</label>
+                    <input type="file" class="hidden" name="file" id="file1">
+                </div>
+                <button type="button" class="btn btn-sm btn-success import">确定导入卡片</button>
+            </div>
+        </div>
+
+        </div>
+
+</div>
+</body>
+<script id="parent" type="text/html">
+    <option value="{{id}}">{{name}}</option>
+</script>
+<script>
+    var service_type = $("#service_type"), agent_name = $("#agent_name"), batch = $("#batch"), pname = $("#pname");
+    $get(urlPrefix + "?r=sms/agent/get-all",
+        function (res) {
+            $.each(res.data, function (i, data) {
+                var parent;
+                parent = $(template('parent', data));
+                parent.appendTo(agent_name);
+            });
+            agent_name.select2()
+        });
+    $get(urlPrefix + '?r=sms/business/package/package-batch/get-all-main', function (res) {
+            $.each(res.data, function (i, data) {
+                var parent;
+                parent = $(template('parent', data));
+                parent.appendTo(batch);
+            });
+            batch.select2()
+        }
+    );
+    option('?r=sms/business/operator/get-all',
+        function (res) {
+            if (res.code == 1) {
+                $.each(res.data, function (i, data) {
+                    var parent;
+                    parent = $(template('parent', data));
+                    parent.appendTo(service_type);
+                })
+            } else {
+                layer.msg(res.msg, {time: 2000})
+            }
+            service_type.select2()
+        }, function () {
+            layer.msg("加载供应商类型失败", {time: 2000})
+        });
+
+    $("#operator_type").change(function(){
+        $('.pname~option').remove();
+        $post(urlPrefix + "?r=sms/business/package/package-main/get-all",
+            {operator_type: $("#operator_type").val()},
+            function (res) {
+                if (res.code == 1) {
+                    $.each(res.data.rows, function (i, data) {
+                        var parent;
+                        parent = $(template('parent', data));
+                        parent.appendTo(pname);
+                    })
+                } else {
+                    layer.msg(res.msg, {time: 2000})
+                }
+                pname.select2()
+            })
+    });
+    // $post(urlPrefix + "?r=sms/business/package/package-main/get-all",
+    //     data,
+    //     function (res) {
+    //         flag = 1;
+    //         if (res.code == 1) {
+    //             layer.msg('搜索成功', {time: 2000});
+    //         }
+    //         else {
+    //             layer.msg(res.msg, {time: 2000})
+    //         }
+    //     })
+
+    function down() {
+        window.open(urlPrefix + '?r=sms/card/down-add', '_self')
+    }
+
+    $(".import").on('click', function () {
+        var operator_type = $("#operator_type").val();
+        var service_type = $("#service_type").val();
+        var card_type = $("#card_type").val();
+        var type = $("#type").val();
+        var pname = $("#pname").val();
+        var date_begin = $("#date_begin").val();
+        var date_end = $("#date_end").val();
+        var agent_name = $("#agent_name").val();
+        var poolNo = $("#poolNo").val();
+        var batch = $("#batch").val();
+        var file = $("input[type='file']").val();
+        if (!operator_type) {
+            layer.msg("请选择所属运营商", {time: 2000});
+            return false
+        }
+        if (!service_type) {
+            layer.msg("请选择供应商", {time: 2000});
+            return false
+        }
+        if (!file) {
+            layer.msg("请上传excel", {time: 2000});
+            return false
+        }
+        var index = layer.load(2, {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        ajaxFileUpload('?r=sms/card/upload-add&batch=' + $("input[name=kind]:checked").attr("value") + '&aid=' + service_type.val(), 'file1',
+            function (res)  //服务器成功响应处理函数
+            {
+                parent.layer.closeAll();
+            }
+        );
+    });
+</script>
+</html>
+

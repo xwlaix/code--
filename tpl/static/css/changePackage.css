@@ -1,0 +1,73 @@
+.Authentication-top{
+    text-align: center;
+    background: #099fde;
+    color: #fff;
+}
+.text-center{
+    text-align: center;
+    color: red;
+}
+.item {
+    border: solid 1px #3abef9;
+    color: #3abef9;
+    text-align: center;
+    box-sizing: border-box;
+    background: #fff;
+    border-radius: 3px;
+    height: 55px;
+    line-height: 55px;
+    font-size: 15px;
+    list-style: none;
+    white-space: nowrap;
+    width: 31%;
+    display: inline-block;
+    margin-top: 10px!important;
+}
+.ietmOBX input{
+    height: calc(100% - 1px);
+    color: rgb(0, 0, 0)!important;
+}
+.item.active{
+    background: #3abef9;
+    color: #fff;
+    border: solid 1px #fff;
+}
+.item:nth-of-type(3n+1){
+    margin-right: 1%;
+    margin-left: 1%;
+}
+.item:nth-of-type(3n+2){
+    margin:0
+}
+.item:nth-of-type(3n-1){
+    margin-right: 1%;
+    margin-left: 1%;
+}
+.remake{
+    width: 96%;
+    margin: 0 auto;
+    height: 40px;
+    border-bottom: 1px solid #E7E7E7;
+    background: #FFFFFF;
+    display: inline-block;
+    line-height: 40px;
+}
+#remake{
+    line-height: 21px;
+    width: calc(100% - 30px);
+    resize: none;
+    height: 106px;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    -webkit-user-select: text;
+    border: 1px solid rgba(0,0,0,.2);
+    border-radius: 3px;
+    outline: 0;
+    background-color: #fff;
+    -webkit-appearance: none;
+    font-size: 17px;
+}
+
+.order{
+    background-color: #ff9a14;
+}

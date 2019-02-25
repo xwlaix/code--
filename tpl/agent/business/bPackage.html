@@ -1,0 +1,443 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>供应商套餐管理</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/jquery.validate.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-editable.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-editable.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+
+</head>
+<style>
+
+</style>
+<body>
+
+<div class="main-box" style="width:95%">
+    <div id="main-box-index">
+        <div class="msgWrap form">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">添加套餐</h4>
+                            <div class="alert">
+                                <strong>提示信息!</strong>
+                                <ol>
+                                    <!--<li>关联关键词和外链url可选填,当您填写完外链url后关联关键词将不能生效</li>-->
+                                    <!--<li>排序为数字，数字越大顺序越靠前，如果不填写将按照添加时间顺序排序</li>-->
+                                </ol>
+                            </div>
+                        </div>
+                        <form class="modal-body bPackage_label" id="signupForm ">
+                            <div class="form-group">
+                                <label for="price">自定义价格:（元）</label>
+                                <input type="text" name="price" data-bind="value:price" class="form-control"
+                                       id="price">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal"><span
+                                        class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消
+                                </button>
+                                <button type="button" id="btn_submit" class="btn btn-primary btn-sm"><span
+                                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="from-groups clearfix">
+                <div class="form-group">
+                    <label for="sce_service_type">供应商:</label>
+                    <select name="service_type" id="sce_service_type" data-bind="value:service_type">
+                        <option class="service_type" selected="selected" value="">请选择供应商</option>
+
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ptype">运营商类型:</label>
+                    <select name="type" id="ptype" data-bind="value:type">
+                        <option class="type" selected="selected" value="">请选择运营商类型</option>
+                        <option class="type" value="1">移动</option>
+                        <option class="type" value="2">电信</option>
+                        <option class="type" value="3">联通</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ptype">套餐类型:</label>
+                    <select name="type" id="type" data-bind="value:type">
+                        <option class="type" selected="selected" value="">请选择套餐类型</option>
+                        <option class="type" value="1">月包</option>
+                        <option class="type" value="2">季包</option>
+                        <option class="type" value="3">年包</option>
+                        <option class="type" value="4">基本套餐</option>
+                        <option class="type" value="5">半年包</option>
+                    </select>
+                </div>
+                <div class="form-group ">
+                    <label for="pname">自定义套餐名称:</label>
+                    <input type="text" name="pname" class="form-control" id="pname">
+                    <button type="button" id="btn_sec" class="btn btn-primary btn-sm keydownBtn">搜索
+                    </button>
+                </div>
+            </div>
+            <table id="tb_dept" data-bind="myBootstrapTable:$root">
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+<script id="parent" type="text/html">
+    {{each data as value index}}
+    <option value="{{value}}">酷鱼-{{value}}
+    </option>
+    {{/each}}
+</script>
+<script type="text/javascript">
+    var flag = 1;
+    //加载table数据
+    function ajaxRequest(params) {
+        $get(urlPrefix + "?r=ems/business/package/get-all",
+            function (res) {
+                if (res.code == 1) {
+                    params.success({
+                        data: res.data
+                    })
+                } else {
+                    layer.msg(res.msg)
+                }
+
+            }, function () {
+                params.success({data: []})
+            });
+    }
+    $get(urlPrefix + '?r=ems/business/operator/get-all',
+        function (res) {
+            if (res.code == 1) {
+                parent = $(template('parent', {data: res.data}));
+                parent.appendTo(sce_service_type)
+            } else {
+                layer.msg(res.msg, {time: 2000})
+            }
+        });
+
+
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateSec();
+            this.DepartmentModel = {
+                id: ko.observable(),
+                price: ko.observable(),
+                sort: ko.observable()
+            };
+        },
+        //搜索
+        operateSec: function () {
+            $('#btn_sec').on('click', function () {
+                var names = $.trim($("#pname").val());
+                $post(urlPrefix + "?r=ems/business/package/get",
+                    {
+                        name: names,
+                        package_type: $("#ptype").val(),
+                        type: $("#type").val(),
+                        operatorid: $("#sce_service_type").val()
+                    },
+                    function (res) {
+                        flag = 1;
+                        if (res.code == 1) {
+                            layer.msg('搜索成功', {time: 2000});
+                            tableInit.myViewModel.load(res.data)
+                        }
+                        else {
+                            layer.msg('搜索失败', {time: 2000})
+                        }
+                    }, function () {
+                        flag = 1;
+                        layer.msg("搜索失败", {time: 2000})
+                    })
+            })
+        },
+
+        //保存数据
+        operateSave: function (index) {
+            $('#btn_submit').on("click", function () {
+                if (!flag) {
+                    return false
+                }
+                flag = 0;
+                //取到当前的viewmodel
+                var oViewModel = operate.DepartmentModel;
+                //将Viewmodel转换为数据model
+                var oDataModel = ko.toJS(oViewModel);
+                $post(urlPrefix + "?r=ems/agent/package-price/update" , {id:oDataModel.id,price:oDataModel.price},
+                    function (res) {
+                        flag = 1;
+                        if (res.code == 1) {
+                            layer.msg(res.msg, {time: 2000});
+                            $("#myModal").modal('hide');
+                            tableInit.myViewModel.update(index, oDataModel)
+                        }
+                        else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    })
+            })
+        }
+    };
+
+
+    window.operateEvents = {
+        //关闭开启
+        'click #btn_status': function (e, value, row, index) {
+            var This = $(this),
+                status = row.status == 1 ? 2 : 1,
+                id = row.id,
+                data = {
+                    id: id,
+                    status: status
+                };
+            layer.confirm('你确定要' + This.text() + '吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=ems/agent/package-price/update",
+                    data,
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('保存成功',
+                                {time: 2000});
+                            $("#myModal").modal('hide');
+                            tableInit.myViewModel.update(index, data)
+                        } else {
+                            layer.msg('修改失败',
+                                {time: 2000})
+                        }
+                    }
+                )
+            });
+        },
+        //编辑
+        'click #btn_edit': function (e, value, row, index) {
+            $("#myModal").modal().on("shown.bs.modal", function () {
+                var oEmptyModel = {
+                    id: ko.observable(),
+                    price: ko.observable()
+                };
+                ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                //将选中该行数据有数据Model通过Mapping组件转换为viewmodel
+                ko.utils.extend(operate.DepartmentModel, row);
+                ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                operate.operateSave(index);
+            }).on('hidden.bs.modal', function () {
+                //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                ko.cleanNode(document.getElementById("myModal"));
+            });
+        }
+    };
+
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+
+        //2、注册增删改事件
+        operate.operateInit();
+
+
+    });
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                ajax: ajaxRequest,
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                onEditableSave: function (field, row, oldValue, $el,index) {
+                    $post(urlPrefix + "?r=ems/agent/package-price/update",
+                        {id:row.id,sort:row.sort},
+                        function (res) {
+                            if (res.code == 1) {
+                                layer.msg('保存成功',
+                                    {time: 2000});
+                                tableInit.myViewModel.update(index, row)
+                            } else {
+                                layer.msg('修改失败',
+                                    {time: 2000})
+                            }
+                        }
+                    )
+                },
+                onRefresh: function () {
+                    $("#pname").val("");
+                    $("#ptype").val("");
+                    $("#names").val("");
+                    $("#sce_service_type").val("");
+                },
+                columns: [{
+                    field: 'id',
+                    title: 'ID'
+                }, {
+                    field: 'name',
+                    title: '自定义套餐名称',
+                    clickToSelect:true
+                }, {
+                    field: 'pid',
+                    title: '套餐id'
+                },  {
+                    field: 'oname',
+                    title: '供应商',
+                    formatter: Names
+                },{
+                    field: 'old_price',
+                    title: '原价:（元）'
+                }, {
+                    field: 'parentprice',
+                    title: '结算价:（元）'
+                },{
+                    field: 'price',
+                    title: '自主定价:（元）'
+                }, {
+                    field: 'addtime',
+                    title: '添加时间'
+                },{
+                    field: 'type',
+                    title: '套餐类型',
+                    align: 'center',
+                    formatter: operateForPackageType
+                }, {
+                    field: 'package_type',
+                    title: '运营商类型',
+                    align: 'center',
+                    formatter: operateForType
+                },  {
+                    field: 'Status',
+                    title: '状态',
+                    formatter: operateForStatus
+                }, {
+                    field: 'sort',
+                    title: '排序',
+                    editable:true
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+
+            function Names(value, row, index) {
+                return [
+                    '酷鱼-'+row.operatorid
+                ].join('');
+            }
+            function operateForStatus(value, row, index) {
+                var status = row.status;
+                if (status == 1) {
+                    return [
+                        '<span class="text-success">' +"已上架"+
+                        '</span>'
+                    ].join('');
+                } else {
+                    return [
+                        '<span class="text-danger">' +"已下架"+
+                        '</span>'
+                    ].join('');
+                }
+            }
+            function operateFormatter(value, row, index) {
+                if (row.status == 2) {
+                    return [
+                        '<button id="btn_edit" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>修改' +
+                        '</button>',
+                        '<button id="btn_status" type="button" class="btn btn-sm btn-success " data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>上架' +
+                        '</button>'
+                    ].join('');
+                } else {
+                    return [
+                        '<button id="btn_edit" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>修改' +
+                        '</button>',
+                        '<button id="btn_status" type="button" class="btn btn-sm btn-warning " data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>下架' +
+                        '</button>'
+                    ].join('');
+                }
+
+            }
+
+
+            function operateForType(value, row, index) {
+                var package_types = row.package_type;
+                if (package_types == 1) {
+                    return ["移动"].join('');
+                }
+                if (package_types == 2) {
+                    return ['电信'].join('');
+                }
+                if (package_types == 3) {
+                    return ['联通'].join('');
+                }
+            }
+            function operateForPackageType(value, row, index) {
+                var type = row.type;
+                if (type == 1) {
+                    return ["月包"].join('');
+                }
+                if (type == 2) {
+                    return ['季包'].join('');
+                }
+                if (type == 3) {
+                    return ['年包'].join('');
+                }
+                if (type == 4) {
+                    return ['基本套餐'].join('');
+                }
+                if (type == 5) {
+                    return ['半年包'].join('');
+                }
+            }
+
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+        }
+
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+    //操作
+</script>
+
+</html>

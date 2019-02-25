@@ -1,0 +1,289 @@
+<template>
+  <view class="main-detail">
+    <view class="weui-panel weui-panel_access">
+      <view class="weui-navbar">
+        <view wx:for="{{tabs}}" wx:key="*this" id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" @tap="tabClick">
+          <view class="weui-navbar__title" >{{item}}</view>
+        </view>
+        <view class="weui-navbar__slider" style="width:{{sliderWidth}}px; left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
+        <view  class="library_num {{activeIndex == 1 ? 'library_member' : ''}} {{activeIndex == 2 ? 'library_admin' : ''}}">{{library_num}}</view>
+      </view>
+      <view style="width: 100%;height: 100rpx"></view>
+      <view class="weui-panel__hd">
+        {{library.name}}会员管理
+      </view>
+      <view class="weui-panel__bd">
+        <view  wx:for="{{members}}" wx:key="*this" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+          <view class="weui-media-box__hd weui-media-box__hd_in-appmsg" @tap="goto('/pages/library/usercollect?library_id={{item.user.id}}')">
+            <image class="weui-media-box__thumb" src="{{item.user.wechat.avatar}}" />
+          </view>
+          <view class="weui-media-box__bd weui-media-box__bd_in-appmsg" style="position: relative">
+            <view style="width: 80%"  @tap="goto('/pages/library/usercollect?library_id={{item.user.id}}')">
+              <view class="weui-media-box__title" >姓名：{{item.user.name}}</view>
+              <block wx:if="{{library.is_admin == '1'}}">
+                <!--<view class="weui-media-box__desc"  >电话: {{item.user.mobile}}</view>-->
+                <!--<view class="weui-media-box__desc" wx:if="{{item.status=='JOIN'}}" style="color:red">状态：待审核</view>-->
+                <!--<view class="weui-media-box__desc" wx:if="{{item.status=='MEMBER'}}" style="color:green">状态：会员</view>-->
+                <!--<view class="weui-media-box__desc" wx:if="{{item.status=='ADMIN'}}"  style="color:blue">状态：管理员</view>-->
+              </block>
+            </view>
+            <view style="position: absolute; right: 12rpx; top: 12rpx;" @tap="makePhoneCall('{{item.user.mobile}}')">
+              <image src="../../images/tabbars/icon-phone.png" style="width: 60rpx;height: 60rpx"></image>
+            </view>
+            <view class="weui-media-box__info" wx:if="{{library.is_admin == '1'}}">
+              <button class="weui-btn mini-btn btn-blue_r" size="mini" style="margin-right: 10px;" wx:if="{{item.status=='ADMIN'}}" @tap = "memberUpdate({{item.id}}, 'member')" type="primary">移除管理权</button>
+              <block  wx:if="{{item.status=='JOIN'}}">
+                <button  class="weui-btn mini-btn btn-blue_l" @tap="memberUpdate({{item.id}}, 'member')" size="mini" style="margin-right: 10px;" type="primary">同意加入</button>
+                <button class="weui-btn mini-btn btn-blue_r" @tap = "memberUpdate({{item.id}}, 'reject')" size="mini" style="margin-right: 10px;" type="danger">移出图书馆</button>
+              </block>
+              <block  wx:if="{{item.status=='MEMBER'}}">
+                <button class="weui-btn mini-btn btn-blue_l" @tap = "memberUpdate({{item.id}}, 'admin')" size="mini" style="margin-right: 10px;" type="danger">升为管理员</button>
+                <button class="weui-btn mini-btn btn-blue_r" @tap = "memberUpdate({{item.id}}, 'reject')" size="mini" style="margin-right: 10px;" type="danger">移出图书馆</button>
+              </block>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <block wx:if="{{message}}">
+      <view class="weui-loadmore_box">
+        <view class="weui-loadmore weui-loadmore_line">
+          <view class="weui-loadmore__tips weui-loadmore__tips_in-line">到底了</view>
+        </view>
+      </view>
+    </block>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { service } from '../../config.js'
+  import http from '../../mixins/http'
+  import base from '../../mixins/base'
+  import user from '../../mixins/user'
+  import Screen from '../../components/screen'
+  import ShareMessage from '../../mixins/ShareMessage'
+
+  export default class libraryMembers extends wepy.page {
+    mixins = [base, http, user, ShareMessage]
+    config = {
+      navigationBarTitleText: '会员管理'
+    }
+    data = {
+      libraryId: 0,
+      library: {},
+      members: [],
+      tabs: ['待审核', '会员', '管理员'],
+      activeIndex: 0,
+      sliderOffset: 0,
+      sliderLeft: 0,
+      sliderWidth: 180,
+      screenWidth: 360,
+      library_num: 0,
+      message: true
+    }
+
+    computed = {
+      isReturn() {
+        return Boolean(this.borrow_id > 0)
+      }
+    }
+
+    onLoad(query) {
+      this.id = query && +query.id
+      this.libraryId = query && +query.library_id
+      let _this = this
+      wx.getSystemInfo({success: function (rst) {
+        _this.screenWidth = rst.screenWidth
+      }})
+      this.sliderWidth = _this.screenWidth / this.tabs.length
+      this.sliderLeft = 0
+      this.sliderOffset = _this.screenWidth / this.tabs.length * this.activeIndex
+    }
+
+    onShow() {
+      // 初始化页面数据
+      this.initPageData()
+    }
+
+    onPullDownRefresh() {
+      this.initPageData()
+    }
+
+    // 初始化页面数据
+    initPageData() {
+      // 请求图书详情
+      this.getMembers(this.activeIndex)
+    }
+
+    // 获取图书信息
+    getMembers(Index) {
+      let that = this
+      let url = ''
+      let statusIndex = ''
+      if (Index == 0) {
+        statusIndex = 'JOIN'
+        url = service.libraries + '/' + this.libraryId + '/members'
+      } else if (Index == 1) {
+        statusIndex = 'MEMBER'
+        url = service.libraries + '/' + this.libraryId + '/members'
+      } else if (Index == 2) {
+        statusIndex = 'ADMIN'
+        url = service.libraries + '/' + this.libraryId + '/members'
+      }
+      this.$get({
+        url: url,
+        data: {
+          'status': statusIndex
+        }
+      }, {
+        success: ({code, data}) => {
+          that.members = data.members
+          that.library = data.library
+          that.library_num = this.members.length
+//          if (that.members.length) {
+//            that.message = false
+//          }else {
+//            that.message = true
+//          }
+          that.$apply()
+        },
+        fail: ({code, data}) => {}
+      })
+
+      // 停止下拉状态
+      wx.stopPullDownRefresh()
+    }
+
+    methods = {
+      goto(url) {
+        wx.navigateTo({url: url})
+      },
+      tabClick (e) {
+        this.sliderOffset = e.currentTarget.offsetLeft
+        this.activeIndex = e.currentTarget.id
+        this.getMembers(this.activeIndex)
+      },
+      checkUser(e) {
+        console.log('radio发生change事件，携带value值为：', e.detail.value)
+        this.borrow_id = e.detail.value
+      },
+      makePhoneCall(mobile) {
+        wx.makePhoneCall({
+          phoneNumber: mobile
+        })
+      },
+      memberUpdate(id, ops) {
+        let self = this
+        let url = service.libraries + '/' + this.libraryId + '/members/' + id + '/' + ops
+        this.$put({url: url}, {
+          success: ({code, data}) => {
+            wx.redirectTo({url: '/pages/library/members?library_id=' + self.libraryId})
+          },
+          fail: ({code, data}) => {}
+        })
+      }
+    }
+    components = {
+      Screen
+    }
+  }
+</script>
+
+<style lang="less">
+@import "../../styles/custom/fn.less";
+
+.main-detail{
+
+  .detail-cover{
+    display: block;
+    margin: 40rpx auto 0;
+  }
+  .detail-tags{
+    .h4();
+    padding: 0.4em 0;
+  }
+
+  .detail-desc-title{
+    .h4();
+    color: #ccc;
+    // margin-bottom: 0.5em;
+  }
+  .detail-info,
+  .detail-desc{
+    color: #aaa;
+    font-size: 12px;
+    line-height: 1;
+    // line-height: 0;
+    padding: 0.5em 0;
+    overflow: hidden;
+    text-align: center;
+  }
+  .detail-info,
+  .detail-text{
+    text-align: left;
+    line-height: 1.5;
+  }
+  .detail-text{
+    // text-indent: 2em;
+    & + .detail-image{
+      margin-top: 0.5em;
+    }
+  }
+  .detail-image{
+    width:100%;
+    // margin: 0.5em 0;
+    & + .detail-text{
+      margin-top: 0.5em;
+    }
+  }
+
+  .btn-flex-1{
+    padding: 0;
+    width: 3.5em;
+    line-height: 1.6;
+    overflow: hidden;
+  }
+  .btn-flex-full{
+    flex: 1 1 auto;
+  }
+  .btn-text-bottom{
+    .h5();
+    line-height: 1;
+    color: #777;
+  }
+  .member-status{
+    margin-right: 10px;
+  }
+  .member-join{
+    color: red;
+  }
+
+}
+.library_num{
+  position: absolute;
+  left: 24%;top: 12rpx;
+  background: red;
+  color: white;
+  border-radius: 50%;
+  width: 32rpx;height: 32rpx;
+  text-align: center;
+  line-height: 32rpx;
+  font-size: 22rpx;
+}
+.library_member{
+  left: 55%;
+}
+.library_admin{
+  left: 90%;
+}
+.weui-loadmore_line{
+  position: inherit;
+
+}
+.weui-loadmore_box{
+  background: white;
+  padding: 20rpx 0rpx 2rpx 0rpx;
+}
+
+</style>

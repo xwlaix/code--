@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>套餐价格管理</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/jquery.validate.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-editable.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-editable.js"></script>
+    <script src="../../common/js/My97DatePicker/WdatePicker.js"></script>
+
+
+</head>
+<style>
+
+</style>
+<body>
+
+<div class="main-box" style="width:95%">
+    <div id="main-box-index">
+        <div class="msgWrap form">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">添加套餐</h4>
+                            <div class="alert">
+                                <strong>提示信息!</strong>
+                                <ol>
+                                    <!--<li>关联关键词和外链url可选填,当您填写完外链url后关联关键词将不能生效</li>-->
+                                    <!--<li>排序为数字，数字越大顺序越靠前，如果不填写将按照添加时间顺序排序</li>-->
+                                </ol>
+                            </div>
+                        </div>
+                        <form class="modal-body bPackage_label" id="signupForm ">
+                            <div class="form-group">
+                                <label for="listId">套餐分类：</label>
+                                <select name="listId" id="listId" data-bind="value:lid">
+                                    <option class="listId " selected="selected" value="">请选择套餐分类</option>
+
+                                </select>
+                            </div>
+                            <div class="form-group hiddens">
+                                <label for="price">实际价格:</label>
+                                <input type="text" name="price" data-bind="value:price" class="form-control" id="price">(必填)
+                            </div>
+                            <div class="form-group hiddens">
+                            <label for="old_price">原价:</label>
+                            <input type="text" name="old_price" data-bind="value:old_price" class="form-control"
+                            id="old_price">(必填)
+                            </div>
+
+                            <div class="form-group is_dis hiddens">
+                                <label>特惠套餐:</label>
+                                <input type="radio" name="is_dis" id="yes_is_dis" data-bind="2" value="2">
+                                <label class="radios" for="yes_is_dis">是</label>
+                                <input type="radio" name="is_dis" id="no_is_dis" data-bind="1" value="1">
+                                <label class="radios" for="no_is_dis">否</label>
+                            </div>
+                            <div class="form-group is_stackable hiddens">
+                                <label>叠加套餐:</label>
+                                <input type="radio" name="is_stackable" id="yes_is_stackable" data-bind="2" value="2">
+                                <label class="radios" for="yes_is_stackable">是</label>
+                                <input type="radio" name="is_stackable" id="no_is_stackable" data-bind="1" value="1">
+                                <label class="radios" for="no_is_stackable">否</label>
+                            </div>
+                            <div class="form-group hidden time">
+                                <label for="discount_start" class="span_title" title="时间">持续时间：</label>
+                                <input id="discount_start" class="Wdate form-control" name="discount_start" type="text"
+                                       onFocus="var discount_start=$dp.$('discount_end');
+                                   WdatePicker({onpicked:function(){discount_end.focus();},
+                                   maxDate:'#F{$dp.$D(\'discount_end\')}'})"/>
+                                <label for="discount_end"
+                                       style="display:-moz-inline-box;display:inline-block;width: 8px;text-align:right;">~</label>
+                                <input id="discount_end" class="Wdate form-control" name="discount_end" type="text"
+                                       onFocus="WdatePicker({minDate:'#F{$dp.$D(\'discount_start\')}'})"/>
+                            </div>
+                            <div class="form-group hiddens sort">
+                                <label for="sort">排序:(越大越靠前)</label>
+                                <input type="number" pattern="[0-9]*" name="sort" data-bind="value:sort"
+                                       class="form-control" id="sort">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal"><span
+                                        class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消
+                                </button>
+                                <button type="button" id="btn_submit" class="btn btn-primary btn-sm"><span
+                                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="from-groups clearfix">
+                <div class="form-group ">
+                    <label for="names">自定义套餐名称:</label>
+                    <input type="text" name="names" class="form-control" id="names">
+                </div>
+
+                <div class="form-group">
+                    <label for="lid">套餐分类：</label>
+                    <select name="lid" id="lid" data-bind="value:lid">
+                        <option class="lid " selected="selected" value="">请选择套餐分类</option>
+
+                    </select>
+                </div>
+                <div class="form-group ">
+                    <label>特惠套餐:</label>
+                    <input type="radio" name="is_dis" id="yes_dis" data-bind="2" value="2">
+                    <label class="radios" for="yes_dis">是</label>
+                    <input type="radio" name="is_dis" id="no_dis" data-bind="1" value="1">
+                    <label class="radios" for="no_dis">否</label>
+                    <label >叠加套餐:</label>
+                    <input type="radio" name="fixed" id="yes_stackable" data-bind="2" value="2">
+                    <label class="radios" for="yes_stackable">是</label>
+                    <input type="radio" name="fixed" id="no_stackable" data-bind="1" value="1">
+                    <label class="radios" for="no_stackable">否</label>
+                    <button type="button" id="btn_sec" class="btn btn-sm btn-primary keydownBtn" style="vertical-align: middle">搜索</button>
+
+                </div>
+            </div>
+            <table id="tb_dept" data-bind="myBootstrapTable:$root">
+            </table>
+            <div id="toolbar">
+                <button class=" btn btn-primary btn-sm  321" id="addProvider" title="添加分类">添加分类</button>
+                <!--<button class=" btn btn-success btn-sm  321" id="addMore" title="批量添加">批量添加</button>-->
+                <!--<button class=" btn btn-info btn-sm  321" id="edit" title="批量修改">批量修改</button>-->
+                <!--<button class=" btn btn-primary btn-sm  321" id="outpackage" title="导出套餐">导出套餐</button>-->
+                <button class=" btn btn-primary btn-sm  321" id="addPassword" title="导入卡密">导入卡密</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script id="parent" type="text/html">
+    <option value="{{id}}">{{name}}</option>
+</script>
+<script type="text/javascript">
+    var flag = 1;
+    var noArr = [], thrArr = [], flag_btn = 0;
+    $("#names").val(getUrlParam('name'));
+    var pid = getUrlParam('pid');
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if (res.code == 0) {
+            return
+        }
+        tableInit.Init();
+        operate.operateInit();
+        if (res.data.id == res.data.uid) {
+            flag_btn = 1;
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (!nodes[b]["children"][a]["children"][c]["checked"]) {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            } else {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (var e in thrArr) {
+            if (thrArr[e] == 321) {
+                flag_btn = 1
+            }
+        }
+        for (var e in noArr) {
+            if (noArr[e] == 321) {
+                $("." + noArr[e]).remove();
+            }
+        }
+    });
+
+
+    $get(urlPrefix + "?r=sms/business/package/package-list/get-all",
+        function (res) {
+            if (res.code == 1) {
+                $.each(res.data.rows, function (i, data) {
+                    $(template('parent', data)).appendTo(lid);
+                    $(template('parent', data)).appendTo(listId);
+                });
+                $("#lid").val(getUrlParam('lid'));
+            } else {
+                layer.msg(res.msg, {time: 2000})
+            }
+        });
+
+    function change() {
+        $("input[name=is_dis]").change(function () {
+            if ($("input[name=is_dis]:checked").attr("value") == 1) {
+                $(".time").addClass('hidden')
+            } else {
+                $(".time").removeClass('hidden')
+            }
+        })
+    }
+
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateAdd();
+            this.operateSec();
+            this.operateDownlaod();
+            this.edit();
+            this.addPassword();
+            this.addMore();
+            this.DepartmentModel = {
+                id: ko.observable(),
+                uid: ko.observable(),
+                pid: ko.observable(),
+                lid: ko.observable(),
+                old_price: ko.observable(),
+                price: ko.observable(),
+                sort: ko.observable(),
+                status: ko.observable(),
+                count: ko.observable(),
+                oname: ko.observable(),
+                packageid: ko.observable(),
+                is_discount: ko.observable(),
+                is_stackable: ko.observable(),
+                discount_start: ko.observable(),
+                discount_end: ko.observable()
+            };
+        },
+        //搜索
+        operateSec: function () {
+            $('#btn_sec').on('click', function () {
+                if (!flag) {
+                    return false
+                }
+                flag = 0;
+                secData();
+                $post(urlPrefix + "?r=sms/business/package/package-price/get-all",
+                    data,
+                    function (res) {
+                        flag = 1;
+                        if (res.code == 1) {
+                            layer.msg('搜索成功', {time: 2000});
+                            tableInit.myViewModel.load(res.data)
+                        }
+                        else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    })
+            })
+        },
+        //批量导入
+        addPassword: function () {
+            $('#addPassword').on('click', function () {
+                layer_open("导入卡密", 'addPassword.html')
+            })
+        },
+        //下载
+        operateDownlaod: function () {
+            $('#outpackage').on('click', function () {
+                $get(urlPrefix + "?r=sms/business/package/package-price/down-all",
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('导出成功', {time: 2000});
+                            window.open(res.data.url, '_self')
+                        }
+                        else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    })
+            })
+        },
+        edit: function () {
+            $("#edit").on('click', function () {
+                layer_open("套餐批量修改", 'editMore.html')
+            })
+        },
+        //批量导入
+        addMore: function () {
+            $('#addMore').on('click', function () {
+                layer_open("套餐批量导入", 'addMore.html')
+            })
+        },
+
+        //新增
+        operateAdd: function () {
+            $('#addProvider').on("click", function () {
+                $('input[name="is_dis"]:checked').prop('checked', false);
+                $('input[name="is_stackable"]:checked').prop('checked', false);
+                change();
+                $(".form-group").removeClass('hidden');
+                $(".time").addClass("hidden");
+                $("#discount_start").val('');
+                $("#discount_end").val('');
+                $("#myModal").modal().on("shown.bs.modal", function () {
+                    var oEmptyModel = {
+                        id: ko.observable(),
+                        uid: ko.observable(),
+                        pid: ko.observable(),
+                        lid: ko.observable(),
+                        old_price: ko.observable(),
+                        price: ko.observable(),
+                        sort: ko.observable(),
+                        status: ko.observable(),
+                        packageid: ko.observable(),
+                        is_discount: ko.observable(),
+                        is_stackable: ko.observable(),
+                        discount_start: ko.observable(),
+                        discount_end: ko.observable(),
+                        ID: 1
+                    };
+                    ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                    ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                    operate.operateSave();
+                }).on('hidden.bs.modal', function () {
+                    ko.cleanNode(document.getElementById("myModal"));
+                });
+
+            });
+        },
+        //保存数据
+        operateSave: function (index) {
+            $('#btn_submit').on("click", function () {
+                if (!flag) {
+                    return false
+                }
+                flag = 0;
+                //取到当前的viewmodel
+                var oViewModel = operate.DepartmentModel;
+                //将Viewmodel转换为数据model
+                var oDataModel = ko.toJS(oViewModel);
+                var is_discount = $("input[name=is_dis]:checked").attr("value");
+                var is_stackable = $("input[name=is_stackable]:checked").attr("value");
+                oDataModel.is_discount = is_discount;
+                oDataModel.is_stackable = is_stackable;
+                oDataModel.discount_start = $('#discount_start').val();
+                oDataModel.discount_end = $('#discount_end').val();
+                oDataModel.packageid = $.trim(oDataModel.packageid);
+                oDataModel.pid = pid;
+                var funcName = oDataModel.ID ? "add" : "update";
+                var data;
+                if (funcName == 'add') {
+                    if (!oDataModel.lid) {
+                        layer.msg("请选择套餐分类", {time: 2000});
+                        flag = 1;
+                        return false
+                    }
+                    if (!oDataModel.price) {
+                        layer.msg("请输入实际价格", {time: 2000});
+                        flag = 1;
+                        return false
+                    }
+                    if (!oDataModel.old_price) {
+                        layer.msg("请输入原价", {time: 2000});
+                        flag = 1;
+                        return false
+                    }
+                    data = oDataModel
+
+                }else{
+                    data = {
+                        id:oDataModel.id,
+                        price:oDataModel.price,
+                        old_price:oDataModel.old_price,
+                        is_stackable:oDataModel.is_stackable,
+                        is_discount:oDataModel.is_discount,
+                        discount_end:oDataModel.discount_end,
+                        discount_start:oDataModel.discount_start,
+                        sort:oDataModel.sort
+                    }
+                }
+                $post(urlPrefix + "?r=sms/business/package/package-price/" + funcName, data,
+                    function (res) {
+                        flag = 1;
+                        if (res.code == 1) {
+                            layer.msg(res.msg, {time: 2000});
+                            $("#myModal").modal('hide');
+                            if (funcName == "update") {
+                                tableInit.myViewModel.update(index, oDataModel)
+                            }
+                            else {
+                                tableInit.myViewModel.refresh()
+                            }
+                        }
+                        else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    })
+            })
+        }
+    };
+
+
+    window.operateEvents = {
+        'mouseenter .show': function (e, value, row, index) {
+            var that = this;
+            layer.tips(row.package, that, {
+                tips: 1 //还可配置颜色
+            });
+        },
+        //删除
+        'click #btn_delete': function (e, value, row, index) {
+            layer.confirm('你确定要删除吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=sms/business/package/package-price/delete",
+                    {id: row.id},
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('删除成功', {time: 2000});
+                            tableInit.myViewModel.remove(row.id);
+                        } else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    });
+            });
+        },
+        //关闭开启
+        'click #btn_status': function (e, value, row, index) {
+            var $btn_turn = $("this"),
+                status = row.status == 1 ? 2 : 1,
+                id = row.id,
+                data = {
+                    id: id,
+                    status: status
+                };
+            var text = status == 1 ? '上架' : "下架";
+            layer.confirm('你确定要' + text + '吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=sms/business/package/package-price/update",
+                    data,
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('保存成功', {time: 2000});
+                            $("#myModal").modal('hide');
+                            tableInit.myViewModel.update(index, data)
+                        } else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    }
+                )
+            });
+        },
+        //编辑
+        'click #btn_edit': function (e, value, row, index) {
+            $(".form-group:not(.clearfix)").addClass('hidden');
+            $(".from-groups").children(".form-group").removeClass('hidden');
+            $(".hiddens").removeClass('hidden');
+            change();
+            if (row.is_discount == 1) {
+                $('#no_is_dis').prop('checked', true);
+            } else {
+                $('#yes_is_dis').prop('checked', true);
+                $(".time").removeClass("hidden");
+                if(row.discount_start=='0000-00-00 00:00:00'){row.discount_start=''}
+                if(row.discount_end=='0000-00-00 00:00:00'){row.discount_end=''}
+                $("#discount_start").val(row.discount_start);
+                $("#discount_end").val(row.discount_end)
+            }
+            if (row.is_stackable == 1) {
+                $('#no_is_stackable').prop('checked', true);
+            }else{
+                $('#yes_is_stackable').prop('checked', true);
+            }
+            $("#myModal").modal().on("shown.bs.modal", function () {
+                var oEmptyModel = {
+                    id: ko.observable(),
+                    uid: ko.observable(),
+                    pid: ko.observable(),
+                    lid: ko.observable(),
+                    old_price: ko.observable(),
+                    price: ko.observable(),
+                    sort: ko.observable(),
+                    status: ko.observable(),
+                    packageid: ko.observable(),
+                    is_discount: ko.observable(),
+                    is_stackable: ko.observable(),
+                    discount_start: ko.observable(),
+                    discount_end: ko.observable(),
+                    ID: 0
+                };
+                ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                //将选中该行数据有数据Model通过Mapping组件转换为viewmodel
+                ko.utils.extend(operate.DepartmentModel, row);
+                ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                operate.operateSave(index);
+            }).on('hidden.bs.modal', function () {
+                //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                ko.cleanNode(document.getElementById("myModal"));
+            });
+        }
+    };
+
+    function secData() {
+        data = {
+            pageSize: 10,
+            pageNumber: 1,
+            pid: getUrlParam('pid'),
+            lid: $("#lid").val()||getUrlParam('lid'),
+            names: $.trim($("#names").val()),
+            is_discount : $("input[name=is_dis]:checked").attr("value"),
+            is_stackable : $("input[name=fixed]:checked").attr("value")
+        };
+        if(!data.pid){
+            $("#addProvider").hide()
+        }
+    }
+
+    function queryParams(params) {
+        secData();
+        data.pageSize = params.pageSize;
+        data.pageNumber = params.pageNumber;
+        return data;
+    }
+
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                search: false,
+                url: urlPrefix + "?r=sms/business/package/package-price/get-all",
+                method: "post",
+                queryParams: queryParams,//传递参数（*）
+                onEditableSave: function (field, row, oldValue, $el, index) {
+                    if (!flag_btn) {
+                        layer.msg('没有权限,修改失败',
+                            {time: 2000});
+                        return
+                    }
+                    $post(urlPrefix + "?r=sms/business/package/package-price/update",
+                        {id: row.id, sort: row.sort},
+                        function (res) {
+                            if (res.code == 1) {
+                                layer.msg('保存成功',
+                                    {time: 2000});
+                                tableInit.myViewModel.update(index, row)
+                            } else {
+                                layer.msg(res.msg,
+                                    {time: 2000})
+                            }
+                        }
+                    )
+                },
+                onRefresh: function () {
+                    $("#listId").val("");
+                    $("#ptype").val("");
+                    $("#infinite").val("");
+                    $("#dis").val("");
+                    $('#yes_dis').prop('checked', false);
+                    $('#no_dis').prop('checked', false);
+                    $('#yes_stackable').prop('checked', false);
+                    $('#no_stackable').prop('checked', false);
+                },
+                columns: [{
+                    field: 'lname',
+                    title: '套餐分类'
+                }, {
+                    field: 'pname',
+                    title: '套餐名称'
+                }, {
+                    field: 'old_price',
+                    title: '原价（元）'
+                }, {
+                    field: 'price',
+                    title: '实际价格（元）'
+                },  {
+                    field: 'status',
+                    title: '状态',
+                    formatter: operateForStatus
+                }, {
+                    field: 'is_discount',
+                    title: '特惠套餐',
+                    formatter: discount
+                }, {
+                    field: 'is_stackable',
+                    title: '叠加套餐',
+                    formatter: stackable
+                }, {
+                    field: 'sort',
+                    title: '排序',
+                    editable: true
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+
+
+            function discount(value, row, index) {
+                if (row.is_discount == 2) {
+                    return ['<span class="text-sum" >' + "是" +
+                    '</span>'].join('');
+                } else {
+                    return ['<span class="text-success show" >' + "否" +
+                    '</span>'].join('');
+                }
+            }
+            function stackable(value, row, index) {
+                if (row.is_stackable == 2) {
+                    return ['<span class="text-sum" >' + "是" +
+                    '</span>'].join('');
+                } else {
+                    return ['<span class="text-success show" >' + "否" +
+                    '</span>'].join('');
+                }
+            }
+
+            function operateForStatus(value, row, index) {
+                var status = row.status;
+                if (status == 1) {
+                    return [
+                        '<span class="text-success">' + "已上架" +
+                        '</span>'
+                    ].join('');
+                } else {
+                    return [
+                        '<span class="text-danger">' + "已下架" +
+                        '</span>'
+                    ].join('');
+                }
+            }
+
+            function operateFormatter(value, row, index) {
+                if (row.status == 2 && flag_btn) {
+                    return [
+                        '<button id="btn_edit" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>修改' +
+                        '</button>',
+                        '<button id="btn_status" type="button" class="btn btn-sm btn-success " data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>上架' +
+                        '</button>',
+                        '<button id="btn_delete" type="button" class="btn btn-sm btn-danger " data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>删除' +
+                        '</button>'
+                    ].join('');
+                } else if ((row.status == 1 && flag_btn)) {
+                    return [
+                        '<button id="btn_edit" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>修改' +
+                        '</button>',
+                        '<button id="btn_status" type="button" class="btn btn-sm btn-warning " data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>下架' +
+                        '</button>',
+                        '<button id="btn_delete" type="button" class="btn btn-sm btn-danger " data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>删除' +
+                        '</button>'
+                    ].join('');
+                }
+            }
+
+
+            function operateForType(value, row, index) {
+                var package_types = row.package_type;
+                if (package_types == 1) {
+                    return ["移动"].join('');
+                }
+                if (package_types == 2) {
+                    return ['电信'].join('');
+                }
+                if (package_types == 3) {
+                    return ['联通'].join('');
+                }
+            }
+
+            function operateForPackageType(value, row, index) {
+                var type = row.type;
+                if (type == 1) {
+                    return ["月包"].join('');
+                }
+                if (type == 2) {
+                    return ['季包'].join('');
+                }
+                if (type == 3) {
+                    return ['年包'].join('');
+                }
+                if (type == 4) {
+                    return ['基本套餐'].join('');
+                }
+                if (type == 5) {
+                    return ['半年包'].join('');
+                }
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+        }
+
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+    //操作
+</script>
+
+</html>

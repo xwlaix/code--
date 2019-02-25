@@ -1,0 +1,342 @@
+<!DOCTYPE html >
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页</title>
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/echarts.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/information.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <script src="../../static/js/Department.js"></script>
+
+</head>
+<body>
+<div id="content">
+    <div id="RightContent">
+        <div id="ConWrap">
+            <div id="basicinform">
+                <span id="picard"></span>
+                <p>基本信息</p><span class="underline2"></span>
+                <div id="agentNum">
+                    <div id="agentNumChart" style="width: 100%;height:400px;"></div>
+                </div>
+                <div id="agentArea">
+                    <div id="agentAreaChart" style="width: 100%;height:400px;"></div>
+                </div>
+                <div id="agentType">
+                    <div id="agentTypeChart" style="width: 100%;height:400px;"></div>
+                </div>
+            </div>
+            <div id="messagecard">
+                <span id="picard3"></span>
+                <p>充值次数</p><span class="underline2"></span>
+                <div id="rechargeTime" style="width: 100%;height:400px;"></div>
+            </div>
+            <!--<div id="messagecard">-->
+            <!--<span id="picard3"></span>-->
+            <!--<p>所得佣金</p><span class="underline2"></span>-->
+            <!--<div id="container5">-->
+            <!--<div id="commission" style="width: 100%;height:400px;"></div>-->
+            <!--</div>-->
+            <!--<div class="gprsMost">-->
+            <!--<table class="gridtable">-->
+            <!--<tr class="title">-->
+            <!--<th align="center" colspan="2">本月佣金最多</th>-->
+            <!--<th width=60></th>-->
+            <!--<th align="center" colspan="2">本月佣金最少</th>-->
+            <!--</tr>-->
+            <!--<tr>-->
+            <!--<th align="center">SIM卡号</th>-->
+            <!--<th align="center">佣金</th>-->
+            <!--<th></th>-->
+            <!--<th align="center">SIM卡号</th>-->
+            <!--<th align="center">佣金</th>-->
+            <!--</tr>-->
+
+            <!--</table>-->
+            <!--</div>-->
+            <!--</div>-->
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+
+    // 显示标题，图例和空的坐标轴
+
+    agentNum = {
+        title: {
+            text: '代理商总数',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%) "
+        },
+        color: ['#66cc66', '#009765', '#0099cc'],
+
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            right: '5%',
+            top: "10%",
+            data: []
+        },
+        series: [
+            {
+                name: '代理商总数',
+                type: 'pie',
+                radius: ['50%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    normal: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        show: true,
+                        textStyle: {
+                            fontSize: '30',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        show: false
+                    }
+                },
+                data: []
+            }
+        ]
+    };
+    agentArea = {
+        title: {
+            text: '代理商区域',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%) "
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            left: '-1%',
+            top: "10%",
+            data: []
+        },
+        color: ['#77bf5a', '#ffbb32', '#36dea9', '#f67565', '#e698a3', '#6391ef', '#f8825a', '#ff9800', '#009765', '#0099cc', '#5b8fd4', '#47c056', '#f8bb39', '#c23531', "#fc8556", '#f2cca2', '#cccccc', '#ff9999'],
+
+        series: [
+            {
+                name: '区域',
+                type: 'pie',
+                radius: ['50%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    normal: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        show: true,
+                        textStyle: {
+                            fontSize: '30',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        show: false
+                    }
+                },
+                data: []
+            }
+        ]
+
+    };
+    agentType = {
+        title: {
+            text: '代理商类型',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%) "
+        },
+        color: ['#66cc66', '#66ccff'],
+
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            right: '5%',
+            top: "10%",
+            data: []
+        },
+        series: [
+            {
+                name: '类型',
+                type: 'pie',
+                radius: ['50%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    normal: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        show: true,
+                        textStyle: {
+                            fontSize: '30',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        show: false
+                    }
+                },
+                data: []
+            }
+        ]
+
+    };
+
+    // 显示标题，图例和空的坐标轴折线图
+    options = {
+        title: {
+            text: '充值总额',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['充值总额'],
+            orient: 'vertical',
+            right: '5%',
+            top: 0
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: []
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name: '充值总额',
+                type: 'line',
+                itemStyle: {normal: {color: '#3bc0ff'}},
+                stack: '总量',
+                data: []
+            }
+        ]
+    };
+
+    //异步加载数据
+    $post(urlPrefix + '?r=sms/data/get-agent-count',
+        {'type': 'province'},
+        function (data) {
+            // 填入数据
+            var res = binTu(data.data, {"": '暂未选择'});
+            agentAreaChart.setOption({
+                legend: [{
+                    data: res
+                }],
+                series: [{
+                    // 根据名字对应到相应的系列
+                    data: res
+                }]
+            });
+        }, function () {
+            layer.msg("获取地区数据失败", {time: 2000})
+        });
+    //异步加载数据
+    $post(urlPrefix + '?r=sms/data/get-agent-count',
+        {'type': 'accountType'},
+        function (res) {
+            var data = binTu(res.data, {1: '行业用户', 2: '渠道用户'});
+            agentTypeChart.setOption({
+                legend: [{
+                    data: data
+                }],
+                series: [{
+                    // 根据名字对应到相应的系列
+                    data: data
+                }]
+            });
+        }, function () {
+            layer.msg("获取代理商类型失败", {time: 2000})
+        });
+    //异步加载数据
+    $post(urlPrefix + '?r=sms/data/get-agent-count',
+        {'type': 'type'},
+        function (res) {
+            var data = binTu(res.data, {1: '一级代理商', 2: '二级代理商', 3: '三级代理商'});
+            agentNumChart.setOption({
+                legend: [{
+                    data: data
+                }],
+                series: [{
+                    // 根据名字对应到相应的系列
+                    data: data
+                }]
+            });
+        }, function () {
+            layer.msg("获取各级代理商失败", {time: 2000})
+        });
+    //异步加载数据
+    $post(urlPrefix + '?r=sms/data/get-card-account-count',
+        {value: "money", data: "month"},
+        function (data) {
+            var res = zhexianTu(data.data);
+            // 填入数据
+            rechargeTime.setOption({
+                xAxis: {
+                    data: res[0]
+                },
+                series: [{
+                    name: "充值总额",
+                    // 根据名字对应到相应的系列
+                    data: res[1]
+                }]
+            });
+        }, function () {
+            layer.msg("获取充值数据失败", {time: 2000})
+        });
+
+    var agentTypeChart = echarts.init(document.getElementById('agentTypeChart'));
+    var agentNumChart = echarts.init(document.getElementById('agentNumChart'));
+    var agentAreaChart = echarts.init(document.getElementById('agentAreaChart'));
+    var rechargeTime = echarts.init(document.getElementById('rechargeTime'));
+    agentTypeChart.setOption(agentType);
+    agentNumChart.setOption(agentNum);
+    agentAreaChart.setOption(agentArea);
+    rechargeTime.setOption(options);
+    setTimeout(function () {
+        window.onresize = function () {
+            agentTypeChart.resize();
+            agentNumChart.resize();
+            agentAreaChart.resize();
+            rechargeTime.resize();
+        }
+    }, 1000);
+</script>
+</body>
+
+

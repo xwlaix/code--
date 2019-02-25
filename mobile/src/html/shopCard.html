@@ -1,0 +1,255 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>购卡</title>
+    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport"
+    />
+    <meta content="ie=edge" http-equiv="X-UA-Compatible" />
+    <style>
+        .weui-check__label.weui-cell {
+            padding: 0 !important;
+            margin-right: 20px;
+            width: 60px;
+        }
+
+        .weui-check__label.weui-cell:before {
+            border-top: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!--标题开始-->
+    <div class="content">
+        <div class="weui-panel__bd">
+            <div class="weui-media-box weui-media-box_appmsg">
+                <div class="weui-media-box__hd">
+                    <img alt="查询佣金" class="weui-media-box__thumb" src="../img/shopCard.png">
+                    </img>
+                </div>
+                <div class="weui-media-box__bd">
+                    <h4 class="weui-media-box__title text-center wx-title">
+                        购卡
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--标题结束-->
+    <!--搜索开始-->
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cell weui-cells_radio">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    运营商类型
+                </label>
+            </div>
+            <label class="weui-cell weui-check__label" for="x11">
+                <div class="weui-cell__bd">
+                    <p>移动</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" class="weui-check" name="operatorType" id="x11" checked="checked" data-bind='1'>
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+            <label class="weui-cell weui-check__label" for="x12">
+                <div class="weui-cell__bd">
+                    <p>电信</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" name="operatorType" class="weui-check" id="x12" data-bind='2'>
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+            <label class="weui-cell weui-check__label" for="x13">
+                <div class="weui-cell__bd">
+                    <p>联通</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" name="operatorType" class="weui-check" id="x13" data-bind='3'>
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    单价
+                </label>
+            </div>
+            <div class="weui-cell__bd weui-cell_primary">
+                <input type="number" class="weui-input" id="price" placeholder="请填写协商好的单价(元)">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    数量
+                </label>
+            </div>
+            <div class="weui-cell__bd weui-cell_primary">
+                <input type="number" class="weui-input" id="number" placeholder="请填写购买的数量(张)">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    总价
+                </label>
+            </div>
+            <div class="weui-cell__bd weui-cell_primary">
+                <input type="number" class="weui-input" readonly id="amount" placeholder="系统会自动计算总价">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    备注
+                </label>
+            </div>
+            <div class="weui-cell__bd weui-cell_primary">
+                <input type="text" class="weui-input" id="remarks" placeholder="请填写备注">
+            </div>
+        </div>
+        <div class="weui-cell weui-cells_radio">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    发货方式
+                </label>
+            </div>
+            <label class="weui-cell weui-check__label" for="x21">
+                <div class="weui-cell__bd">
+                    <p>自收</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" class="weui-check" name="sendType" id="x21" checked="checked" data-bind="1">
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+            <label class="weui-cell weui-check__label" for="x22">
+                <div class="weui-cell__bd">
+                    <p>代发</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" name="sendType" class="weui-check" id="x22" data-bind="2 data-bind='1'">
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+        </div>
+        <div class="weui-cell send">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    发件人
+                </label>
+            </div>
+            <div class="weui-cell__bd weui-cell_primary">
+                <input type="text" class="weui-input" id="sender" placeholder="请填写发件人">
+            </div>
+        </div>
+        <div class="weui-cell send">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    发件人手机
+                </label>
+            </div>
+            <div class="weui-cell__bd weui-cell_primary">
+                <input type="text" class="weui-input" id="sender_phone" placeholder="请填写发件人手机">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    收货人
+                </label>
+            </div>
+            <div class="weui-cell__bd weui-cell_primary">
+                <input type="text" class="weui-input" id="consignee" placeholder="请填写收货人">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    手机号码
+                </label>
+            </div>
+            <div class="weui-cell__bd weui-cell_primary">
+                <input type="text" class="weui-input" id="phone" placeholder="请填写收货人手机号码">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    收货地址
+                </label>
+            </div>
+            <div class="weui-cell__bd weui-cell_primary">
+                <input type="text" class="weui-input" id="city-picker" placeholder="请填写收货人地址">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    详细地址
+                </label>
+            </div>
+            <div class="weui-cell__bd weui-cell_primary">
+                <input type="text" class="weui-input" id="address" placeholder="请填写详细地址">
+            </div>
+        </div>
+        <div class="weui-cell weui-cells_radio">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    付款方式
+                </label>
+            </div>
+            <label class="weui-cell weui-check__label" for="x31">
+                <div class="weui-cell__bd">
+                    <p>线下</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" class="weui-check" name="payType" id="x31" checked="checked" data-bind='1'>
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+            <label class="weui-cell weui-check__label" for="x32">
+                <div class="weui-cell__bd">
+                    <p>余额</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" name="payType" class="weui-check" id="x32" data-bind='2'>
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+            <label class="weui-cell weui-check__label" for="x33">
+                <div class="weui-cell__bd">
+                    <p>微信</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" name="payType" class="weui-check" id="x33" data-bind='4'>
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+        </div>
+        <div class="weui-cell under">
+            <div class="weui-cell__hd">
+                <label class="weui-label">
+                    上传凭证
+                </label>
+            </div>
+            <div class="weui-uploader__input-box">
+                <div class="weui-uploader__input" id="upload">
+                    <img alt="" style="width: 100%;height: 100%" id='pic' src=""></img>
+                    <div id="file1" class="weui-uploader__input" >
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="weui-btn-area">
+        <input class="weui-btn weui-btn_primary" id="addOrder" type="submit" value="提交">
+        </input>
+    </div>
+    <!--搜索结束-->
+</body>

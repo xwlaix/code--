@@ -1,0 +1,42 @@
+{
+  "pages":[
+    "pages/index/index",
+    "pages/order/order",
+    "pages/personal/personal",
+    "pages/record/record",
+    "pages/register/register"
+  ],
+  "window":{
+    "backgroundTextStyle":"light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "酷易充",
+    "navigationBarTextStyle":"black"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#35495e",
+    "borderStyle": "white",
+    "backgroundColor": "#f5f5f5",
+    "list": [{
+      "text": "详情",
+      "pagePath": "pages/index/index",
+      "iconPath": "images/index.png",
+      "selectedIconPath": "images/index-actived.png"
+    }, {
+      "text": "订购",
+      "pagePath": "pages/order/order",
+      "iconPath": "images/order.png",
+      "selectedIconPath": "images/order-actived.png"
+    }, {
+      "text": "个人中心",
+      "pagePath": "pages/personal/personal",
+      "iconPath": "images/personal.png",
+      "selectedIconPath": "images/personal-actived.png"
+    }]
+  },
+  "networkTimeout": {
+    "request": 20000,
+    "downloadFile": 20000
+  },
+  "debug": false
+}

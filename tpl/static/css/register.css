@@ -1,0 +1,223 @@
+.TotalContentBox {
+    background: #f0f1f3;
+}
+
+.Authentication-top {
+    width: auto;
+    background: #fdaa42;
+    padding: 10px 0;
+}
+input[type="button"], input[type="submit"], input[type="reset"] {
+    -webkit-appearance: none;
+}
+.weui-toast{
+    top: 50%;
+    margin-left:0;
+}
+.Authentication-top .icon-left {
+    width: 30px;
+    height: 40px;
+    float: left;
+    text-align: right;
+    display: inline-block;
+}
+
+.hidden {
+    display: none !important;
+}
+
+span.icon-zhuyi {
+    color: #fff;
+    font-size: 15px;
+    margin-top: 3px;
+    display: block;
+    margin-right: 5px;
+}
+
+.Authentication-top .RightTip {
+    display: inherit;
+    color: rgb(255, 235, 218);
+    font-size: 13px;
+    font-family: 微软雅黑;
+    margin-left: 30px;
+}
+
+.Authentication-forms {
+    width: 100%;
+    margin: 0 auto;
+    background: #fff;
+    border-bottom: 1px solid #E7E7E7;
+}
+
+.TotalContentBox .name {
+    width: 25%;
+    display: inline-block;
+    line-height: 38px;
+    font-size: 14px;
+    font-family: 微软雅黑;
+    color: rgb(0, 0, 0);
+}
+
+.TotalContentBox .text {
+    font-family: 微软雅黑;
+    color: rgb(213, 217, 220);
+    width: 70%;
+    border-width: initial;
+    border-style: none;
+    border-color: initial;
+    border-image: initial;
+    background: rgb(255, 255, 255);
+}
+
+.user-register-Pro.hide {
+    display: none;
+}
+
+.user-register {
+    line-height: 40px;
+    color: #de1c4d;
+    font-size: 14px;
+}
+
+.UploadID-BOX {
+    width: 100%;
+    margin-top: 10px;
+    background: #fff;
+    padding-bottom: 10px;
+}
+
+.TotalContentBox .ietmOBX {
+    width: 96%;
+    margin: 0 auto;
+    height: 40px;
+    border-bottom: 1px solid #E7E7E7;
+    background: #FFFFFF;
+}
+
+.UploadID {
+    width: 96%;
+    margin: 0 auto;
+}
+
+.UploadID .title {
+    font-family: '微软雅黑';
+    font-size: 14px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: block;
+    color: #000;
+}
+
+.UploadID .box {
+    width: 45%;
+    height: 130px;
+    display: inline-flex;
+    border: 1px dashed #E7E7E7;
+    position: relative;
+    text-align: center;
+}
+
+.clearfix {
+    clear: both;
+}
+
+select, textarea, input {
+    -webkit-user-select: auto;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    -webkit-appearance: none;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+    text-rendering: auto;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    margin: 0;
+    font: 13.3333px Arial;
+    outline: none;
+}
+
+.wx_pic img {
+    z-index: 999;
+    width: 100%;
+}
+
+.updata_ img {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    z-index: 99999;
+}
+
+.updata_ img {
+    z-index: 99;
+}
+
+img {
+    max-width: 100%;
+    border: 0;
+    vertical-align: bottom;
+}
+
+.UploadID-BOX .icon-shagnchuan {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 35px;
+    position: absolute;
+    left: 50%;
+    margin-left: -25px;
+    top: 50%;
+    margin-top: -35px;
+    color: #d5d9dc;
+    z-index: 50;
+}
+
+.UploadID-BOX .shangchuan {
+    left: 0;
+    width: 100%;
+    position: absolute;
+    bottom: 21px;
+    font-size: 14px;
+    color: #d5d9dc;
+}
+
+.UploadID .rightBOX {
+    float: right;
+}
+
+.Authentication-footer {
+    width: 96%;
+    text-align: center;
+    font-size: 16px;
+    color: rgb(255, 255, 255);
+    font-family: 微软雅黑;
+    padding: 11px 0;
+    margin: 20px auto 0;
+    background: rgb(50, 163, 239);
+    border-radius: 6px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.ietmOBX .success, .ietmOBX .danger {
+    float: right;
+    display: inline-block;
+    line-height: 38px;
+    font-size: 14px;
+    font-family: 微软雅黑;
+}
+
+#password {
+    width: 40%;
+}

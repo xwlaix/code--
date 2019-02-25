@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>酷鱼账号列表</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../common/css/account_list.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/My97DatePicker/WdatePicker.js"></script>
+    <script src="../../common/js/jquery.validate.js"></script>
+    <script src="../../common/js/ajaxfileupload.js"></script>
+
+</head>
+<body>
+<div class="header_top">
+    <div class="header_left">
+    </div>
+    <div class="header_right">
+        <ul class="ul">
+            <li><a href="#">账号管理</a></li>
+            <li><a href="rechage.html">充值管理</a></li>
+            <li><a href="javascript:logout()">退出</a></li>
+        </ul>
+    </div>
+</div>
+<div class="header">
+    <div class="sub">
+        <p class="sub_title">账号查询</p>
+        <span class="underline2"></span>
+    </div>
+    <form id="accountListForm">
+        <div style="margin-left:90px">
+            <div class="form-group">
+                <label>快速查询：</label>
+                <input type="text" name="queryType" class="form-control" placeholder="请输入id、账号、用户名、电话、邮箱">
+            </div>
+            <div class="form-group">
+                <label>用户名：</label>
+                <input type="text" name="uname" class="form-control" placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label for="DateStatus">服务期止：</label>
+                <select name="DateStatus" id="DateStatus">
+                    <option value="">---请选择---</option>
+                    <option value="1">已过期</option>
+                    <option value="2">三天内</option>
+                    <option value="3">一周内</option>
+                    <option value="4">一月内</option>
+                    <option value="5">三月内</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="status">活动状态：</label>
+                <select name="status" id="status">
+                    <option value="">---请选择---</option>
+                    <option value="0">开启</option>
+                    <option value="1">关闭</option>
+                    <option value="2">无</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date_begin" class="span_title" title="激活时间">激活时间：</label>
+                <input id="date_begin" class="Wdate" name="saledate_begin" type="text"
+                       onFocus="var date_begin=$dp.$('date_end');
+                       WdatePicker({onpicked:function(){date_end.focus();},
+                       maxDate:'#F{$dp.$D(\'date_end\')}'})"/>
+                <label for="date_end">~</label>
+                <input id="date_end" class="Wdate" name="saledate_end" type="text"
+                       onFocus="WdatePicker({minDate:'#F{$dp.$D(\'date_begin\')}'})"/>
+            </div>
+            <div class="form-group">
+                <label class="inquires" title="id段查询">id段查询：</label>
+                <input type="text" name="id_begin" placeholder="请输入初始id">
+                <label for="id_end">~</label>
+                <input type="text" name="id_end" id="id_end" placeholder="请输入结束id">
+                <button type="button" id="btn_sec" class="btn btn-sm btn-primary sec">搜索</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">添加账号</h4>
+            </div>
+            <form class="modal-body account_add " id="signupForm">
+                <div class="form-group">
+                    <label for="txt_username">账号:</label>
+                    <input type="text" name="txt_username" data-bind="value:username" class="form-control"
+                           id="txt_username" placeholder="账号">
+                </div>
+                <div class="form-group password">
+                    <label for="password">密码:</label>
+                    <input type="text" name="password" data-bind="value:password" class="form-control"
+                           id="password" placeholder="密码">
+                </div>
+                <div class="form-group">
+                    <label for="txt_phone">电话:</label>
+                    <input type="text" name="txt_phone" data-bind="value:phone" class="form-control" id="txt_phone"
+                           placeholder="电话">
+                </div>
+                <div class="form-group">
+                    <label for="txt_email">邮箱:</label>
+                    <input type="text" name="txt_email" data-bind="value:email" class="form-control" id="txt_email"
+                           placeholder="邮箱">
+                </div>
+
+                <div class="form-group">
+                    <label for="txt_uname">联系人:</label>
+                    <input type="text" name="txt_uname" data-bind="value:uname" class="form-control" id="txt_uname"
+                           placeholder="联系人">
+                </div>
+                <div class="form-group">
+                    <label for="txt_project">项目名称:</label>
+                    <input type="text" name="txt_project" data-bind="value:project" class="form-control"
+                           id="txt_project" placeholder="项目名称">
+                </div>
+                <div class="form-group">
+                    <label for="wxname">公众号（小程序）:</label>
+                    <input type="text" name="wxname" data-bind="value:wxname" class="form-control" id="wxname"
+                           placeholder="公众号（小程序）名称">
+                </div>
+                <div class="form-group">
+                    <label>头像图片:</label>
+                    <img src="" id="img" alt="" style="width: 60px;height: 60px;">
+                </div>
+                <div class="form-group">
+                    <label for="file1">上传头像图片：</label>
+                    <a href="javascript:" class="a-upload">
+                        <input type="file" name="headimg" id="file1">点击这里上传文件
+                    </a>
+                </div>
+
+                <!--<div class="form-group">-->
+                <!--<label for="txt_status">服务状态</label>-->
+                <!--<input type="text" name="txt_status" data-bind="value:status" class="form-control" id="txt_status" placeholder="服务状态">-->
+                <!--</div>-->
+
+                <!--<div class="form-group clearfix">-->
+                    <!--<label for="text">备注:</label>-->
+                    <!--<textarea name="text" id="text" cols="30" data-bind="value:text" rows="5"-->
+                              <!--style="border: 1px solid #D7D7D7"></textarea>-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                <!--<label for="txt_fs">开启的服务</label>-->
+                <!--<input type="text" name="txt_fs" data-bind="value:fs" class="form-control" id="txt_fs" placeholder="开启的服务">-->
+                <!--</div>-->
+                <div class="modal-footer ">
+                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal"><span
+                            class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                    </button>
+                    <button type="button" id="btn_submit" class="btn btn-primary btn-sm"><span
+                            class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="header table-over">
+    <div class="sub">
+        <p class="sub_title">账号信息</p>
+        <span class="underline2"></span>
+    </div>
+
+    <table id="tb_dept" data-bind="myBootstrapTable:$root">
+
+    </table>
+    <div id="toolbar" class="btn-group">
+        <button type="button" id="btn_add" aria-hidden="true" class=" btn btn-sm btn-primary" data-toggle="modal"
+                data-target="#modalTable" style="margin-right:15px;">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            新增
+        </button>
+    </div>
+</div>
+<div class="foot">
+    <div class="foot_cont">
+        Copyright © 2017.深圳市酷鱼互动科技有限公司 版权所有 
+    </div>
+</div>
+</body>
+
+
+<script>
+    //检测是否登陆
+    $(function () {
+        var tag = getCookie("name");
+        if (tag == "") {
+            alert("登陆超时");
+            window.location.href = "accLogin.html";
+            return false;
+        }
+    });
+    //退出
+    var flag = 0, indexs;
+    function logout() {
+        layer.confirm('您确定要退出吗？', {
+            btn: ['确定', '取消'], //按钮
+            shade: false //不显示遮罩
+        }, function () {
+            location.href = "accLogin.html";
+        });
+    }
+    //表单检验规则
+    function JqValidate() {
+        return $("#signupForm").validate({
+            rules: {
+                txt_username: {
+                    required: true,
+                    minlength: 2
+                },
+                txt_uname: {
+                    required: true,
+                    minlength: 2
+                },
+                txt_phone: {
+                    required: true,
+                    minlength: 11,
+                    // 自定义方法：校验手机号在数据库中是否存在
+                    // checkPhoneExist : true,
+                    isMobile: true
+                },
+                txt_email: {
+                    required: true,
+                    email: true
+                },
+//                txt_status: {
+//                    required: true,
+//                    minlength: 1
+//                },
+                txt_project: {
+                    required: true,
+                    minlength: 1
+                },
+                txt_fs: {
+                    required: true,
+                    minlength: 1
+                }
+            },
+            messages: {
+                txt_username: {
+                    required: "请输入账号",
+                    minlength: "账号长度不能小于 2 个字母"
+                },
+                txt_uname: {
+                    required: "请输入联系人",
+                    minlength: "联系人最少两个字母组成"
+                },
+                txt_phone: {
+                    required: "请输入手机号",
+                    minlength: "确认手机不能小于11个字符",
+                    isMobile: "请正确填写您的手机号码"
+                },
+                txt_email: {
+                    required: "请输入邮箱",
+                    email: "请输入正确的邮箱"
+                },
+//                txt_status: {
+//                    required: "请输入服务状态",
+//                    minlength: "服务状态长度不能小于 1 个字母"
+//                },
+                txt_project: {
+                    required: "请输入项目名称",
+                    minlength: "项目名称长度不能小于 1 个字母"
+                }
+//                ,
+//                txt_fs: {
+//                    required: "请输入开启的服务",
+//                    minlength: "开启的服务长度不能小于 1 个字母"
+//                }
+            }
+        });
+    }
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateAdd();
+            this.operateSec();
+            this.DepartmentModel = {
+                id: ko.observable(),
+                username: ko.observable(),
+                uname: ko.observable(),
+                password: ko.observable(),
+                phone: ko.observable(),
+                email: ko.observable(),
+                status: ko.observable(),
+                project: ko.observable(),
+                fs: ko.observable(),
+                wxname: ko.observable(),
+                wxheader: ko.observable(),
+                text: ko.observable()
+            };
+        },
+        //搜索
+        operateSec: function () {
+            $("#btn_sec").on('click', function () {
+                var This = $(this),
+                    queryType = $.trim($("input[name='queryType']").val()),
+                    uname = $.trim($("input[name='uname']").val()),
+                    DateStatus = $.trim($("select[name='DateStatus']").val()),
+                    status = $.trim($("select[name='status']").val()),
+                    saledate_begin = $.trim($("input[name='saledate_begin']").val()),
+                    saledate_end = $.trim($("input[name='saledate_end']").val()),
+                    id_begin = $.trim($("input[name='id_begin']").val()),
+                    id_end = $.trim($("input[name='id_end']").val()),
+                    sceData = {
+                        like: queryType,
+                        uname: uname,
+                        endtime: DateStatus,
+                        status: status,
+                        addtime1: saledate_begin,
+                        addtime2: saledate_end,
+                        id1: id_begin,
+                        id2: id_end
+                    };
+                This.addClass('disabled');
+                $post(urlPrefix + "?r=ams/user/seach",
+                    sceData,
+                    function (res) {
+                        This.removeClass('disabled');
+                        var index = layer.load(1,  {
+                            shade: [0.1, '#fff'] //0.1透明度的白色背景
+                        });
+                        if (res.code == 1) {
+                            layer.close(index);
+                            tableInit.myViewModel.load(res.data.rows);
+                        } else {
+                            layer.msg('业务繁忙', {time: 1000});
+                            layer.close(index);
+                        }
+                    }
+                )
+            })
+        },
+        //新增
+        operateAdd: function () {
+            $('#btn_add').on("click", function () {
+                $(".password").removeClass('hidden');
+                $("#myModal").modal().on("shown.bs.modal", function () {
+                    var oEmptyModel = {
+                        id: ko.observable(),
+                        username: ko.observable(),
+                        uname: ko.observable(),
+                        password: ko.observable(),
+                        phone: ko.observable(),
+                        email: ko.observable(),
+                        status: ko.observable(),
+                        project: ko.observable(),
+                        fs: ko.observable(),
+                        wxname: ko.observable(),
+                        wxheader: ko.observable(),
+                        text: ko.observable()
+                    };
+                    ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                    ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                    $("#file1").change(function () {
+                        ajaxFileUpload('?r=ams/user/upload-img',"file1",
+                            function (res) {  //服务器成功响应处理函数
+                                $("#img").attr("src", res.data.url);
+                            })
+                    });
+                    operate.operateSave();
+                }).on('hidden.bs.modal', function () {
+                    ko.cleanNode(document.getElementById("myModal"));
+                });
+
+            });
+        },
+        //保存数据
+        operateSave: function (row) {
+            if (JqValidate()) {
+                $('#btn_submit').on("click", function () {
+                    if (flag)return false;
+                    flag = 1;
+                    var This = $(this),
+                        headimg = $("#img").attr("src");
+                    This.addClass('disabled');
+                    //取到当前的viewmodel
+                    var oViewModel = operate.DepartmentModel;
+                    //将Viewmodel转换为数据model
+                    var oDataModel = ko.toJS(oViewModel);
+                    oDataModel.headimg = headimg;
+                    var funcName = oDataModel.id ? "update" : "add";
+                    if(funcName=="update"){
+                        data={
+                            id:row.id,
+                            username:oDataModel.username,
+                            phone:oDataModel.phone,
+                            email:oDataModel.email,
+                            uname:oDataModel.uname,
+                            project:oDataModel.project,
+                            wxname:oDataModel.wxname,
+                            headimg:oDataModel.headimg,
+                            text:oDataModel.text
+
+                        }
+                    }else{
+                        data={
+                            username:oDataModel.username,
+                            password:oDataModel.password,
+                            phone:oDataModel.phone,
+                            email:oDataModel.email,
+                            uname:oDataModel.uname,
+                            project:oDataModel.project,
+                            wxname:oDataModel.wxname,
+                            headimg:oDataModel.headimg,
+                            text:oDataModel.text
+                        }
+                    }
+
+                    $post(urlPrefix + "?r=ams/user/" + funcName,
+                        data,
+                        function (res) {
+                            flag = 0;
+                            This.removeClass('disabled');
+                            if (res.code == 1) {
+                                layer.msg('保存成功',
+                                    {time: 1000});
+                                $("#myModal").modal('hide');
+
+                                if (funcName == "update") {
+                                    tableInit.myViewModel.update(indexs, oDataModel)
+                                } else {
+                                    tableInit.myViewModel.refresh()
+                                }
+                            } else {
+                                layer.msg(res.msg,
+                                    {time: 1000})
+                            }
+                        }
+                    )
+                })
+            }
+        }
+    };
+
+    function ajaxRequest(params) {
+        $get(url = urlPrefix + "?r=ams/user/get-all",
+            function (res) {
+                params.success({
+                    data: res.data.rows
+                });
+                if(res.code==0){
+                    layer.msg(res.msg,{time:2000})
+                }
+            }, function () {
+                params.success({data: []})
+            }
+        )
+    }
+    window.operateEvents = {
+
+        //关闭开启
+        'click #btn_turn': function (e, value, row, index) {
+            var $btn_turn = $("#btn_turn"),
+                status = row.status == 1 ? 2 : 1,
+                id = row.id,
+                data = {
+                    id: id,
+                    status: status
+                };
+            layer.confirm('你确定要' + $btn_turn.text() + '吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=ams/user/update",
+                    data,
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('保存成功',
+                                {time: 1000});
+                            $("#myModal").modal('hide');
+                            tableInit.myViewModel.update(index, data)
+                        } else {
+                            layer.msg('修改失败',
+                                {time: 1000})
+                        }
+                    }
+                )
+            });
+        },
+        //删除
+        'click #btn_delete': function (e, value, row, index) {
+            layer.confirm('你确定要删除吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=ams/user/delete",
+                    {id: row.id},
+                    function (res) {
+                        layer.msg(res.msg, {time: 1000});
+                        if (res.code == 1) {
+                            tableInit.myViewModel.remove(row.id);
+                        }
+                    }
+                );
+            });
+        },
+        //编辑
+        'click #btn_edit': function (e, value, row, index) {
+            $(".password").addClass('hidden');
+            $("#myModal").modal().on("shown.bs.modal", function () {
+                var headimg = row.headimg;
+                if (headimg) {
+                    $("#img").attr("src", headimg);
+                }
+                var oEmptyModel = {
+                    id: ko.observable(),
+                    username: ko.observable(),
+                    uname: ko.observable(),
+                    phone: ko.observable(),
+                    email: ko.observable(),
+                    status: ko.observable(),
+                    project: ko.observable(),
+                    password: ko.observable(),
+                    fs: ko.observable(),
+                    wxname: ko.observable(),
+                    wxheader: ko.observable(),
+                    text: ko.observable()
+                };
+                ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                $("#file1").change(function () {
+                    ajaxFileUpload('?r=ams/user/upload-img','file1',
+                        function (res) {  //服务器成功响应处理函数
+                            $("#img").attr("src", res.data.url);
+                        })
+                });
+                indexs = index;
+                //将选中该行数据有数据Model通过Mapping组件转换为viewmodel
+                ko.utils.extend(operate.DepartmentModel, row);
+                ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                operate.operateSave(row);
+            }).on('hidden.bs.modal', function () {
+                //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                ko.cleanNode(document.getElementById("myModal"));
+            });
+        },
+        //充值
+        'click #btn_recharge': function (e, value, row, index) {
+            var id = row.id,
+                username = row.username;
+            window.open("rechage.html?id=" + id + '&username=' + username)
+        }
+    };
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+
+        //2、注册增删改事件
+        operate.operateInit();
+
+
+    });
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                ajax: ajaxRequest,
+              	sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                columns: [{
+                    field: 'id',
+                    title: 'id'
+                }, {
+                    field: 'username',
+                    title: '账号'
+                }, {
+                    field: 'uname',
+                    title: '联系人'
+                }, {
+                    field: 'wxname',
+                    title: '公众号'
+                }, {
+                    field: 'phone',
+                    title: '电话'
+                }, {
+                    field: 'email',
+                    title: '邮箱'
+                }, {
+                    field: 'addtime',
+                    title: '添加时间'
+                }, {
+                    field: 'operated',
+                    title: '服务状态',
+                    align: 'center',
+                    formatter: operateForStatus
+                }, {
+                    field: 'project',
+                    title: '项目名称'
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+
+            });
+            function operateFormatter(value, row, index) {
+                var btn_status;
+                if (row.status == 1) {
+                    btn_status = '开启'
+                } else {
+                    btn_status = '关闭'
+                }
+                return [
+                    '<button id="btn_edit" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                    '<span class="" aria-hidden="true"></span>修改' +
+                    '</button>',
+                    '<button type="button" id="btn_recharge" class=" btn btn-sm  btn-success" style="margin-right:15px;">充值</button>',
+                    '<button type="button" id="btn_turn" class=" btn btn-sm btn-warning" style="margin-right:15px;">'
+                    + btn_status +
+                    '</button>',
+                    '<button id="btn_delete" type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                    '<span class="" aria-hidden="true"></span>删除' +
+                    '</button>'
+                ].join('');
+            }
+
+            function operateForStatus(value, row, index) {
+                var status = row.status;
+                if (status == 1) {
+                    return [
+                        '关闭'
+                    ].join('');
+                } else {
+                    return [
+                        '开启'
+                    ].join('');
+                }
+
+
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+    //操作
+
+</script>
+</html>

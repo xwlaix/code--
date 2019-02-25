@@ -1,0 +1,315 @@
+.swiper-container {
+    width: 100%;
+}
+
+.swiper-container img {
+    display: block;
+    width: 100%;
+}
+
+body, html {
+    -webkit-tap-highlight-color: transparent;
+    font-size: 14px !important;
+}
+#tel{
+    white-space: nowrap;
+}
+.weui-media-box__desc {
+    font-size: 14px !important;
+
+}
+
+.wx-title {
+    text-align: center;
+    font-size: 24px;
+    color: #3cc51f;
+    font-weight: 400;
+    margin: 0 15%;
+}
+
+.record, #template {
+    font-size: 14px !important;
+}
+
+.demos-sub-title {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+}
+
+.demos-header {
+    padding: 35px 0;
+}
+
+.demos-content-padded {
+    padding: 15px;
+}
+
+.demos-second-title {
+    text-align: center;
+    font-size: 24px;
+    color: #3cc51f;
+    font-weight: 400;
+    margin: 0 15%;
+}
+
+footer {
+    text-align: center;
+    font-size: 14px;
+    padding: 20px;
+}
+
+footer a {
+    color: #999;
+    text-decoration: none;
+}
+
+.flex-side {
+    margin: 5px;
+    padding: 0 10px;
+    height: 2.3em;
+    line-height: 2.3em;
+    text-align: center;
+}
+
+.input-inline {
+    margin-top: 10px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.right {
+    float: right;
+    color: #3cc51f;
+}
+
+.margin_top {
+    margin-top: 0;
+}
+
+.content-block {
+    background: url(../../static/css/img/bg2.png);
+    background-size: 100% 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+.white-bg {
+    background-color: transparent !important;
+    color: #ffFFFF;
+}
+
+.login_logo {
+    text-align: center;
+}
+
+.login_logo img {
+    width: 70px;
+    padding: 50px 0;
+}
+
+img {
+    max-width: 100%;
+    border: 0;
+    vertical-align: bottom;
+}
+
+.weui-input {
+    text-indent: 5px;
+
+}
+
+.weui-toast {
+    margin-left: 0;
+}
+
+.button.weui-btn, input.weui-btn, .weui-btn-area {
+    z-index: 100;
+}
+
+.weui-pull-to-refresh__layer .weui-pull-to-refresh__arrow {
+    z-index: 0;
+}
+
+.hidden {
+    display: none !important
+}
+.TotalContentBox .weui-panel:before{
+    height: 0!important;
+    border-top: none!important;
+}
+.top-info {
+    height: 160px;
+    width: 100%;
+    background-color: #ffffff;
+    background: url("img/bg2.png");
+    background-size: contain;
+}
+input[type="button"], input[type="submit"], input[type="reset"] {
+    -webkit-appearance: none;
+}
+.top-info-content {
+    height: 100%;
+    padding-left: 0 !important;
+}
+
+.weui-media-box_appmsg.top-info-content {
+    height: -webkit-calc(100% - 30px);
+}
+
+.qiehaun {
+    color: #ffffff;
+    float: right;
+    position: absolute;
+    top: 25%;
+    right: 10%;
+}
+
+.logo_img {
+    height: 80px !important;
+    width: 80px !important;
+    margin-left: 20px;
+}
+
+.logo-join {
+    width: 55px;
+    height: 55px;
+    background: white;
+    -moz-border-radius: 55px;
+    border-radius: 55px;
+    border: 5px solid #434448;
+    margin: 0 auto;
+}
+
+.logo_img img {
+    height: 86px !important;
+    width: 86px !important;
+    border-radius: 50%;
+}
+
+.logo_content p:nth-of-type(1) {
+    width: 100%;
+    height: 23px;
+    line-height: 23px;
+    font-size: 14px !important;
+    color: white;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.logo_content p {
+    color: #fff;
+    margin: 10px 24px;
+    white-space: nowrap;
+    overflow: visible;
+}
+
+.info-middle {
+    height: 40px;
+    background: #ffffff;
+    color: #2c2c2c;
+}
+
+.packageBox {
+    text-align: center;
+    line-height: 30px;
+    padding: 5px;
+}
+
+.packageBox:nth-of-type(1) {
+    border-right: 1px solid #ebebeb;
+}
+
+.amount {
+    color: #2471b4;
+}
+
+.price, .real_status {
+    color: #ffa200;
+}
+
+.hengxian {
+    background: #f0f1f3;
+    height: 6px;
+}
+
+.weui-grid__icon {
+    width: 40px;
+    height: 40px;
+}
+
+.number {
+    color: #ff4302;
+}
+
+.info_home {
+    text-align: center;
+    background: #393a3e;
+}
+
+.info_home div div:nth-of-type(2) {
+    color: #fbfbfc;
+    padding: 5px 0 10px 0;
+}
+
+.info_home div div:nth-of-type(1) {
+    padding: 10px 0 5px 0;
+}
+
+.info_title {
+    height: 160px;
+    width: 93%;
+    padding: 0 4% 0 4%;
+    margin: 0 auto;
+    position: fixed;
+    top: 0;
+    background: rgb(57, 58, 62);
+    z-index: 99998;
+}
+
+.info_home {
+    margin-top: 160px;
+}
+
+.list_content.weui-grids a {
+    padding: 0 !important;
+    position: relative;
+}
+
+.list_content.weui-grids a p {
+    text-align: center;
+    color: #404145;
+    font-size: 18px;
+    margin-top: -30%;
+    padding-bottom: 15%;
+    white-space: nowrap;
+}
+
+.spec {
+    color: #00a1e3 !important;
+}
+
+.icon.icon-1 {
+    background: url(../img/icon-01.svg) center no-repeat;
+}
+
+.icon.icon-4 {
+    background: url(../img/icon-04.svg) center no-repeat;
+}
+
+.icon.icon-23 {
+    background: url(../img/icon-23.svg) center no-repeat;
+}
+
+.icon.icon-5 {
+    background: url(../img/icon-05.svg) center no-repeat;
+}
+
+.icon.icon-6 {
+    background: url(../img/icon-06.svg) center no-repeat;
+}

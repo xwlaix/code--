@@ -1,0 +1,121 @@
+<!-- <image class="image" mode="widthFix" src="../../image/banner2.jpg">
+</image> -->
+<import src="../../component/toastTest/toastTest.wxml">
+</import>
+<template data="{{ ..._toast_ }}" is="toast">
+</template>
+<view class="weui-cells">
+    <view class="weui-cell"  wx:if="{{type == 'cmcc'}}" style="text-align: center;">
+           酷鱼唯一一次，推出多月套餐，优惠系统，机不可失失不再来！移动39包无限半年，6个月，震撼来袭！可出空卡！利润丰厚！
+    </view>
+    <view wx:elif="{{type == 'ctcc'}}" style="text-align: center;">
+        2
+    </view>
+    <view wx:else="" style="text-align: center;">
+        3
+    </view>
+    <view class="weui-cell">
+        <view class="weui-cell__hd">
+            <label class="weui-label">
+                卡种类：
+            </label>
+        </view>
+        <view class="weui-cell__bd">
+            <input class="weui-input" id="card" readonly="" type="text" value="{{name}}">
+            </input>
+        </view>
+    </view>
+    <view class="weui-cell">
+        <view class="weui-cell__hd">
+            <label class="weui-label">
+                申请卡数：
+            </label>
+        </view>
+        <view class="weui-cell__bt">
+            <label class="weui-count">
+                <view bindtap="decrease" class="weui-count__btn weui-count__decrease">
+                </view>
+                <input bindblur="changeNumber" class="weui-count__number" type="number" value="{{number}}"/>
+                <view bindtap="increase" class="weui-count__btn weui-count__increase">
+                </view>
+            </label>
+        </view>
+        <view class="weui-cell__ft">
+            <view class="weui-count" style="font-size:14px; white-space: nowrap;padding-left: 5px">
+                增加一张卡加收5元
+            </view>
+        </view>
+    </view>
+    <view class="weui-cell">
+        <view class="weui-cell__hd">
+            <label class="weui-label">
+                收货人姓名：
+            </label>
+        </view>
+        <view class="weui-cell__bd">
+            <input bindfocus="chooseAddress" bindinput="getSname" class="weui-input" id="name" placeholder="请输入收货人姓名" type="text" value="{{sname}}">
+            </input>
+        </view>
+    </view>
+    <view class="weui-cell">
+        <view class="weui-cell__hd">
+            <label class="weui-label">
+                收货人手机：
+            </label>
+        </view>
+        <view class="weui-cell__bd">
+            <input bindinput="getSphone" class="weui-input" id="phone" pattern="[0-9]*" placeholder="请输入收货人手机号码" type="number" value="{{sphone}}">
+            </input>
+        </view>
+    </view>
+    <view class="weui-cell">
+        <view class="weui-cell__hd">
+            <label class="weui-label" for="city-picker">
+                省市区：
+            </label>
+        </view>
+        <picker bindchange="bindRegionChange" mode="region" value="{{region}}">
+            <view class="picker">
+                {{region}}
+            </view>
+        </picker>
+    </view>
+    <view class="weui-cell">
+        <view class="weui-cell__hd">
+            <label class="weui-label">
+                详细地址：
+            </label>
+        </view>
+        <view class="weui-cell__bd">
+            <input bindinput="getAddress" class="weui-input" id="detailArea" placeholder="请输入详细地址" type="text" value="{{address}}">
+            </input>
+        </view>
+    </view>
+    <view class="weui-cell">
+        <view class="weui-cell__hd">
+            <label class="weui-label">
+                金额：
+            </label>
+        </view>
+        <view class="weui-cell__bd">
+            <span class="number">
+                ¥
+                <span class="money">
+                    {{money}}
+                </span>
+            </span>
+        </view>
+    </view>
+    <view class="weui-panel weui-panel_access" style="text-align: center">
+        <view class="weui-panel__bd">
+            <view class="weui-media-box weui-media-box_text">
+                <!--   <h4 class="weui-media-box__title textCenter">
+                    流量随易充，随用随充，1G最低4元钱
+                </h4> -->
+            </view>
+        </view>
+        <view bindtap="addCard" class="weui-btn pay" href="javascript:">
+            立即提交
+        </view>
+    </view>
+</view>

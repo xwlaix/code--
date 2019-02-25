@@ -1,0 +1,58 @@
+.wrap{
+	width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    background: url(http://wx.szcoolfish.com/coolfish/tpl/static/css/img/bg2.png);
+    background-size: contain;
+}
+page{
+	height:100%
+}
+.logo{
+    text-align: center;
+}
+.image{
+	width:60%;
+	height: 160px;
+	margin-top: 20%;
+}
+.bindCardMain{
+	width: 96%;
+	margin: 2% auto;
+}
+.cardNoArea{
+    padding-bottom: 8px;
+    border-bottom: 1px solid #d4d4d4;	
+}
+.card_label {
+    float: left;
+    color: #fff;
+    line-height: 25px;
+}
+.card_wrap{
+    margin: 0 40px 0 60px;	
+}
+#card_no{
+	font-size: 14px;
+    color: #fff;
+    width: 100%;
+    height: 25px;
+    line-height: 25px;
+}
+#bindCard{
+	display: block;
+    width: 100%;
+    height: 40px;
+    color: #fff;
+    font-size: 14px!important;
+    margin: 30px auto 0;
+    text-align: center;
+    border-radius: 4px;
+    background: -webkit-linear-gradient(left, #32a3ef , #43d4ff);
+}
+.tips{
+	font-size: 10px;
+    margin-top: 16px;
+    text-align: center;
+    color: #fff;
+}	

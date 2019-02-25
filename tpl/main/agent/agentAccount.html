@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>代理商账号</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../static/js/provinceCity.js"></script>
+
+</head>
+<body>
+
+<div class="main-box">
+    <div id="main-box-index">
+        <div class="msgWrap form">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">操作</h4>
+                            <div class="alert">
+                                <strong>提示信息!</strong>
+                                <ol>
+                                    <!--<li>关联关键词和外链url可选填,当您填写完外链url后关联关键词将不能生效</li>-->
+                                    <!--<li>排序为数字，数字越大顺序越靠前，如果不填写将按照添加时间顺序排序</li>-->
+                                </ol>
+                            </div>
+                        </div>
+                        <form class="modal-body agentAgent" id="signupForm">
+                            <div class="form-group  ">
+                                <label for="name">代理商名称:</label>
+                                <input type="text" name="name" data-bind="value:name" class="form-control"
+                                       id="name">(必填)
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">代理商电话:</label>
+                                <input type="text" name="phone" data-bind="value:phone" class="form-control"
+                                       id="phone">
+                            </div>
+                            <div class="form-group hidden username">
+                                <label for="username">代理商登陆账号:</label>
+                                <input type="text" name="username" data-bind="value:username"
+                                       class="form-control" id="username">(必填)
+                            </div>
+                            <div class="form-group from-agentRadio">
+                                <label>代理商类型:</label>
+                                <input type="radio" name="accountType" data-bind="1" id="industry">
+                                <label for="industry" style="width: 55px;">行业用户</label>
+                                <input type="radio" name="accountType" data-bind="2" id="channel">
+                                <label for="channel" style="width: 55px!important;">渠道用户</label>
+                            </div>
+                            <div class="form-group hidden password">
+                                <label for="password">代理商密码:</label>
+                                <input type="text" name="password" data-bind="value:password"
+                                       class="form-control" id="password">(必填)
+                            </div>
+                            <div class="form-group ">
+                                <label>代理商支付类型:</label>
+                                <input type="radio" name="payType" data-bind="1" id="mini">
+                                <label for="mini" style="width: 75px!important;">当前平台支付</label>
+                                <input type="radio" name="payType" data-bind="0" id="me">
+                                <label for="me" style="width: 65px!important;">公众号支付</label>
+                                <input type="radio" name="payType" data-bind="2" id="other">
+                                <label for="other" style="width: 65px!important;">其它平台支付</label>
+                            </div>
+                            <div class="form-group pay_link">
+                                <label for="website_name">其他平台名称:</label>
+                                <input type="text" name="website_name" data-bind="value:website_name" class="form-control"
+                                       id="website_name" placeholder="请输入其他平台名称">
+                            </div>
+                            <div class="form-group pay_link">
+                                <label for="link">其它平台支付支付链接:</label>
+                                <input type="text" name="link" data-bind="value:pay_link" class="form-control"
+                                       id="link" placeholder="请输入支付链接">
+                            </div>
+                            <div class="form-group pay_self">
+                                <label for="wechat_name" class="wechat_name">微信公众号名称:</label>
+                                <input type="text" tabindex="1" name="wechat_name" data-bind="value:wechat_name"
+                                       class="form-control setting"
+                                       id="wechat_name" style="margin-right: 15px" placeholder="微信公众号名称">
+                            </div>
+                            <div class="form-group pay_self">
+                                <label for="appid" class="appsecret">微信公众号AppId:</label>
+                                <input type="text" tabindex="1" name="appid" data-bind="value:appid"
+                                       class="form-control setting"
+                                       id="appid" style="margin-right: 15px" placeholder="微信公众号AppId">
+                            </div>
+                            <div class="form-group pay_self">
+                                <label for="appsecret" class="appsecret">微信公众号AppSecret:</label>
+                                <input type="text" tabindex="1" name="appsecret" data-bind="value:secret"
+                                       class="form-control setting" id="appsecret" placeholder="微信公众号AppSecret">
+                            </div>
+                            <div class="form-group pay_self">
+                                <label for="apikey">微信支付商户MCHID:</label>
+                                <input type="text" name="apikey" data-bind="value:mchid" class="form-control setting"
+                                       id="apikey"
+                                       placeholder="请填写微信支付商户MCHID">
+                            </div>
+                            <div class="form-group pay_self">
+                                <label for="key">商户秘钥PartnerKey:</label>
+                                <input type="text" name="key" class="form-control setting" data-bind="value:key"
+                                       id="key"
+                                       placeholder="请填写商户秘钥PartnerKey">
+                            </div>
+                            <div class="form-group">
+                                <label for="province">代理商地区:</label>
+                                <select id="province" name="province" data-bind="value:province"></select>
+                                <label for="city" style="width: 10px">--</label>
+                                <select id="city" name="city" data-bind="value:city"></select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal"><span
+                                        class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                                </button>
+                                <button type="button" id="btn_submit" class="btn btn-primary btn-sm"><span
+                                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group  ">
+                <label>代理商登陆网址:</label>
+                <a href="http://wx.szcoolfish.com/go" class="dls_url" target="_blank">wx.szcoolfish.com/go</a>
+            </div>
+            <table id="tb_dept" data-bind="myBootstrapTable:$root">
+            </table>
+
+            <div id="toolbar">
+                <div class="form-group  ">
+                    <label for="secName">代理商名称:</label>
+                    <input type="text" name="secName" class="form-control"
+                           id="secName">
+                    <button type="button" class="btn btn-primary btn-sm keydownBtn" id="secNameBtn">搜索
+                    </button>
+                </div>
+                <button class=" btn btn-primary btn-sm 111" id="addProvider" title="添加代理商">添加代理商</button>
+            </div>
+            <div id="status" class="hidden"></div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/html" id="test">
+    <div id="per">
+        <div class="form-group  ">
+            <label>返点类型:</label>
+            <input type="radio" name="per" class="per" data-bind="1" id="pack_per">
+            <label for="pack_per" style="width: 55px;">套餐返点</label>
+            <input type="radio" name="per" class="per" data-bind="2" id="scale_per">
+            <label for="scale_per" style="width: 55px!important;">比例返点</label>
+        </div>
+        {{each data as value index}}
+        <div class="form-group  pre_list">
+            <label>{{value.name}}</label>
+            <input type="text" name="name" data-bind="value:per[{{value.id}}]" class="form-control" id="{{value.id}}">
+        </div>
+        {{/each}}
+    </div>
+</script>
+<script type="text/javascript">
+    var flag = 1;
+    //加载table数据
+    $get(urlPrefix + "?r=sms/business/operator/get-all", function (res) {
+        var html = template('test', res);
+        $("#signupForm").prepend(html)
+    });
+    var thrArr = [], twoArr = [], noArr = [], btn_card = [], send = 0, flag_btn = [], btn_pool = [], btn_package = [],
+        btn_commission = [];
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if (res.code == 0) {
+            return
+        }
+        tableInit.Init();
+        operate.operateInit();
+        if (res.data.id == res.data.uid) {
+            flag_btn =
+                [
+                    '<button id="btn_card" type="button" class="btn btn-sm btn-warning">' +
+                    '<span class=" " aria-hidden="true"></span>卡片' +
+                    '</button>',
+                    '<button id="btn_edit" type="button" class="btn btn-sm btn-info">' +
+                    '<span class=" " aria-hidden="true"></span>修改' +
+                    '</button>',
+                    '<button id="btn_change" type="button" class="btn btn-sm btn-info">' +
+                    '<span class=" " aria-hidden="true"></span>返点' +
+                    '</button>',
+                    '<button id="btn_recharge" type="button" class="btn btn-sm btn-success">' +
+                    '<span class=" " aria-hidden="true"></span>充值' +
+                    '</button>',
+                    '<button id="btn_allot" type="button" class="btn btn-sm btn-success">' +
+                    '<span class=" " aria-hidden="true"></span>分配套餐' +
+                    '</button>',
+                    '<button id="btn_editpsw" type="button" class="btn btn-sm btn-primary">' +
+                    '<span class=" " aria-hidden="true"></span>修改密码' +
+                    '</button>',
+                    '<button id="btn_commission" type="button" class="btn btn-sm btn-primary">' +
+                    '<span class=" " aria-hidden="true"></span>查询佣金' +
+                    '</button>',
+                    '<button id="btn_delete" type="button" class="btn btn-sm btn-danger">' +
+                    '<span class=" " aria-hidden="true"></span>删除' +
+                    '</button>'
+                ];
+            send = 1;
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        twoArr.push(nodes[b]["children"][a]["id"]);
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (nodes[b]["children"][a]["children"][c]["checked"]) {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"]);
+                            } else {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (var e in noArr) {
+            $("." + noArr[e]).remove();
+        }
+        for (var e in thrArr) {
+            if (thrArr[e] == 111) {
+                flag_btn =
+                    [
+                        '<button id="btn_edit" type="button" class="btn btn-sm btn-info">' +
+                        '<span class=" " aria-hidden="true"></span>修改' +
+                        '</button>',
+                        '<button id="btn_change" type="button" class="btn btn-sm btn-info">' +
+                        '<span class=" " aria-hidden="true"></span>返点' +
+                        '</button>',
+                        '<button id="btn_recharge" type="button" class="btn btn-sm btn-success">' +
+                        '<span class=" " aria-hidden="true"></span>充值' +
+                        '</button>',
+                        '<button id="btn_editpsw" type="button" class="btn btn-sm btn-primary">' +
+                        '<span class=" " aria-hidden="true"></span>修改密码' +
+                        '</button>',
+                        '<button id="btn_delete" type="button" class="btn btn-sm btn-danger">' +
+                        '<span class=" " aria-hidden="true"></span>删除' +
+                        '</button>'
+                    ]
+            }
+            if (thrArr[e] == 721) {
+                send = 1
+            }
+        }
+        for (var e in twoArr) {
+            if (twoArr[e] == 21) {
+                btn_card =
+                    ['<button id="btn_card" type="button" class="btn btn-sm btn-warning">' +
+                    '<span class=" " aria-hidden="true"></span>卡片' +
+                    '</button>']
+            }
+            if (twoArr[e] == 13) {
+                btn_package =
+                    ['<button id="btn_allot" type="button" class="btn btn-sm btn-success">' +
+                    '<span class=" " aria-hidden="true"></span>分配套餐' +
+                    '</button>']
+            }
+            if (twoArr[e] == 42) {
+                btn_commission =
+                    ['<button id="btn_commission" type="button" class="btn btn-sm btn-primary">' +
+                    '<span class=" " aria-hidden="true"></span>查询佣金' +
+                    '</button>']
+            }
+        }
+
+    });
+
+
+    function change() {
+        $("input[name=per]").change(function () {
+            if ($("input[name=per]:checked").data("bind") == 1) {
+                $(".pre_list").addClass('hidden')
+            } else {
+                $(".pre_list").removeClass('hidden')
+            }
+        })
+    }
+
+    function ajaxRequest(params) {
+        $get(urlPrefix + "?r=sms/agent/get-all",
+            function (res) {
+                params.success({
+                    data: res.data
+                });
+                if (res.code == 0) {
+                    layer.msg(res.msg, {time: 2000})
+                }
+
+            }, function () {
+                params.success({data: []})
+            })
+    }
+
+    //加载省市二级数据
+    function area() {
+        var pro = document.getElementById("province");
+        for (var p in cities) {
+            var op = new Option(p, p);
+            pro.add(op);
+        }
+        loadCity();
+        pro.onchange = function () {
+            loadCity();
+        };
+    }
+
+    function payType() {
+        $('input[name="payType"]').change(function () {
+            var payType = $('input[name="payType"]:checked').data('bind');
+            if (payType == 1) {
+                $(".pay_link").hide();
+                $(".pay_self").hide()
+            } else if (payType == 0) {
+                $(".pay_link").hide();
+                $(".pay_self").show()
+            } else if (payType == 2) {
+                $(".pay_link").show();
+                $(".pay_self").hide()
+            }
+        });
+    }
+
+    area();
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateAdd();
+            this.operateSec();
+            this.DepartmentModel = {
+                amount: ko.observable(),
+                phone: ko.observable(),
+                username: ko.observable(),
+                name: ko.observable(),
+                province: ko.observable(),
+                city: ko.observable(),
+                password: ko.observable(),
+                pool_flow: ko.observable(),
+                appid: ko.observable(),
+                secret: ko.observable(),
+                key: ko.observable(),
+                mchid: ko.observable(),
+                website_name: ko.observable(),
+                wechat_name: ko.observable(),
+                pay_link: ko.observable(),
+                per: ko.observable(),
+                accountType: ko.observable()
+            };
+        },
+        //搜索
+        operateSec: function () {
+            $('#secNameBtn').on("click", function () {
+                var name = $.trim($("#secName").val());
+                if (!name) {
+                    layer.msg("请输入代理商", {time: 2000});
+                    return false
+                }
+                $post(urlPrefix + "?r=sms/agent/get", {name: name}, function (res) {
+                    layer.msg(res.msg, {time: 2000});
+                    if (res.code == 1) {
+                        tableInit.myViewModel.load(res.data)
+                    }
+                })
+            })
+
+        },
+        //新增
+        operateAdd: function () {
+            $('#addProvider').on("click", function () {
+                $("#province").val("请选择");
+                loadCity();
+                payType();
+                $('#industry').prop('checked', true);
+                $('#mini').prop('checked', true);
+                $(".pay_link").hide();
+                $(".pay_self").hide();
+                $("#apool").val('');
+                $("#signupForm").children(".form-group").removeClass('hidden');
+                $("#per").addClass('hidden');
+                $("#myModal").modal().on("shown.bs.modal", function () {
+                    var oEmptyModel = {
+                        amount: ko.observable(),
+                        phone: ko.observable(),
+                        username: ko.observable(),
+                        name: ko.observable(),
+                        province: ko.observable(),
+                        city: ko.observable(),
+                        password: ko.observable(),
+                        appid: ko.observable(),
+                        secret: ko.observable(),
+                        key: ko.observable(),
+                        mchid: ko.observable(),
+                        website_name: ko.observable(),
+                        wechat_name: ko.observable(),
+                        pay_link: ko.observable(),
+                        per: ko.observable(),
+                        accountType: ko.observable(),
+                        func: 0
+                    };
+                    ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                    ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                    operate.operateSave();
+                }).on('hidden.bs.modal', function () {
+                    ko.cleanNode(document.getElementById("myModal"));
+                });
+
+            });
+        },
+        //保存数据
+        operateSave: function (index) {
+            $('#btn_submit').on("click", function () {
+                if (!flag) {
+                    return false
+                }
+                flag = 0;
+                var kind = $('input[name="accountType"]:checked').data('bind');
+                var pers = $('input[name="per"]:checked').data('bind');
+                //取到当前的viewmodel
+                var oViewModel = operate.DepartmentModel, city = $("#city");
+                //将Viewmodel转换为数据model
+                var oDataModel = ko.toJS(oViewModel), funcName, data = {};
+                oDataModel.accountType = kind;
+                oDataModel.province = oDataModel.province === '请选择' ? '' : oDataModel.province;
+                oDataModel.city = city.val() === '请选择' ? '' : city.val();
+                if (!oDataModel.name) {
+                    layer.msg('请输入代理商名称!', {time: 1000});
+                    flag = 1;
+                    return false;
+                }
+                if (!oDataModel.username) {
+                    layer.msg('请输入代理商账号', {time: 1000});
+                    flag = 1;
+                    return false;
+                }
+                var appid = $.trim(oDataModel.appid),
+                    secret = $.trim(oDataModel.secret),
+                    key = $.trim(oDataModel.key),
+                    mchid = $.trim(oDataModel.mchid),
+                    website_name = $.trim(oDataModel.website_name),
+                    wechat_name = $.trim(oDataModel.wechat_name),
+                    pay_link = $.trim(oDataModel.pay_link);
+                var payType = $('input[name="payType"]:checked').data('bind');
+                if (payType == 2) {
+                    appid = '';
+                    secret = '';
+                    key = '';
+                    mchid = '';
+                    wechat_name = '';
+                    if (!pay_link) {
+                        layer.msg('选择其它平台支付请填写支付链接', {time: 2000});
+                        flag = 1;
+                        return
+                    }
+                    if (!website_name) {
+                        layer.msg('选择其它平台支付请填写平台名称', {time: 2000});
+                        flag = 1;
+                        return
+                    }
+                } else if (payType == 0) {
+                    pay_link = '';
+                    website_name = '';
+                    if (!wechat_name) {
+                        layer.msg('公众号支付请填写微信公众号名称', {time: 2000});
+                        flag = 1;
+                        return
+                    }
+                    if (!appid) {
+                        layer.msg('公众号支付请填写微信公众号AppId', {time: 2000});
+                        flag = 1;
+                        return
+                    }
+                    if (!secret) {
+                        layer.msg('公众号支付请填写微信公众号AppSecret', {time: 2000});
+                        flag = 1;
+                        return
+                    }
+                    if (!key) {
+                        layer.msg('公众号支付请填写微信支付商户MCHID', {time: 2000});
+                        flag = 1;
+                        return
+                    }
+                    if (!mchid) {
+                        layer.msg('公众号支付请填写商户秘钥PartnerKey', {time: 2000});
+                        flag = 1;
+                        return
+                    }
+                } else {
+                    appid = '';
+                    secret = '';
+                    key = '';
+                    mchid = '';
+                    wechat_name = '';
+                    website_name = '';
+                    pay_link = 0;
+                }
+                if (oDataModel.func == 1) {
+                    funcName = 'update';
+                    data = {
+                        id: oDataModel.id,
+                        name: oDataModel.name,
+                        phone: oDataModel.phone,
+                        accountType: oDataModel.accountType,
+                        appid: appid,
+                        wechat_name: wechat_name,
+                        website_name: website_name,
+                        secret: secret,
+                        key: key,
+                        mchid: mchid,
+                        pay_link: pay_link,
+                        city: oDataModel.city
+                    }
+                } else if (oDataModel.func == 2) {
+                    funcName = 'change-password';
+                    if (!oDataModel.password) {
+                        layer.msg('请输入代理商密码', {time: 1000});
+                        flag = 1;
+                        return false;
+                    }
+                    data = {id: oDataModel.id, password: $.trim(oDataModel.password)}
+                } else if (oDataModel.func == 0) {
+                    funcName = 'add';
+                    if (!oDataModel.password) {
+                        layer.msg('请输入代理商密码', {time: 1000});
+                        flag = 1;
+                        return false;
+                    }
+                    if (!oDataModel.password) {
+                        layer.msg('请输入代理商密码', {time: 1000});
+                        flag = 1;
+                        return false;
+                    }
+                    oDataModel.pay_link = $.trim(oDataModel.pay_link);
+                    oDataModel.appid = appid;
+                    oDataModel.secret = secret;
+                    oDataModel.key = key;
+                    oDataModel.mchid = mchid;
+                    oDataModel.website_name = website_name;
+                    oDataModel.wechat_name = wechat_name;
+                    oDataModel.pay_link = pay_link;
+                    oDataModel.password = $.trim(oDataModel.password);
+                    data = oDataModel;
+                } else {
+                    funcName = 'update';
+                    var per = {};
+                    for (i = 0; i < $('#per').find('input:not(.per)').length; i++) {
+                        var per1 = $($('#per').find('input:not(.per)')[i]).attr('id').toString();
+                        var per2 = $($('#per').find('input:not(.per)')[i]).val();
+                        per[per1] = per2
+                    }
+                    if (pers == 1) {
+                        data = {id: oDataModel.id, per: 0};
+                    } else {
+                        data = {id: oDataModel.id, per: JSON.stringify(per)};
+                    }
+
+                }
+                $post(urlPrefix + "?r=sms/agent/" + funcName, data,
+                    function (res) {
+                        flag = 1;
+                        if (res.code == 1) {
+                            layer.msg('保存成功',
+                                {time: 1000});
+                            $("#myModal").modal('hide');
+                            tableInit.myViewModel.refresh()
+                        } else {
+                            layer.msg(res.msg,
+                                {time: 1000})
+                        }
+                    })
+            })
+        }
+    };
+
+
+    window.operateEvents = {
+        //删除
+        'click #btn_delete': function (e, value, row, index) {
+            layer.confirm('你确定要删除吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=sms/agent/delete",
+                    {id: row.id},
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('删除成功', {time: 1000});
+                            tableInit.myViewModel.remove(row.id)
+                        } else {
+                            layer.msg('删除失败', {time: 1000})
+                        }
+                    })
+            });
+        },
+        //编辑
+        'click #btn_edit': function (e, value, row, index) {
+            if (row.province) {
+                $("#province").val(row.province);
+            } else {
+                $("#province").val("请选择");
+            }
+            loadCity();
+            payType();
+            var pay_link = row.pay_link;
+            if (pay_link == '0'||!pay_link) {
+                $('#mini').prop('checked', true);
+                $(".pay_link").hide();
+                $(".pay_self").hide()
+            } else if (pay_link == '/coolfish/agent_pay/') {
+                $(".pay_link").hide();
+                $(".pay_self").show();
+                $('#me').prop('checked', true);
+            } else {
+                $(".pay_link").show();
+                $(".pay_self").hide();
+                $('#other').prop('checked', true);
+            }
+            $('.form-group').removeClass('hidden');
+            $(".password").addClass('hidden');
+            $(".username").addClass('hidden');
+            $("#per").addClass('hidden');
+            var accountType = row.accountType;
+            if (accountType == 1) {
+                $('#industry').prop('checked', true);
+            }
+            else {
+                $('#channel').prop('checked', true);
+            }
+            $("#myModal").modal().on("shown.bs.modal", function () {
+                var oEmptyModel = {
+                    amount: ko.observable(),
+                    phone: ko.observable(),
+                    name: ko.observable(),
+                    province: ko.observable(),
+                    city: ko.observable(),
+                    password: ko.observable(),
+                    appid: ko.observable(),
+                    secret: ko.observable(),
+                    key: ko.observable(),
+                    mchid: ko.observable(),
+                    website_name: ko.observable(),
+                    wechat_name: ko.observable(),
+                    pay_link: ko.observable(),
+                    per: ko.observable(),
+                    accountType: ko.observable(),
+                    func: 1
+                };
+                ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                //将选中该行数据有数据Model通过Mapping组件转换为viewmodel
+                ko.utils.extend(operate.DepartmentModel, row);
+                ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                operate.operateSave(index);
+            }).on('hidden.bs.modal', function () {
+                //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                ko.cleanNode(document.getElementById("myModal"));
+                $(".other .form-group:eq(0)").siblings().remove();
+                $('.other').find('.first .add_btn').removeClass('hidden')
+            });
+        },
+        //充值
+        'click #btn_recharge': function (e, value, row, index) {
+            var names = row.name,
+                id = row.id;
+            layer.open({
+                type: 2,
+                title: '充值',
+                shadeClose: true,
+                shade: [0.5, 'rgb(0,0,0)'],
+                maxmin: true, //开启最大化最小化按钮
+                area: ['100%', '100%'],
+                cancel: function () {
+                    if ($("#status").val()) {
+                        $("#status").val("");
+                        $post(urlPrefix + "?r=sms/agent/get", {name: names},
+                            function (res) {
+                                tableInit.myViewModel.update(index, res.data[0])
+                            })
+                    }
+                },
+                content: "agentRecharge.html?name=" + names + '&id=' + id + '&money=' + row.money,
+                zIndex: layer.zIndex, //重点1
+                success: function (layero) {
+                    layer.setTop(layero); //重点2
+                }
+            });
+        },
+        //分配套餐
+        'click #btn_allot': function (e, value, row, index) {
+            var id = row.id;
+            var name = row.name;
+            if (row.per != 0) {
+                layer.msg("比例分配不用分配套餐", {time: 2000})
+            } else {
+                layer_open('分配套餐',"apackage.html?aid=" + id + '&name=' + name)
+            }
+        },
+        //查询佣金
+        'click #btn_commission': function (e, value, row, index) {
+            var name = row.name;
+            layer_open('查询佣金', "../finance/financeCommission.html?name=" + name)
+        },
+        //卡片管理
+        'click #btn_card': function (e, value, row, index) {
+            var name = row.name;
+            layer_open('卡片管理', "../card/cCard.html?name=" + name + '&type=' + "true")
+        },
+        //设置返点
+        'click #btn_change': function (e, value, row, index) {
+            change();
+            $("#per").removeClass('hidden').siblings('.form-group').addClass('hidden');
+            if (row.per == 0 || !row.per) {
+                row.per=0;
+                $('#pack_per').prop('checked', true);
+                $(".pre_list").addClass('hidden')
+            } else {
+                $('#scale_per').prop('checked', true);
+                row.per = JSON.parse(row.per);
+            }
+            $("#myModal").modal().on("shown.bs.modal", function () {
+                var oEmptyModel = {
+                    func: 4
+                };
+                ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                //将选中该行数据有数据Model通过Mapping组件转换为viewmodel
+                ko.utils.extend(operate.DepartmentModel, row);
+                ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                operate.operateSave(index);
+            }).on('hidden.bs.modal', function () {
+                //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                ko.cleanNode(document.getElementById("myModal"));
+                $(".other .form-group:eq(0)").siblings().remove();
+                $('.other').find('.first .add_btn').removeClass('hidden');
+                if (row.per != 0) {
+                    row.per = JSON.stringify(row.per)
+                }
+
+            });
+        },
+        'click #jumpissend': function (e, value, row, index) {
+            var issend = row.issend == 1 ? 2 : 1,
+                text = issend == 1 ? "关闭" : "开通",
+                id = row.id,
+                data = {
+                    id: id,
+                    issend: issend
+                };
+            layer.msg('暂未开通', {time: 2000});
+//            layer.confirm('你确定要' + text + '吗？', {
+//                btn: ['确定', '取消']
+//            }, function () {
+//                $post(urlPrefix + "?r=sms/business/package/update",
+//                    data,
+//                    function (res) {
+//                        if (res.code == 1) {
+//                            row.issend=issend;
+//                            layer.msg('保存成功',
+//                                {time: 1000});
+//                            $("#myModal").modal('hide');
+//                            tableInit.myViewModel.update(index, data)
+//                        } else {
+//                            layer.msg('修改失败',
+//                                {time: 1000})
+//                        }
+//                    }
+//                )
+//            });
+        },
+        //编辑密码
+        'click #btn_editpsw': function (e, value, row, index) {
+            $(".password").removeClass('hidden').siblings('.form-group').addClass('hidden');
+            $("#per").addClass('hidden');
+            $("#myModal").modal().on("shown.bs.modal", function () {
+                var oEmptyModel = {
+                    amount: ko.observable(),
+                    username: ko.observable(),
+                    password: ko.observable(),
+                    func:2,
+                    funcName: 'change-password'
+                };
+                ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                //将选中该行数据有数据Model通过Mapping组件转换为viewmodel
+                ko.utils.extend(operate.DepartmentModel, row);
+                ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                operate.operateSave(index);
+            }).on('hidden.bs.modal', function () {
+                //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                ko.cleanNode(document.getElementById("myModal"));
+                $(".other .form-group:eq(0)").siblings().remove();
+                $('.other').find('.first .add_btn').removeClass('hidden')
+            });
+        }
+    };
+
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                ajax: ajaxRequest,
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                onRefresh: function () {
+                    $("#secName").val("");
+                },
+                columns: [{
+                    field: 'id',
+                    title: '代理商id'
+                }, {
+                    field: 'name',
+                    title: '代理商名称'
+                }, {
+                    field: 'username',
+                    title: '代理商登录账号'
+                }, {
+                    field: 'phone',
+                    title: '代理商电话'
+                }, {
+                    field: 'accountType',
+                    title: '代理商类型',
+                    formatter: operateAccountType
+                }, {
+                    field: 'amount',
+                    title: '剩余佣金(元)'
+                }, {
+                    field: 'per',
+                    title: '返点比例',
+                    formatter: operateForPer
+                }, {
+                    field: 'issend',
+                    title: '短信功能',
+                    formatter: issend,
+                    events: operateEvents
+                }, {
+                    field: 'money',
+                    title: '账户余额(元)'
+                }, {
+                    field: 'addtime',
+                    title: '添加时间',
+                    formatter: operateForDate
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+
+            function operateForDate(value, row, index) {
+                var newDate = /\d{4}-\d{1,2}-\d{1,2}/g.exec(row.addtime);
+                return [newDate].join('')
+            }
+
+            function operateForPer(value, row, index) {
+                var per;
+                if (row.per == 0) {
+                    per = "套餐返点"
+                } else {
+                    per = '比例返点'
+                }
+                return [per].join('')
+            }
+
+            function issend(value, row, index) {
+                var issend;
+                if (row.issend == 1) {
+                    issend = "开通"
+                } else {
+                    issend = '关闭'
+                }
+                if (!send) {
+                    return [
+                        issend
+                    ].join('')
+                } else {
+
+                    return [
+                        '<a href="javascript:void(0);" id="jumpissend" >' + issend +
+                        '</a>'
+                    ].join('')
+                }
+            }
+
+            function operateFormatter(value, row, index) {
+                return btn_card.concat(flag_btn).concat(btn_package).concat(btn_commission).join('');
+            }
+
+            function operateAccountType(value, row, index) {
+                var str = row.accountType == 1 ? '行业用户' : '渠道用户';
+                return [
+                    str
+                ].join('');
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+        }
+
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+    //操作
+</script>
+
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+
+    <title>实名认证</title>
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../static/css/register.css">
+    <link rel="stylesheet" href="../../static/css/fonticon.css">
+
+</head>
+
+<body>
+<!--总内容外层盒子-->
+<div class="TotalContentBox">                                                                                            
+    <!--头部提示内容-->
+    <div class="Authentication-top">
+        <div class="icon-left">
+            <span class="icon-zhuyi"></span>
+        </div>
+        <div class="RightTip">
+            尊敬的用户,为了贯彻工信部《电话用户真实身份信息登记规定》,请对您购买的流量卡进行实名认证。
+        </div>
+    </div>
+    <!--认证部分-->
+    <div class="Authentication-forms">
+        <div class="ietmOBX">
+            <span class="name">卡号</span>
+            <input id="kahao" class="text" type="text" value="" placeholder="请输入购买的流量卡号">
+        </div>
+        <div class="ietmOBX user-register-Pro hide">
+            <div class="user-register" id="textinfo"></div>
+        </div>
+        <div class="ietmOBX">
+            <span class="name">姓名</span>
+            <input id="username" class="text" type="text" placeholder="请输入真实姓名">
+        </div>
+        <div class="ietmOBX">
+            <span class="name">手机号</span>
+            <input id="phone" class="text" type="text" placeholder="请输入本人手机号">
+        </div>
+        <div style="border: none;" class="ietmOBX">
+            <span class="name">余额密码</span>
+            <span class="color-danger danger hidden">已经设置了密码</span>
+            <input id="password" class="text" type="text" placeholder="请设置余额密码" >
+        </div>
+    </div>
+    <!--身份证上传部分-->
+    <div class="UploadID-BOX">
+        <div class="ietmOBX">
+            <span class="name">身份证号</span>
+            <input id="ID" class="text" type="text" placeholder="请输入身份证号码">
+        </div>
+        <div class="UploadID">
+            <span class="title">上传身份证正反面照</span>
+            <div class="clearfix">
+                <div id="upload" class="leftBOX box wx_pic">
+                    <img class="img" src="" alt="">
+                    <span class="icon-shagnchuan"></span>
+                    <span class="shangchuan">上传身份证正面</span>
+                </div>
+                <div id="shangcuan" class="rightBOX box wx_pic">
+                    <img class="img" src="" alt="">
+                    <span class="icon-shagnchuan"></span>
+                    <span class="shangchuan">上传身份证反面</span>
+                </div>
+            </div>
+
+        </div>
+        <!--上传手持身份证-->
+        <div class="UploadID">
+            <span class="title">上传手持身份证照</span>
+            <div class="leftBOX box borNo">
+                <img class="icon-cankao" src="../../static/css/img/tuli.png"/>
+            </div>
+            <div id="shouci" class="rightBOX box wx_pic">
+                <img class="img" src="" alt="">
+                <span class="icon-shagnchuan"></span>
+                <span class="shangchuan">上传手持身份证</span>
+            </div>
+        </div>
+        <!---->
+        <div class="Authentication-footer">
+            <p>提交审核</p>
+        </div>
+    </div>
+</div>
+</body>
+<script src="../../common/js/jquery-3.1.1.min.js"></script>
+<script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+<script src="../../static/js/mobileCommon.js"></script>
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+    var seeId = sessionStorage.getItem("id"),
+        cardNo = sessionStorage.getItem("cardNo");
+    $("#kahao").val(cardNo);
+    $.showLoading();
+
+    $get('?r=wms/personal/get-celebrity', function (res) {
+        if(res.code==1){
+            if(res.data.status == 3){
+                $(".user-register-Pro").removeClass('hide').css('height','100%');
+                $("#textinfo").text(res.data.text)
+            }else if(res.data.status == 2){
+                $('.Authentication-footer').hide();
+            }
+            $("#kahao").val(res.data.card);
+            $("#username").val(res.data.name);
+            $("#phone").val(res.data.phone);
+            $("#ID").val(res.data.cardNo);
+            $("#upload img").attr("src",res.data.pic1);
+            $("#shangcuan img").attr("src",res.data.pic2);
+            $("#shouci img").attr("src",res.data.pic3);
+            $.hideLoading();
+        }else{
+            $.hideLoading();
+        }
+    });
+    $post('?r=wms/personal/validate-password', {password:"888888"},function (res) {
+        if(res.code!=1){
+            $(".danger").removeClass("hidden");
+            $("#password").attr('readonly','readonly')
+        }
+    });
+    //配置jssdk
+    $post("/?r=home/setting/get-jsapi-conf",
+        {uid: seeId, url: document.location.href},
+        function (data) {
+            wx.config({
+                appId: data.data.appId, // 必填，公众号的唯一标识
+                timestamp: data.data.timestamp, // 必填，生成签名的时间戳
+                nonceStr: data.data.nonceStr, // 必填，生成签名的随机串
+                signature: data.data.signature,// 必填，签名，见附录1
+                jsApiList: ["chooseImage", "uploadImage"] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+            })
+        });
+    //微信上传图片jssdk配置
+    $(".wx_pic").click(function () {
+        var This = $(this);
+        wx.chooseImage({
+            count: 1, // 默认9
+            sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+            sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+            success: function (res) {
+                var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                wx.uploadImage({
+                    localId: localIds.toString(), // 需要上传的图片的本地ID，由chooseImage接口获得
+                    isShowProgressTips: 1, // 默认为1，显示进度提示
+                    success: function (res) {
+                        $post("?r=wms/personal/upload-img", {
+                            uid: seeId,
+                            mediaid: [res.serverId]
+                        }, function (data) {
+                            picPath = data.data[0];  //picPath 取得图片的路径
+                            This.find(".img").attr("src", urlPrl + picPath);
+                        }, function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert("提交失败" + textStatus);
+                        });
+                    }
+                });
+
+            }
+        });
+    });
+    $("#password").blur(function(){
+        if($(".danger").hasClass("hidden")){
+            if(!$("#password").val()){$.toptip("请输入密码", 'error'); return}
+            $post("?r=wms/personal/change-password", {newPassword:$("#password").val(),oldPassword :"888888"},function(res){
+                if(res.code==1){
+                    $.toptip("成功设置密码",2000, 'success');
+                }
+            })
+        }
+    });
+    $(".Authentication-footer").click(function () {
+        var This = $(this);
+        var kahao = $.trim($("#kahao").val());
+        var username = $.trim($("#username").val());
+        var phone = $.trim($("#phone").val());
+        var ID = $.trim($("#ID").val());
+        var pic1 = $("#upload img").attr("src");
+        var pic2 = $("#shangcuan img").attr("src");
+        var pic3 = $("#shouci img").attr("src");
+        //验证卡号,不为空&全部是数字小于20位通过
+        if (!kahao) {
+            $.toptip('请输入您的卡号', 2000, 'error');
+            return (false)
+        }
+        //验证名字不为空&小于8位 通过
+        if (!username) {
+            $.toptip('请输入您的名字', 2000, 'error');
+            return (false)
+        }
+        //验证手机号
+        if (!phone) {
+            $.toptip('请输入手机号码', 2000, 'error');
+            return (false)
+        }
+        var reg = /^1[3|4|5|7|8][0-9]\d{4,8}$/;
+        if (!reg.test(phone)) {
+            $.toptip('手机号码格式不对!', 2000, 'error');
+            return false;
+        }
+        //验证身份证
+        if (!ID) {
+            $.toptip('请输入您身份证!', 2000, 'error');
+            return false;
+        }
+        if (!(/(^\d{15}$)|(^\d{17}([0-9]|X)$)/.test(ID))) {
+            $.toptip('请输入正确的身份证!', 2000, 'error');
+            return false;
+        }
+        if (!pic1 || !pic2 || !pic3) {
+            return $.toptip('请上传图片!', 2000, 'error');
+        }
+
+        if (This.hasClass('active')) return false;
+        This.addClass('active');
+        This.text('提交中...');
+        var url = "?r=wms/personal/update-celebrity";
+        $post(url, {name: username, phone: phone, card: kahao, cardNo: ID, pic1: pic1, pic2: pic2, pic3: pic3},
+            function (res) {
+                This.removeClass('active');
+                if (res.code == 1) {
+                    location.href = "home.html";
+                } else {
+                    $.toptip(res.msg, 2000, 'error');
+                    This.text('提交审核');
+                }
+            });
+
+    });
+
+</script>
+</html>

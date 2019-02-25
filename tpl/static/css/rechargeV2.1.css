@@ -1,0 +1,91 @@
+.weui-navbar{
+    background-color:#ffffff;
+}
+.weui-tab{
+    margin-bottom: 60px;
+}
+.weui-navbar:after{
+    border-bottom: none;
+}
+.weui-navbar__item:after{
+    border-right:none;
+}
+.weui-navbar__item{
+    color: #a3a3a3;
+}
+.weui-navbar__item.weui-bar__item--on{
+    color: #43abf0;
+    background-color: #ffffff;
+}
+.weui-navbar__item.weui-bar__item--on{
+    border-bottom:3px  solid;
+    border-image: -webkit-linear-gradient( #54b2f2,#ddf0fc,#54b2f2 ) 30 30;
+    border-image: -moz-linear-gradient(#54b2f2,#ddf0fc,#54b2f2) 30 30;
+    border-image: linear-gradient( #54b2f2,#ddf0fc,#54b2f2) 30 30;
+    border-top-width: 0!important;
+}
+.rechargeSingleMonthPage ul li{
+    height: 100%;
+    padding: 10px 6px;
+    background: #fff;
+}
+.info{
+    position: relative;
+}
+.info_right {
+    position: absolute;
+    top:0;
+    right:0;
+}
+.rechargeSingleMonthPage ul li .right div {
+    display: inline-block;
+    width: 8em;
+    text-align: right;
+}
+.rechargeSingleMonthPage ul li .left {
+    line-height: 40px;
+    color: #292929;
+    text-indent: 5%;
+    white-space: nowrap;
+}
+.rightArrow {
+    line-height: 40px;
+    vertical-align: top;
+    position: relative;
+    left: -2em;
+}
+.saleAfter {
+    font-size: 15px;
+    color: #56b3f2;
+}
+.saleBefore {
+    font-size: 13px;
+    color: #aaaaaa;
+    text-decoration: line-through;
+}
+.info_left{
+    width: 68%;
+    margin: 0 2.5%;
+    color: #aaaaaa;
+}
+#tab1,#tab2,#tab3{
+    margin-top: 15px;
+}
+.foot{
+    font-size: 15px;
+    width: 100%;
+    padding: 18px 0;
+    text-align: center;
+    color: #fff;
+    font-family: "微软雅黑";
+    position: fixed;
+    bottom: 0;
+    background: -webkit-linear-gradient(left, #31a5ee , #42d5ff);
+}
+.addPack ul li{
+    background: -webkit-linear-gradient(left, #31a5ee , #42d5ff) !important;
+    color: #FFFFFF!important;
+}
+.addPack ul li .left,.addPack ul li .info_left,.addPack ul li .saleAfter,.addPack ul li .saleBefore{
+    color: #FFFFFF!important;
+}

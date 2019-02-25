@@ -1,0 +1,181 @@
+@CHARSET "UTF-8";
+
+
+.topnav {
+	
+	font-size:14px;
+    line-height: 34px;
+
+}
+.topnav  a.as{
+    text-decoration: none!important;
+}
+.topnav  a.as:hover{
+    text-decoration: none!important;
+}
+.topnav a.menu-open {
+}
+a.as.menu-open span {
+    color: #fff;
+    background-color: #F57900;
+    border-color: #F57900;
+}
+
+a.as {
+	position:relative;
+	margin-left:25px;
+}
+a.as span {
+	background-repeat:no-repeat;
+	background-position:100% 50%;
+}
+
+
+
+/**按钮背景图.disk-info,*/
+.btn, .button,  .space-status, .space-status i, .file-list dt, .file-list dt a, .title-float, .title-float a, .file-more a, .file-more span, .file-pages, .pages, .page-index-list .box-con, .popup-space h3 {
+
+    background-repeat: repeat-x;
+}
+
+
+
+
+.select-info {
+    -moz-user-select: none;
+    margin: 8px;
+    overflow: hidden;
+    padding: 14px 10px 0 60px;
+    position: relative;
+}
+.select-info  .top-label {
+    height: 20px;
+    left: 12px;
+    position: absolute;
+    top: 20px;
+    font-size: 14px;
+    font-weight: bold;
+	color: #5893B7;
+}
+.select-info ul{
+    height: 30px;
+    margin-bottom: 0!important;
+}
+
+.select-info ul li {
+    margin: 5px 5px 0 30px;
+    cursor: pointer;
+    float: left;
+    height: 25px;
+    width: 190px;
+    line-height: 25px;
+    white-space: nowrap;
+}
+
+
+.select-info li:hover {
+	background-color: #DFECFF;
+}
+.select-info  li.current {
+    color: #F57900;
+	font-weight: bold;
+}
+
+
+/**xmenu样式*/
+.xmenu {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-top: 0;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    outline: medium none;
+}
+
+
+.xmenu dl dt {
+	height: 30px;
+	line-height: 30px;
+	font-size: 14px;
+	font-weight: bold;
+	color: #5893B7;
+	cursor: pointer;
+	margin: 8px -6px;
+	padding-left: 25px;
+	display: block;
+}
+.xmenu dl dt:hover {
+	background-color: #F4FFF4;
+
+}
+
+
+.xmenu dl dt.open {
+}
+.xmenu dl dt.open:hover {
+	background-color: #F4FFF4;
+}
+
+.xmenu dl dd {
+	line-height: 20px;
+}
+
+.xmenu dl dd h2 {
+	font-size: 15px;
+}
+
+.xmenu dl dd ul {
+   padding:20px 0 0 25px;
+   overflow: hidden;
+    width: 100%;
+}
+
+.xmenu dl dd ul li {
+    cursor: pointer;
+    float: left;
+    height: 30px;
+    line-height: 25px;
+    margin-right: 8px;
+    padding: 0 5px;
+    width: 248px;
+    white-space: nowrap;
+
+}
+.xmenu dl dd ul li input{
+    margin: 0!important;
+    vertical-align: middle;
+}
+.xmenu dl dd ul  li:hover {
+    background-color: #DFECFF;
+}
+
+
+.xmenu dl dd ul  li.current {
+    color: #F57900;
+	font-weight: bold;
+}
+
+
+/** css动画按钮*/
+.btn-package-cancel,.btn-package-confirm {
+    display: block;
+    float: right;
+    margin: 2px;
+    overflow: hidden;
+    position: relative;
+}
+
+
+/**关闭按钮样式*/
+.m-close{
+	bottom: 0;
+    height: 25px;
+    position: absolute;
+    right: 0;
+    text-indent: -9999px;
+    width: 25px;
+	cursor: pointer;
+	margin: 5px;
+}
+.m-close:hover {
+    background-position: -25px -25px;
+}

@@ -1,0 +1,19 @@
+.weui-cells:before{
+    border-top:none;
+}
+.weui-cells_form.weui-cells{
+    margin-top: 20%;
+}
+.conf{
+    margin-top: 10%;
+    background-color: rgb(51,166,240);
+}
+.weui-btn{
+    border-radius: 0!important;
+}
+.weui-btn:after{
+    border:none;
+}
+input[type="button"], input[type="submit"], input[type="reset"] {
+    -webkit-appearance: none;
+}

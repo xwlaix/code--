@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>实名认证详情页</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/css/details.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+
+
+</head>
+<body>
+<!--中间部分start!-->
+<div class="main-box">
+    <div id="main-box-index" style="margin-bottom: 100px;">
+        <div class="msgWrap bgfc">
+            <table class="userinfoArea" style=" margin:0;" border="0" cellspacing="0" cellpadding="0" width="100%">
+                <tbody id="detail">
+                <tr class="real_status hidden 221">
+                    <th>审核状态：</th>
+                    <td>
+                        <label for="status"></label>
+                        <select name="status" id="status">
+                            <option value="">请选择审核状态</option>
+                            <option value="1">未审核</option>
+                            <option value="2">审核通过</option>
+                            <option value="3">审核失败</option>
+                        </select>
+                        <button type="button" id="submit" class="btn btn-sm btn-primary"
+                                style="vertical-align: baseline">提交
+                        </button>
+                    </td>
+                </tr>
+                <tr id="fail" class="hidden">
+                    <th>失败的原因：</th>
+                    <td>
+                        <input type="text" id="textbask" placeholder="请填写审核失败的原因">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+</body>
+<script id="parent" type="text/html">
+    <tr>
+        <th>ICC卡号：</th>
+        <td>
+            {{card}}
+        </td>
+    </tr>
+    <tr>
+        <th>客户姓名：</th>
+        <td>
+            {{name}}
+        </td>
+    </tr>
+    <tr>
+        <th>客户电话：</th>
+        <td>
+            {{phone}}
+        </td>
+    </tr>
+    <tr>
+        <th>身份证号：</th>
+        <td>
+            {{cardNo}}
+        </td>
+    </tr>
+    <tr>
+        <th>身份证证件照1：</th>
+        <td>
+            <img class="img" style="width: 300px;"
+                 src="{{pic1}}">
+        </td>
+    </tr>
+    <tr>
+        <th>身份证证件照2：</th>
+        <td>
+            <img class="img" style="width: 300px;"
+                 src="{{pic2}}">
+    </tr>
+    <tr>
+        <th>身份证证件照3：</th>
+        <td>
+            <img class="img" style="width: 300px;"
+                 src="{{pic3}}">
+        </td>
+    </tr>
+</script>
+<script type="text/javascript">
+    var id = getUrlParam('id'),
+        card = getUrlParam('iccid')||getUrlParam('tel'),
+        status = getUrlParam('status'),
+        text = getUrlParam('text'),
+        $status = $("#status").val(status);
+        $('#textbask').val(text);
+    var noArr = [], thrArr = [];
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if(res.code==0){
+            return
+        }
+        if(res.data.id == res.data.uid){
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (!nodes[b]["children"][a]["children"][c]["checked"]) {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            } else {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (var e in noArr) {
+            if (noArr[e] == 221) {
+                $("." + noArr[e]).remove();
+            }
+        }
+    });
+    $post(urlPrefix + "?r=sms/card/celebrity/get",
+        {id: id, card: card},
+        function (res) {
+            var parent, status;
+            parent = $(template('parent', res.data));
+            parent.prependTo(detail);
+            $(".real_status").removeClass('hidden');
+            $("#fail").removeClass('hidden');
+        },function(){layer.msg("获取详情失败",{time:2000})});
+
+    $status.change(function () {
+        if ($status.val() == 3) {
+            $("#fail").removeClass('hidden')
+        } else {
+            $("#fail").addClass('hidden')
+        }
+    });
+    $('#submit').click(function () {
+        if($status.val() == 1||''){
+            layer.msg("请进行审核",{time:2000});
+            return false
+        }
+        $post(urlPrefix + '?r=sms/card/celebrity/update',
+            {status: $status.val(), text: $("#textbask").val(), id: id},
+            function (res) {
+                if (res.code==1) {
+                    parent.$("#realStatus").val("true");
+                    parent.layer.closeAll();
+                } else {
+                    layer.msg(res.msg, {time: 2000})
+                }
+            },function(){layer.msg("操作失败",{time:2000})})
+    });
+</script>
+</html>
+

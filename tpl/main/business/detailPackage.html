@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>套餐详细</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <!--<script src="../../common/js/artTemplate.js"></script>-->
+    <script src="../../common/js/template-web.js"></script>
+    <style>
+        .price{
+            width: 60px!important;
+            margin-right: 10px!important;
+        }
+        .detailProvider label{
+            width: 100px;
+        }
+        .detailProvider{
+            margin:0 25%;
+        }
+    </style>
+</head>
+<body>
+<div class="main-box">
+    <div id="main-box-index">
+        <div class="msgWrap form">
+            <form class=" detailProvider">
+                <div class="form-group ">
+                    <label>运营商类型:</label>
+                    <input type="radio" name="kind" value="2" id="ctcc">
+                    <label class="operator_type" for="ctcc">电信</label>
+                    <input type="radio" name="kind" value="1" id="cmcc">
+                    <label class="operator_type" for="cmcc">移动</label>
+                    <input type="radio" name="kind" value="3" id="cucc">
+                    <label class="operator_type" for="cucc">联通</label>
+                </div>
+                <div class="form-group">
+                    <label for="name">自定义套餐名称:</label>
+                    <input type="text" name="name" data-bind="value:name" class="form-control" id="name" placeholder="请输入自定义套餐名称">
+                </div>
+                <div class="form-group">
+                    <label for="type">自定义套餐类型:</label>
+                    <select name="type" id="type" data-bind="value:type">
+                        <option class="type " selected="selected" value="0">请选择套餐类型</option>
+                        <option class="type " value="1">月包</option>
+                        <option class="type " value="2">季包</option>
+                        <option class="type " value="3">年包</option>
+                        <option class="type " value="4">基本套餐</option>
+                        <option class="type " value="5">半年包</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="card_type">卡片分类：</label>
+                    <select name="card_type" id="card_type" data-bind="value:card_type">
+                        <option class="card_type " selected="selected" value="0">请选择卡片分类</option>
+                        <option class="card_type " value="1">套餐</option>
+                        <option class="card_type " value="2">行业卡</option>
+                        <option class="card_type " value="3">池卡</option>
+                    </select>
+                </div>
+                <div class="card_two">
+                    <div class="form-group" id="afterPrice">
+                        <label >卡片分类：</label>
+                        <label >普通卡</label>
+                        <label >月卡</label>
+                    </div>
+                </div>
+                <div class="flow">
+                    <div class="form-group ">
+                        <label for="flow">自定义套餐流量:(M)</label>
+                        <input type="text" name="flow" data-bind="value:flow" class="form-control" id="flow">
+                    </div>
+                    <div class="form-group ">
+                        <label for="usetime">自定义套餐时长:(天)</label>
+                        <input type="number" pattern="[0-9]*" name="usetime" data-bind="value:usetime"
+                               class="form-control" id="usetime">
+                    </div>
+                </div>
+                <div class="hidden open">
+                    <h4 class="off"> 暂未开通</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn_submit" class="btn btn-primary btn-sm" ><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+
+<script type="text/html" id="template">
+
+</script>
+<script type="text/html" id="provider">
+    {{each data value index}}
+    {{if value}}
+    <div class="form-group operator_input" data-bind="{{value.id}}" data-type="{{value.operator_type}}">
+        <label >{{value.name}}：</label>
+        <input type="text" name="normal" class="form-control price normal" >
+        <input type="text" name="month" class="form-control price month" >
+    </div>
+    {{/if}}
+    {{/each}}
+    {{$imports.log}}
+</script>
+<script type="text/javascript">
+    //根据不同的radio显示不同的列表
+
+    function change() {
+        $get(urlPrefix+"?r=sms/business/operator/get-all",function (res) {
+            var str = template('provider', res);
+            $("#afterPrice").after(str)
+        });
+        $("#type").change(function () {
+            if($("#type").val()==1){
+                $("input[name=month]").show()
+            }else {
+                $("input[name=month]").hide()
+            }
+        });
+        $("#card_type").change(function () {
+            if($("#card_type").val()==1){
+                $(".card_two").show();
+                $('.flow').hide();
+                $('.open').addClass('hidden')
+            }else if($("#card_type").val()==2){
+                $(".card_two").hide();
+                $('.flow').hide();
+                $('.open').removeClass('hidden')
+            }else{
+                $(".card_two").hide();
+                $('.flow').show();
+                $('.open').addClass('hidden')
+            }
+        })
+    }
+    change();
+    $("#btn_submit").click(function(){
+       var kind = $("input[name='kind']:checked").val(),
+           name = $("#name").val(),
+           type = $("#type").val(),
+           card_type = $("#card_type").val(),
+           flow = $.trim($("#flow").val()),
+           usetime = $.trim($("#usetime").val()),
+           normal = $("input[name='normal']").val(),
+           month = $("input[name='month']").val();
+        var valArr = [];
+        $(".operator_input").each(function(i){
+            valArr[$(this).data('bind')] = {normal: $(this).find('.normal').val(),month: $(this).find('.month').val()};
+        });
+        console.log(valArr);
+        if(type==1){
+            if(card_type=1){
+                $post(urlPrefix+'1',{operate_type:kind,name:name,card_type:card_type,normal:normal,month:month},
+                    function(res){
+
+                    })
+            }
+        }
+    });
+
+
+
+
+
+
+</script>
+
+</html>

@@ -1,0 +1,35 @@
+.text-center {
+    font-size: 14px!important;
+    white-space: nowrap;
+}
+.info p span{
+    margin:0 5px 0 5px;
+    color: #2471b4;
+}
+body{
+    height: 100%;
+}
+.erweima_box {
+    position: relative;
+    height: 100%;
+}
+.erweima_box #bg{
+    height: 100%;
+    width: 100%;
+}
+#erweima img{
+    position: absolute;
+    bottom: 11%;
+    left: 33%;
+    width: 33%;
+}
+#rows.weui-cells:before{
+    border: none!important;
+}
+.remarks{
+    white-space: normal!important;
+}
+.weui-cell__bd {
+    width: 33%!important;
+    word-wrap:break-word;
+}

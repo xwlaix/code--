@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>首页</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/wxhome.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <script src=" ../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/echarts.js"></script>
+    <script src="../../static/js/Department.js"></script>
+
+</head>
+
+<body>
+<!--中间部分start!-->
+<div id="contain-box" >
+    <!--中间部分_左侧start!-->
+    <div id="main" style="">
+        <div class="main-box"  >
+            <div id="main-box-index">
+                <div id="tips">
+                    <div id="tips-text">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <strong>提示信息</strong>
+                        <div>微信官方授权登录正式上线欢迎使用！</div>
+                    </div>
+                </div>
+
+                <div id="main-box-head">
+                    <ul id="today">
+                        <li id="today-fans">
+                            <a >
+                                <span class="t-count">
+                                    <i class="t-icon fans"></i>
+                                    <em class="t-num">0</em>
+                                    <strong class="t-title">新粉丝</strong>
+                                </span>
+                            </a>
+                        </li >
+                        <!--<li id="today-massage">-->
+                            <!--<a >-->
+                                <!--<span class="t-count">-->
+                                    <!--<i class="t-icon massage"></i>-->
+                                    <!--<em class="t-num">0</em>-->
+                                    <!--<strong class="t-title">新消息</strong>-->
+                                <!--</span>-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!--<li id="today-visitor">-->
+                            <!--<a >-->
+                                <!--<span class="t-count">-->
+                                    <!--<i class="t-icon visitor"></i>-->
+                                    <!--<em class="t-num">0</em>-->
+                                    <!--<strong class="t-title">新访问</strong>-->
+                                <!--</span>-->
+                            <!--</a>-->
+                        <!--</li>-->
+                    </ul>
+                    <ul id="all">
+                        <li id="all-fans">
+                            <a >
+                                <span class="t-count">
+                                    <i class="t-icon allfans"></i>
+                                    <em class="t-num">0</em>
+                                    <strong class="t-title">粉丝总数</strong>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="function-box main-box-info" >
+                    <div class="title-box">
+						<span>
+							 新增粉丝
+						</span>
+                    </div>
+                    <div class="content-box">
+                        <div class="content-box-item info-detail" >
+                            <div id="echart" style="height: 300px;width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="function-box main-box-info" >-->
+                    <!--<div class="title-box">-->
+						<!--<span>-->
+							<!--我的微信公众号-->
+						<!--</span>-->
+                    <!--</div>-->
+                    <!--<div class="content-box">-->
+                        <!--<div class="content-box-item info-detail">-->
+                            <!--<div style="font-size:12px">-->
+                                <!--您还没绑定平台哦,请点击微信公众平台官方授权登陆入口进行绑定-->
+                                <!--<a href="" style="margin-left: 10px;"></a>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $('.close').on('click',function(){
+        $('#tips').hide()
+    });
+    var myChart = echarts.init(document.getElementById('echart'));
+    // 显示标题，图例和空的坐标轴
+    option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['粉丝增加数']
+        },
+        xAxis:  {
+            type: 'category',
+            boundaryGap: false,
+            data: []
+        },
+        yAxis: {
+            type: 'value',
+            axisLabel: {
+                formatter: '{value} '
+            }
+        },
+        series: [
+            {
+                name:'粉丝增加数',
+                type:'line',
+                data:[],
+                markPoint: {
+                    data: [
+                        {type: 'max', name: '最大值'},
+                        {type: 'min', name: '最小值'}
+                    ]
+                },
+                markLine: {
+                    data: [
+                        {type: 'average', name: '平均值'}
+                    ]
+                }
+            }
+
+        ]
+    };
+
+    $get( urlPrefix + '?r=sms/data/get-fans-add-count',
+            function (data) {
+            data = zhexianTu(data.data);
+
+            // 填入数据
+            myChart.setOption({
+                xAxis: {
+                    data: data[0]
+                },
+                series: [{
+                    // 根据名字对应到相应的系列
+                    data: data[1]
+                }]
+            });
+            });
+    myChart.setOption(option);
+    setTimeout(function (){
+        window.onresize = function () {
+            myChart.resize();
+        }
+    },2000);
+
+
+
+
+
+
+
+
+</script>
+</html>

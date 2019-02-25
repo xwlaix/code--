@@ -1,0 +1,77 @@
+<import src="../../component/toastTest/toastTest.wxml"/>
+<template is="toast" data="{{ ..._toast_ }}"/>
+
+<view class="TotalContentBox">
+     <!--头部提示内容-->
+    <view class="Authentication-top">
+        <view class="icon-left">
+            <icon type="warn" class="icon-zhuyi" color="white" size="20"/>
+        </view>
+        <view class="RightTip">
+            尊敬的用户,为了贯彻工信部《电话用户真实身份信息登记规定》,请对您购买的流量卡进行实名认证。
+        </view>
+    </view>
+    <!--认证部分-->
+    <view class="Authentication-forms">
+        <view class="ietmOBX">
+            <text class="name">卡号</text>
+            <input id="kahao" class="text" placeholder-class="placeholder" bindinput="getkahao" type="text" value="{{kahao}}" placeholder="请输入购买的流量卡号"/>
+        </view>
+        <view class="ietmOBX user-register-Pro hide">
+            <view class="user-register" id="textinfo"></view>
+        </view>
+        <view class="ietmOBX">
+            <text class="name">姓名</text>
+            <input id="username" class="text" placeholder-class="placeholder" type="text" bindinput="getusername" value="{{username}}" placeholder="请输入真实姓名"/>
+        </view>
+        <view class="ietmOBX">
+            <text class="name">手机号</text>
+            <input id="phone" class="text" placeholder-class="placeholder" type="text" bindblur="getphone" value="{{phone}}" placeholder="请输入本人手机号"/>
+        </view>
+        <view style="border: none;" class="ietmOBX">
+            <text class="name">余额密码</text>
+            <text class="color-danger danger hidden">已经设置了密码</text>
+            <input id="password" class="text" placeholder-class="placeholder" type="text" bindinput="getpassword" value="{{password}}" placeholder="请设置余额密码"/>
+        </view>
+    </view>
+    <!--身份证上传部分-->
+    <view class="UploadID-BOX">
+        <view class="ietmOBX">
+            <text class="name">身份证号</text>
+            <input id="ID" class="text" type="text" placeholder-class="placeholder" bindinput="getID" value="{{ID}}" placeholder="请输入身份证号码"/>
+        </view>
+        <view class="UploadID">
+            <text class="title">上传身份证正反面照</text>
+            <view class="clearfix">
+                <view id="upload" class="leftBOX box wx_pic" bindtap="wx_upload_1">
+                    <image class="img" src="{{pic1}}" alt=""></image>
+                    <text class="icon-shagnchuan"></text>
+                    <text class="shangchuan" wx:if="{{upload_flag_1}}">上传身份证正面</text>
+                </view>
+                <view id="shangcuan" class="rightBOX box wx_pic" bindtap="wx_upload_2">
+                    <image class="img" src="{{pic2}}" alt=""></image>
+                    <text class="icon-shagnchuan"></text>
+                    <text class="shangchuan" wx:if="{{upload_flag_2}}">上传身份证反面</text>
+                </view>
+            </view>
+
+        </view>
+        <!--上传手持身份证-->
+        <view class="UploadID">
+            <text class="title">上传手持身份证照</text>
+            <view class="leftBOX box borNo">
+                 <image class="icon-cankao" src="http://wx.szcoolfish.com/coolfish/tpl/static/css/img/tuli.png"></image>
+            </view>
+            <view id="shouci" class="rightBOX box wx_pic"  bindtap="wx_upload_3">
+                <image class="img" src="{{pic3}}" alt=""></image>
+                <text class="icon-shagnchuan"></text>
+                <text class="shangchuan" wx:if="{{upload_flag_3}}">上传手持身份证</text>
+            </view>
+        </view>
+        
+        <view class="Authentication-footer" bindtap="confirm">
+            <text>提交审核</text>
+        </view>
+    </view>
+</view>
+

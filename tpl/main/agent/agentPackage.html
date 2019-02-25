@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>代理商套餐</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/powerFloat.css">
+    <link rel="stylesheet" href="../../common/css/xmenu.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../static/js/jquery-xmenu.js"></script>
+    <script src="../../common/js/jquery-powerFloat.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/jquery.validate.js"></script>
+
+
+</head>
+<body>
+
+<div class="main-box" style="width:95%">
+    <div id="main-box-index">
+        <div class="msgWrap form">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">操作</h4>
+                            <div class="alert">
+                                <strong>提示信息!</strong>
+                                <ol>
+                                    <!--<li>关联关键词和外链url可选填,当您填写完外链url后关联关键词将不能生效</li>-->
+                                    <!--<li>排序为数字，数字越大顺序越靠前，如果不填写将按照添加时间顺序排序</li>-->
+                                </ol>
+                            </div>
+                        </div>
+                        <form class="modal-body" id="signupForm">
+                            <div class="form-group">
+                                <label for="parentprice" class='price_label'>结算价:（元）</label>
+                                <input type="text" name="parentprice" data-bind="value:parentprice" class="form-control"
+                                       id="parentprice">
+                            </div>
+                            <div class="form-group">
+                                <label for="price" class='price_label'>自主定价:（元）</label>
+                                <input type="text" name="price" data-bind="value:price" class="form-control"
+                                       id="price">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                                </button>
+                                <button type="button" id="btn_submit" class="btn btn-primary btn-sm"><span
+                                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="from-groups clearfix">
+        <div class="form-group">
+            <label for="names">代理商名称:</label>
+            <input type="text" name="names" class="form-control" id="names" value="">
+        </div>
+        <div class="form-group">
+            <label for="sce_service_type">供应商:</label>
+            <select name="service_type" id="sce_service_type" data-bind="value:service_type">
+                <option class="service_type" selected="selected" value="">请选择供应商</option>
+
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="ptype">运营商类型:</label>
+            <select name="type" id="ptype" data-bind="value:type">
+                <option class="type" selected="selected" value="">请选择运营商类型</option>
+                <option class="type" value="1">移动</option>
+                <option class="type" value="2">电信</option>
+                <option class="type" value="3">联通</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="ptype">套餐类型:</label>
+            <select name="type" id="type" data-bind="value:type">
+                <option class="type" selected="selected" value="">请选择套餐类型</option>
+                <option class="type" value="1">月包</option>
+                <option class="type" value="2">季包</option>
+                <option class="type" value="3">年包</option>
+                <option class="type" value="4">基本套餐</option>
+                <option class="type" value="5">半年包</option>
+            </select>
+        </div>
+        <div class="form-group ">
+            <label for="pname">自定义套餐名称:</label>
+            <input type="text" name="pname" class="form-control" id="pname">
+            <button type="button" id="btn_sec" class="btn btn-primary btn-sm keydownBtn">搜索
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myselect" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id=" ">操作</h4>
+                    <div class="alert">
+                        <strong>提示信息!</strong>
+                        <ol>
+                            <!--<li>关联关键词和外链url可选填,当您填写完外链url后关联关键词将不能生效</li>-->
+                            <!--<li>排序为数字，数字越大顺序越靠前，如果不填写将按照添加时间顺序排序</li>-->
+                        </ol>
+                    </div>
+                    <form class="modal-body" style="margin: 0!important;padding: 0;">
+                        <div class="select-package">
+                            <div id="main">
+                                <div id="lead" class="card">
+                                    <div class="form-group" style="margin-left: 25px;">
+                                        <label for="service_type">供应商:</label>
+                                        <select name="service_type" id="service_type" data-bind="value:service_type">
+                                            <option class="service_type" selected="selected" value="">请选择供应商</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="topnav">
+                                        <a id="btn_cmcc" href="javascript:void(0);" class="as">
+                                            <span class="btn btn-sm btn-primary">移动</span>
+                                        </a>
+                                        <a id="btn_ctcc" href="javascript:void(0);" class="as">
+                                            <span class="btn btn-sm btn-primary">电信</span>
+                                        </a>
+                                        <a id="btn_cucc" href="javascript:void(0);" class="as">
+                                            <span class="btn btn-sm btn-primary">联通</span>
+                                        </a>
+                                    </div>
+                                    <div class="hidden">
+                                        <label for="selectcmcc"></label>
+                                        <input type="text" value="" id="selectcmcc"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="cmcc" class="xmenu" style="display: none; ">
+                                <div class="select-info">
+                                    <label class="top-label">已选套餐：</label>
+                                    <ul id="cmccselect">
+                                    </ul>
+                                    <a name="menu-confirm" href="javascript:">
+                                        <span class="btn-package-confirm btn btn-sm btn-primary">确定</span>
+                                    </a>
+                                </div>
+                                <dl class="choose">
+                                    <dd>
+                                        <ul class="center-block" id="cmccchoose">
+                                        </ul>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div id="ctcc" class="xmenu" style="display: none; ">
+                                <div class="select-info">
+                                    <label class="top-label">已选套餐：</label>
+                                    <ul id="ctccselect">
+                                    </ul>
+                                    <a name="menu-confirm" href="javascript:">
+                                        <span class="btn-package-confirm btn btn-sm btn-primary">确定</span>
+                                    </a>
+                                </div>
+                                <dl class="choose">
+                                    <dd>
+                                        <ul class="center-block" id="ctccchoose">
+                                        </ul>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div id="cucc" class="xmenu" style="display: none; ">
+                                <div class="select-info">
+                                    <label class="top-label">已选套餐：</label>
+                                    <ul id="cuccselect">
+                                    </ul>
+                                    <a name="menu-confirm" href="javascript:">
+                                        <span class="btn-package-confirm btn btn-sm btn-primary">确定</span>
+                                    </a>
+                                </div>
+                                <dl class="choose">
+                                    <dd>
+                                        <ul class="center-block" id="cuccchoose">
+                                        </ul>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="toolbar">
+        <button class="131 btn btn-primary btn-sm addpackage">
+            添加套餐
+        </button>
+    </div>
+    <table id="tb_dept" data-bind="myBootstrapTable:$root">
+    </table>
+
+</div>
+</body>
+<script id="parent" type="text/html">
+    {{each tab as value index}}
+    <option value="{{value.id}}"> {{value.name}}</option>
+    {{/each}}
+</script>
+<script id="choose" type="text/html">
+    {{each list as value index}}
+    <li rel="{{value.id}}" class="">
+        {{value.name}}
+        【{{value.cname}} ·
+        {{if value.type == 1}}月包{{/if}}
+        {{if value.type == 2}}季包{{/if}}
+        {{if value.type == 3}}年包{{/if}}
+        {{if value.type == 4}}基本套餐{{/if}}
+        {{if value.type == 5}}半年包{{/if}}
+        】
+    </li>
+    {{/each}}
+</script>
+<script id="select" type="text/html">
+    {{each list as value index}}
+    <li rel="{{value.pid}}" class="">
+        {{value.pname}}
+        【
+        {{if value.type == 1}}月包{{/if}}
+        {{if value.type == 2}}季包{{/if}}
+        {{if value.type == 3}}年包{{/if}}
+        {{if value.type == 4}}基本套餐{{/if}}
+        {{if value.type == 5}}半年包{{/if}}
+        】
+    </li>
+    {{/each}}
+</script>
+<script type="text/javascript">
+    //设置权限
+    var flag = 0;
+    var thrArr = [], noArr = [], flag_btn = 0;
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if (res.code == 0) {
+            return
+        }
+        tableInit.Init();
+        operate.operateInit();
+        if (res.data.id == res.data.uid) {
+            flag_btn = 1;
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (nodes[b]["children"][a]["children"][c]["checked"]) {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"]);
+                            } else {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (var e in thrArr) {
+            if (thrArr[e] == 131) {
+                flag_btn = 1
+            }
+        }
+        for (var e in noArr) {
+            if (noArr[e] == 131) {
+                $("." + noArr[e]).remove();
+            }
+
+        }
+    });
+    //初始化分配套餐按钮
+    $('.addpackage').click(function () {
+        $("#myselect").modal().on("shown.bs.modal", function () {
+        })
+    });
+    //加载供应商类型
+
+    $get(urlPrefix + '?r=sms/business/operator/get-all',
+        function (res) {
+            if (res.code == 1) {
+                var lib = {tab: res.data};
+                $("#service_type").append($(template('parent', lib)));
+                $("#sce_service_type").append($(template('parent', lib)));
+            } else {
+                layer.msg(res.msg, {time: 2000})
+            }
+        });
+
+    //加载不同供应商套餐
+    $("#service_type").change(function () {
+        changeOname()
+    });
+
+    function changeOname() {
+        var pid = $("#service_type").val();
+        $("#sce_service_type").val(pid);
+        $("#btn_sec").click();
+        $post(urlPrefix + "?r=sms/business/package/get",
+            {pid: pid},
+            function (res) {
+                load(res, 'choose')
+            })
+    }
+
+    //渲染不同运营商套餐到
+    function load(res, id) {
+        $("." + id + " ul li").remove();
+        var lib = {tab1: [], tab2: [], tab3: []};
+        $.each(res.data.rows ? res.data.rows : res.data, function (i, data) {
+            switch (data.package_type) {
+                case "1":
+                    lib['tab1'].push(data);
+                    break;
+                case "2":
+                    lib['tab2'].push(data);
+                    break;
+                case "3":
+                    lib['tab3'].push(data);
+                    break;
+                default:
+                    break;
+            }
+        });
+        var tab1 = {list: lib.tab1};
+        var tab2 = {list: lib.tab2};
+        var tab3 = {list: lib.tab3};
+        $("#cmcc" + id + "").append($(template(id, tab1)));
+        $("#ctcc" + id + "").append($(template(id, tab2)));
+        $("#cucc" + id + "").append($(template(id, tab3)))
+    }
+
+    //获取某个代理的套餐并渲染到候选框
+    function getAid(names) {
+        $post(urlPrefix + "?r=sms/agent/get-one",
+            {name: names},
+            function (res) {
+                if (res.code == 1) {
+                    layer.msg('搜索成功',
+                        {time: 2000});
+                    aid = res.data.id;
+                    getPack(aid)
+                } else {
+                    layer.msg('没有这个代理商',
+                        {time: 2000});
+                    $("#names").val(name);
+                }
+            }, function () {
+                layer.msg("搜索失败", {time: 2000})
+            }
+        )
+    }
+
+    //获取某个aid的套餐并渲染到候选框
+    function getPack(aid) {
+        var pid = $("#sce_service_type").val();
+        $("#service_type").val(pid);
+        $post(urlPrefix + "?r=sms/business/package/get",
+            {pid: pid},
+            function (res) {
+                load(res, 'choose')
+            });
+        $post(urlPrefix + "?r=sms/agent/package-price/get-all",
+            {
+                aid: aid,
+                pname: $.trim($("#pname").val()),
+                type: $("#type").val(),
+                package_type: $("#ptype").val(),
+                operatorid: pid
+            },
+            function (res) {
+                tableInit.myViewModel.load(res.data);
+                load(res, "select");
+            })
+    }
+
+
+    //加载table数据
+    function ajaxRequest(params) {
+        $post(urlPrefix + "?r=sms/agent/package-price/get-all",
+            {aid: aid || "a"},
+            function (res) {
+                params.success({
+                    data: res.data
+                });
+                $(".select-info ul li").remove();
+                load(res, "select");
+                if (res.code == 0) {
+                    layer.msg(res.msg, {time: 2000})
+                }
+            }, function () {
+                params.success({data: []})
+            }
+        )
+    }
+
+    //根据url获取aid，把相应的套餐分配到对应的选项框
+    var aid = getUrlParam('aid');
+    var name = getUrlParam('name');
+    $("#names").val(name);
+    $get(urlPrefix + '?r=sms/business/package/package-main/get-all',
+        function (res) {
+            load(res, 'choose')
+        }, function () {
+            layer.msg("获取套餐失败", {time: 2000})
+        });
+    //初始化选项框
+    $("#btn_cmcc").xMenu({
+        width: 800,
+        eventType: "click", //事件类型 支持focus click hover
+        dropmenu: "#cmcc",//弹出层
+        hiddenID: "selectcmcc",//隐藏域ID
+        emptytext: "移动"
+    });
+    $("#btn_ctcc").xMenu({
+        width: 800,
+        eventType: "click", //事件类型 支持focus click hover
+        dropmenu: "#ctcc",//弹出层
+        hiddenID: "selectcmcc",//隐藏域ID
+        emptytext: "电信"
+    });
+    $("#btn_cucc").xMenu({
+        width: 800,
+        eventType: "click", //事件类型 支持focus click hover
+        dropmenu: "#cucc",//弹出层
+        hiddenID: "selectcmcc",//隐藏域ID
+        emptytext: "联通"
+    });
+
+
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateSec();
+            this.DepartmentModel = {
+                price: ko.observable(),
+                id: ko.observable(),
+                parentprice: ko.observable()
+            };
+        },
+        //搜索
+        operateSec: function () {
+            $('#btn_sec').on("click", function () {
+                var names = $.trim($("#names").val());
+                if (names) {
+                    getAid(names)
+                } else {
+                    layer.msg("请输入代理商", {time: 2000})
+                }
+            });
+        },
+        //保存数据
+        operateSave: function (index) {
+            $('#btn_submit').on("click", function () {
+                //取到当前的viewmodel
+                var oViewModel = operate.DepartmentModel;
+                //将Viewmodel转换为数据model
+                var oDataModel = ko.toJS(oViewModel);
+                $post(urlPrefix + "?r=sms/agent/package-price/update",
+                    {id: oDataModel.id, parentprice: oDataModel.parentprice, price: oDataModel.price},
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg(res.msg, {time: 2000});
+                            tableInit.myViewModel.update(index, oDataModel);
+                            $("#myModal").modal('hide');
+                        } else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    }, function () {
+                        layer.msg("操作失败", {time: 2000})
+                    });
+            })
+        }
+    };
+
+
+    window.operateEvents = {
+        //删除
+        'click #btn_delete': function (e, value, row, index) {
+            layer.confirm('你确定要删除吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=sms/agent/package-price/delete",
+                    {id: row.id},
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('删除成功', {time: 2000});
+                            tableInit.myViewModel.remove(row.id);
+                            getPack(aid)
+                        } else {
+                            layer.msg(res.msg, {time: 2000});
+                        }
+                    }, function () {
+                        layer.msg("删除失败", {time: 2000})
+                    });
+            });
+        },
+        //编辑
+        'click #btn_edit': function (e, value, row, index) {
+
+            $("#myModal").modal().on("shown.bs.modal", function () {
+                //将选中该行数据有数据Model通过Mapping组件转换为viewmodel
+                ko.utils.extend(operate.DepartmentModel, row);
+                ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                operate.operateSave(index);
+            }).on('hidden.bs.modal', function () {
+                //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                ko.cleanNode(document.getElementById("myModal"));
+            });
+        }
+    };
+
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                ajax: ajaxRequest,
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                onRefresh: function () {
+                    $("#pname").val("");
+                    $("#ptype").val("");
+                    $("#type").val("");
+                    $("#sce_service_type").val("");
+                },
+                columns: [{
+                    field: 'id',
+                    title: 'ID'
+                }, {
+                    field: 'pname',
+                    title: '套餐名称'
+                    /* ,
+                     events: operateEvents,
+                     formatter: operateForName*/
+                }, {
+                    field: 'type',
+                    title: '套餐类型',
+                    formatter: type
+                }, {
+                    field: 'oname',
+                    title: '供应商'
+                }, {
+                    field: 'package_type',
+                    title: '运营商类型',
+                    formatter: operateForpackage_type
+                }, {
+                    field: 'old_price',
+                    title: '套餐价格:（元）'
+                }, {
+                    field: 'parentprice',
+                    title: '结算价:（元）'
+                }, {
+                    field: 'price',
+                    title: '自主定价:（元）'
+                }, {
+                    field: 'addtime',
+                    title: '添加时间'
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+
+            function operateFormatter(value, row, index) {
+                if (flag_btn) {
+                    return [
+                        '<button id="btn_edit" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>修改' +
+                        '</button>',
+                        '<button id="btn_delete" type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>删除' +
+                        '</button>'
+                    ].join('');
+                }
+            }
+
+            function type(value, row, index) {
+                if (row.type == 1) {
+                    return ["月包"].join('');
+                } else if (row.type == 2) {
+                    return ["季包"].join('');
+                } else if (row.type == 3) {
+                    return ["年包"].join('');
+                } else if (row.type == 4) {
+                    return ["基本套餐"].join('');
+                } else if (row.type == 5) {
+                    return ["半年包"].join('');
+                } else {
+                    return ["未知"].join('');
+                }
+            }
+
+            function operateForpackage_type(value, row, index) {
+                if (row.package_type == 1) {
+                    return ["移动"].join('');
+                } else if (row.package_type == 2) {
+                    return ["电信"].join('');
+                } else {
+                    return ["联通"].join('');
+                }
+            }
+
+            function operateForName(value, row, index) {
+                var package_name = row.package_name;
+                return [
+                    '<a href="javascript:void(0);" id="jumpName" >' + package_name +
+                    '</a>'
+                ].join('');
+            }
+
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+        }
+
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+
+</script>
+
+</html>

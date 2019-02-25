@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no" />
+    <style type="text/css">
+        .main   {width: 100%;}
+        .title  {text-align: center;}
+        img    {margin: 0.2rem;box-sizing: border-box; max-width: 100%}
+        .body   {padding: 0 2%;width: 100%; box-sizing: border-box; overflow: hidden;}
+    </style>
+
+</head>
+<body>
+
+
+
+    <div class="main">
+    	<h3  class='title'></h3>
+        <div class='info'></div>
+        <img class='img'/>
+        <div class='body'></div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/transparency.min.js"></script>
+    <script type="text/javascript">
+  
+        /**
+         * Post
+         *
+         * @param      {<type>}  url     The url
+         * @param      {<type>}  data    The data
+         * @return     {<type>}  { description_of_the_return_value }
+         */
+        var $post = function(url, data){
+            return $.ajax({
+                url:  url,
+                data: data,
+                type: 'post',
+                crossDomain: true,
+                xhrFields: {
+                    withCredentials: true
+                },
+            })
+        }
+
+        /**
+         * Gets the url parameter.
+         *
+         * @param      {string}  module  The module
+         * @return     {<type>}  The url parameter.
+         */
+        var getUrlParam = function(module) {
+            var reg = new RegExp("(^|&)" + module + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg); //匹配目标参数
+            if (r != null) return (r[2]);
+            return null; //返回参数值
+        }
+
+
+        opt = {
+            img:{src: function(){return this.img}}, 
+        }
+
+
+
+        $post('/?r=home/view/index', {id:getUrlParam('id')})
+            .then(function(data){
+                $('.main').render(data.data, opt)
+                $('.body').append($(data.data.content))
+            })
+        $post('/?r=wms/personal/get-openid')
+        	.then(console.log);
+
+    </script>
+</body>
+</html>

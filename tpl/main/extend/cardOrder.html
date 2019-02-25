@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../common/css/withdraw.css">
+    <title>详细订单</title>
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/mobileCommon.js"></script>
+    <script src="../../common/js/transparency.min.js"></script>
+    <script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+
+</head>
+<body>
+<div class="weui-msg">
+    <div class="weui-msg__icon-area">
+        <img src="../../static/img/card.png" alt="">
+    </div>
+    <div class="weui-msg__text-area">
+        <h1 class="weui-msg__title">我的卡片</h1>
+    </div>
+    <div class="weui-form-preview__hd">
+        <label class="weui-form-preview__label">订单号</label>
+        <span  class="weui-form-preview__value" data-bind="orderid"></span >
+    </div>
+    <div class="weui-form-preview__hd hidden snames">
+        <label class="weui-form-preview__label">收件人</label>
+        <span  class="weui-form-preview__value" data-bind="sname"></span >
+    </div>
+    <div class="weui-form-preview__hd">
+        <label class="weui-form-preview__label">收货地址</label>
+        <span class="weui-form-preview__value">
+            <span data-bind="province"></span >
+            <span data-bind="city"></span >
+            <span data-bind="area"></span >
+            <span data-bind="address"></span >
+        </span >
+    </div>
+    <div class="weui-form-preview__hd">
+        <label class="weui-form-preview__label">创建时间</label>
+        <span  class="weui-form-preview__value" data-bind="addtime"></span >
+    </div>
+    <div class="weui-form-preview__hd">
+        <label class="weui-form-preview__label">状态</label>
+        <span  class="weui-form-preview__value" data-bind="status"></span >
+    </div>
+    <div class="weui-form-preview__hd Cnames hidden">
+        <label class="weui-form-preview__label">快递公司</label>
+        <span  class="weui-form-preview__value Cname" data-bind="Cname"></span >
+    </div>
+    <div class="weui-form-preview__hd Cnumbers hidden">
+        <label class="weui-form-preview__label">快递单号</label>
+        <span  class="weui-form-preview__value Cnumber" data-bind="Cnumber"></span >
+    </div>
+    <div class="weui-msg__opr-area sec_btn hidden">
+        <p class="weui-btn-area">
+            <a href="javascript:;" class="weui-btn weui-btn_primary sec">查询物流</a>
+        </p>
+    </div>
+    <div class="weui-msg__extra-area">
+        <div class="weui-footer">
+            <p class="weui-footer__text">Copyright © 2008-2016 流量沟通100</p>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $post('?r=wms/extension/get-order-info',{id:getUrlParam('id')},function(res){
+        if (res.data.status == 2) {res.data.status = '已支付';}
+        if (res.data.status == 3) {res.data.status = '已发货';}
+        if (res.data.status == 4) {res.data.status = '完成';}
+        $('.weui-msg').render(res.data);
+        if(res.data.sname){$(".snames").removeClass('hidden')}
+        if(res.data.Cname){
+            $(".Cnames").removeClass('hidden');
+            $(".Cnumbers").removeClass('hidden');
+            $(".sec_btn").removeClass('hidden')
+        }
+    });
+    $(".sec").click(function(){
+        $(".sec").text('查询中');
+        var cname;
+        if($(".Cname").text()=='圆通'){
+             cname = 'yuantong'
+        }else{
+            cname = 'shunfeng'
+        }
+        location.href = 'https://m.kuaidi100.com/index_all.html?type=' +cname+
+            '&postid=' +$(".Cnumber").text()+
+            '&callbackurl=' +urlPrl + "/coolfish/tpl/main/extend/home.html";
+    })
+</script>
+</html>

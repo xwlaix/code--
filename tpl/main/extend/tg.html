@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <link rel="stylesheet" href="../../static/css/mtV2.css"/>
+    <link rel="stylesheet" href="../../static/css/wxMobileV2.css"/>
+    <link rel="stylesheet" href="../../static/css/record.css"/>
+    <title> 推广专属二维码 </title>
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/mobileCommon.js"></script>
+
+    <script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+
+</head>
+<body>
+<div class="erweima_box">
+    <img src="../../static/img/tg.png" id="bg" alt="">
+    <div id="erweima">
+        <img src="" alt="">
+    </div>
+</div>
+</body>
+<script>
+    var id = getUrlParam('id'),aid = getUrlParam('aid');
+    if(sessionStorage.getItem("needtg")=='true'){
+        $("#erweima img").attr('src',sessionStorage.getItem("src"))
+    }else{
+        $get('?r=wms/extension/obtaincard&id='+51+"&aid="+aid,function (res) {
+            if(res.code==1){
+                sessionStorage.setItem("needtg", true);
+                sessionStorage.setItem("src", res.data);
+                $("#erweima img").attr('src',res.data)
+            }
+        })
+    }
+</script>
+</html>

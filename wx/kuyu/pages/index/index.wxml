@@ -1,0 +1,33 @@
+<view class="wrap">
+    <view class="logo">
+        <image class="image" mode="aspectFit" src="../../image/logo.jpg">
+        </image>
+    </view>
+    <view class="bindCardMain">
+        <view class="cardNoArea">
+            <label class="card_label">
+                卡号
+            </label>
+            <text class="icon-saoyisao" id="scanQRCode">
+            </text>
+            <view class="card_wrap">
+                <input auto-focus="" bindconfirm="search" bindinput="getCard" bindfocus='showlist' confirm-type="search" id="card_no" placeholder="请输入流量卡号" type="text" value="{{card_no}}"/>
+            </view>
+        </view>
+        <block wx:if='{{focus}}'>
+            <view class="FuzzySearch" >
+            <view class="list">
+                <view class="card" wx:for="{{cards}}" data-value="{{item.card}}" bindtap='getHistory'>
+                    {{item.card}}
+                </view>
+            </view>
+        </view>
+        </block>
+        <button bindtap="bindCard" id="bindCard">
+            查询
+        </button>
+        <view class="tips">
+            点击输入卡号右侧 "扫一扫" 图标，可直接扫码查询
+        </view>
+    </view>
+</view>

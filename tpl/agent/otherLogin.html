@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=11">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>酷鱼互动管理系统</title>
+    <link rel="shortcut icon" href="/kuyu/tpl/static/img/favicon.ico" />
+    <link rel="stylesheet" href="/kuyu/tpl/common/css/accordion.css">
+    <link rel="stylesheet" href="/kuyu/tpl/common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/kuyu/tpl/static/css/login_pc.css">
+
+    <script src="/kuyu/tpl/common/js/jquery-3.1.1.min.js"></script>
+    <script src="/kuyu/tpl/common/js/layer/layer.js"></script>
+    <script src="/kuyu/tpl/static/js/Department.js"></script>
+</head>
+<body class="bj2">
+<div class="warp">
+    <div class="login_title hidden-xs hidden-sm col-md-3 col-md-offset-2 ">
+        <img src="/kuyu/tpl/static/img/logo.png" class="center-block" alt="">
+        <div class="info">
+            <span class="first">浩瀚物联</span>
+            <span>一起畅游</span>
+        </div>
+    </div>
+    <div class="login_title_sm  visible-xs ">
+        <img src="/kuyu/tpl/static/img/logo.png" class="center-block" alt="">
+    </div>
+    <div class="login_main  col-md-3 col-md-offset-7 col-xs-8 col-xs-offset-2">
+        <div class="login_from">
+            <div class="from-title text-center">
+                帐号密码登录
+            </div>
+            <div class="login_input login_input_name">
+                <input type="text" name="account" id="otherID" placeholder="请输入代理商id">
+                <span class="glyphicon glyphicon-user"></span>
+            </div>
+            <div class="login_btn">登录</div>
+        </div>
+    </div>
+</div>
+<footer id="footer" class="foot-account">
+    <div class="container ">
+        <div class="row hidden-xs">
+            <div class=" center-block text-center">
+                Copyright © 2017.深圳市酷鱼互动科技有限公司 版权所有
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+<script>
+    //加载验证码
+
+    //点击刷新验证码
+
+
+    $(document).ready(function() {
+
+        //点击登陆判断
+        $(".login_btn").on('click',function () {
+            if($("#otherID").val()){
+                $post(urlPrefix+'?r=ems/tao-test&id='+$("#otherID").val());
+                                window.location.href = '/coolfish/tpl/agent/index.html';
+            }
+        });
+        //	    回车键登录
+        $(document).keydown(function (e) {
+            if (e.keyCode === 13) {
+                $(".login_btn").click()
+            }
+        })
+    })
+
+</script>
+</html>

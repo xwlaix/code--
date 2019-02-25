@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../static/css/homeAgent.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/echarts.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <style>
+        *{
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        li{
+            height: 25px;
+            line-height: 25px;
+        }
+        #three{
+            margin: 30px auto;
+            overflow: hidden;
+            border: 1px solid blue;
+            height: 127px;
+            width: 200px;
+        }
+        #three ul{
+            margin-top: 125px;
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+<div class="l-tab-content">
+    <div class="l-tab-content-item" tabid="index">
+        <div class="home cf">
+            <div class="home-main-item left">
+                <div class="home-main">
+                    <div class="home-goodsMsg">
+                        <div class="home-goodsMsg-wrap">
+                            <ul class="goodsMsg-dtl cf" >
+                                <li class="panel hide firstLi">
+                                    <span class="name">卡片总数（张）</span>
+                                    <div class="number" data-number="0"></div>
+                                </li>
+                                <li class="panel hide secondLi">
+                                    <span class="name">账户余额（元）</span>
+                                    <div class="number" data-number="0"></div>
+                                </li>
+                                <li style=""
+                                    class="panel hide thirdLi">
+                                    <span class="name">本月收入（元）</span>
+                                    <div class="number" data-number="0"></div>
+                                </li>
+                                <li class="panel hide forthLi">
+                                    <span class="name">本月佣金（元）</span>
+                                    <div class="number" data-number="0"></div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="home-charts panel">
+                        <div class="header cf">
+                            <div class="title left">
+                                <div class="tab">
+                                    <ul>
+                                        <li id="0" class="cur">卡片统计</li>
+                                        <li id="1">充值统计</li>
+                                        <li id="2">佣金统计</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="home-myCharts" >
+                            <div class="home-stock">
+                                <div class="home-stock-warp">
+                                    <div id="cmcc"></div>
+                                    <div class="cmcc_legend">
+                                        <span><span></span>待激活<span></span>张</span>
+                                        <span><span></span>正常<span></span>张</span>
+                                        <span><span></span>停机<span></span>张</span>
+                                        <span><span></span>其他<span></span>张</span>
+                                    </div>
+                                    <div id="cucc"></div>
+                                    <div class="cmcc_legend">
+                                        <span><span></span>待激活<span></span>张</span>
+                                        <span><span></span>正常<span></span>张</span>
+                                        <span><span></span>停机<span></span>张</span>
+                                        <span><span></span>其他<span></span>张</span>
+                                    </div>
+                                    <div id="ctcc"></div>
+                                    <div class="cmcc_legend">
+                                        <span><span></span>待激活<span></span>张</span>
+                                        <span><span></span>正常<span></span>张</span>
+                                        <span><span></span>停机<span></span>张</span>
+                                        <span><span></span>其他<span></span>张</span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="home-stock" style="display: none;">
+                                <div id="recharge"></div>
+                            </div>
+                            <div class="home-stock" style="display: none;">
+                                <div id="commission"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="home-auxiliary-item left">
+                <div class="home-notice panel">
+                    <div id="three">
+                        
+                        <ul class="home-noticeWrap">
+
+                        </ul>
+                        <span class="home-sticky"></span></div>
+                </div>
+                <div class="home-common panel agent">
+                    <div class="home-title">
+                        <div class="tab">
+                            <ul>
+                                <li class="cur">本月充值排名</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="home-content">
+                        <div class="commission detail">
+                            <div>
+                                <ul id="list_top">
+                                    <li><span>排名</span><span>代理商</span><span>充值金额（元）</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/html" id="list">
+    {{each list as value index}}
+    {{if index < 11}}
+        <li>
+            <span>TOP{{index+1}}</span><span>{{value.name}}</span><span>{{value.value}}</span>
+        </li>
+    {{/if}}
+    {{/each}}
+</script>
+<script type="text/html" id="announce">
+    {{each list as value index}}
+        {{if index < 3}}
+            <li class="islink" data-bind="{{value.id}}">
+               {{index+1}}.{{value.tetle}}
+            </li>
+        {{/if}}
+       {{if index == 3}}
+        <!--<a class="lookMore">查看全部</a>-->
+       {{/if}}
+    {{/each}}
+</script>
+<script>
+    var accountMoney,commissionMoney;
+    var myDate = new Date(),month = myDate.getMonth(); //获取当前月份(0-11,0代表1月)
+    //    柱状图
+    var bar = {
+        color: ['#3398DB'],
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            },
+            formatter: '{b0}: {c0}'+"元"
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: [
+            {
+                type: 'category',
+                data: [],
+                axisTick: {
+                    alignWithLabel: true
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value'
+            }
+        ],
+        series: [
+            {
+                type: 'bar',
+                barWidth: '60%',
+                data: []
+            }
+        ]
+    };
+
+    //滚动公告
+    function dd(){
+        //每一秒减去25px----->一个li的高度
+        //linear----->滚动更加流畅
+        $('#three ul').animate({marginTop:'-=25px'},1000,"linear",function(){
+            var top = $('#three ul').attr('style');
+            //当有一个li出去时改变top值并克隆第一个li在ul内部进行追加
+            if(top=='margin-top: -25px;'){
+                $('#three ul').attr('style','margin-top: 0px;');
+                $("#three ul li:first").remove().clone(true).appendTo("#three ul");
+            }
+        });
+    }
+
+    $(".agent").click(function () {
+        $(window.parent.document.getElementById("agent").click());
+    });
+    $get(urlPrefix + "?r=ems/agent/get-info", function (res) {
+        $(".secondLi").children(".number").text(res.data.money||'0.00')
+    });
+    //本月收入
+    $post(urlPrefix+"?r=ems/finance/order/get-data",{type:'month-money'},function(res){
+        $(".thirdLi").click(function(){
+            $(window.parent.document.getElementById("order").click());
+        }).children(".number").text(res.data[0]||'0.00')
+    });
+//    本月充值排名
+    $post(urlPrefix+"?r=ems/finance/order/get-data",{type:'month-sonMoney'},function(res){
+        var data = binTu(res.data).sort(function(a,b){
+            return b.value - a.value;
+        });
+        var datas ={list:data};
+        $("#list_top").append(template('list', datas))
+    });
+
+    //加载公告
+    $get(urlPrefix+"?r=ems/notice/get-all",function(res){
+        $(".home-noticeWrap").append(template('announce', {list:res.data.rows}))
+            .on('click','li',function(){
+                layer_open('查看公告','announce.html?id='+$(this).data('bind'))
+        }).on('click','.lookMore',function(e){
+            e.stopPropagation();
+            layer_open('查看全部','announceMore.html')
+        })
+        var int = setInterval(dd,1000);
+        $('#three').hover(function(){
+            clearInterval(int);
+        },function(){
+            int = setInterval(dd,1000);
+        });
+    });
+//    卡片总数
+    $post(urlPrefix+'?r=ems/data/get-card-count',{type:"card_status"},function (data) {
+        var num = 0;
+        for (var i in data.data) {
+            num += data.data[i]
+        }
+        $(".firstLi").click(function(){
+            $(window.parent.document.getElementById("card").click());
+        }).children(".number").text(num)
+    });
+    $post(urlPrefix+"?r=ems/data/get-agent-commission",{type:'month'},function(res){
+        $(".forthLi").click(function(){
+            $(window.parent.document.getElementById("order").click());
+        }).children(".number").text(res.data[month+1+'月']);
+        commissionMoney = zhexianTu(res.data,'',true);
+    });
+    $post(urlPrefix+'?r=ems/data/get-card-account-count',
+        {value:"money",data:"month"},
+        function (data) {
+            accountMoney = zhexianTu(data.data);
+        });
+//    var reg = /[a-zA-Z]/g;
+    $(".tab ul li").click(function () {
+        var This = $(this);
+        This.addClass('cur').siblings().removeClass('cur');
+        $(".home-myCharts").children().eq(This.attr("id")).show().siblings().hide();
+        if (This.attr("id") == 1) {
+            var recharge = echarts.init(document.getElementById('recharge'));
+            recharge.setOption(bar);
+            recharge.setOption({
+                xAxis: {
+                    data: accountMoney[0]
+                },
+                series: [{
+                    name:"充值总额",
+                    // 根据名字对应到相应的系列
+                    data: accountMoney[1]
+                }]
+            });
+            setTimeout(function () {
+                window.onresize = function () {
+                    recharge.resize();
+                }
+            }, 1500);
+        }
+        if (This.attr("id") == 2) {
+            var commission = echarts.init(document.getElementById('commission'));
+            // 基于准备好的dom，初始化echarts实例
+            commission.setOption(bar);
+            commission.setOption({
+                xAxis: {
+                    data: commissionMoney[0]
+                },
+                series: [{
+                    name:"佣金总额",
+                    // 根据名字对应到相应的系列
+                    data: commissionMoney[1]
+                }]
+            });
+            setTimeout(function () {
+                window.onresize = function () {
+                    commission.resize();
+                }
+            }, 1500);
+        }
+
+
+    });
+    var cmcc = echarts.init(document.getElementById('cmcc')),
+        cucc = echarts.init(document.getElementById('cucc')),
+        ctcc = echarts.init(document.getElementById('ctcc')),
+        cmccImg = '../../static/img/cmcc-logo.png',
+        cuccImg = '../../static/img/unicom-logo.png',
+        ctccImg = '../../static/img/chinanet-logo.png';
+
+    // 显示标题，图例和空的坐标轴饼图
+    options = {
+        graphic: {
+            elements: [{
+                type: 'image',
+                style: {
+                    image: '',
+                    width: 50,
+                    height: 50
+                },
+                left: '40%',
+                top: '34%'
+            }]
+        },
+        title: {
+            x: '15%',
+            y: '3%'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%) "
+        },
+        legend: {
+            show: false
+        },
+        series: [
+            {
+                legendHoverLink:true,
+                name: '',
+                type: 'pie',
+                center: ['50%', '40%'],
+                radius: ['50%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    normal: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        textStyle: {
+                            fontSize: '30',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        show: false
+                    }
+                }
+            }
+        ],
+//    {1:"待激活",2:"正常",3:"单向停机",4:"停机",5:"预销号",6:"销号",7:"过户",8:"休眠",9:"未知状态"}
+
+        color: ['#5b8fd4', '#47c056', '#f8bb39', '#cccccc']
+
+    };
+
+    cmcc.setOption(options);
+    cucc.setOption(options);
+    ctcc.setOption(options);
+
+    //异步加载数据
+    function load(data) {
+        if (data.code == 0) {
+            return false
+        }
+        if (data.data["3"]) {
+            if (data.data["4"]) {
+                data.data["4"] = data.data["3"] + data.data["4"];
+            } else {
+                data.data["4"] = data.data["3"];
+            }
+        } else {
+            if (data.data["4"]) {
+            } else {
+                data.data["4"] = 0;
+            }
+        }
+        if (data.data["0"]) {
+            if (data.data["9"]) {
+                data.data["9"] = data.data["0"] + data.data["9"];
+            } else {
+                data.data["9"] = data.data["0"];
+            }
+        } else {
+            if (data.data["9"]) {
+            } else {
+                data.data["9"] = 0;
+            }
+        }
+    }
+    function loadNum(res,template){
+        template.next().children().eq(0).children().eq(1).text(res[0]?res[0].value:0);
+        template.next().children().eq(1).children().eq(1).text(res[1]?res[1].value:0);
+        template.next().children().eq(2).children().eq(1).text(res[2]?res[2].value:0);
+        template.next().children().eq(3).children().eq(1).text(res[3]?res[3].value:0);
+    }
+    $post(urlPrefix + '?r=ems/data/get-card-count', {type: "card_status",operator_type:'1'}, function (data) {
+     	load(data);
+        var res = binTu(data.data, {1: "待激活", 2: "正常", 4: "停机",9:"其他"},true),template = $("#cmcc");
+        
+		loadNum(res,template);
+        // 填入数据
+   	
+        cmcc.setOption({
+            graphic: {
+                elements: [{
+                    style: {
+                        image: cmccImg
+                    }
+                }]
+            },
+            title: {
+                text: '移动'
+            },
+            legend: [{
+                data: res
+            }],
+            series: [{
+                name: '移动',
+                // 根据名字对应到相应的系列
+                data: res
+            }]
+        });
+    });
+    $post(urlPrefix + '?r=ems/data/get-card-count', {type: "card_status",operator_type:'3'}, function (data) {
+        var res = binTu(data.data, {1: "待激活", 2: "正常", 4: "停机",9:"其他"}),template = $("#cucc");
+        loadNum(res,template);
+        // 填入数据
+        load(data);
+        cucc.setOption({
+            graphic: {
+                elements: [{
+                    style: {
+                        image: cuccImg
+                    }
+                }]
+            },
+            title: {
+                text: '联通'
+            },
+            legend: [{
+                data: res
+            }],
+            series: [{
+                name: '联通',
+                // 根据名字对应到相应的系列
+                data: res
+            }]
+        });
+    });
+    $post(urlPrefix + '?r=ems/data/get-card-count', {type: "card_status",operator_type:'2'}, function (data) {
+        var res = binTu(data.data, {1: "待激活", 2: "正常", 4: "停机",9:"其他"}),template = $("#ctcc");
+        loadNum(res,template);
+        // 填入数据
+        load(data);
+        ctcc.setOption({
+            graphic: {
+                elements: [{
+                    style: {
+                        image: ctccImg
+                    }
+                }]
+            },
+            title: {
+                text: '电信'
+            },
+            legend: [{
+                data: res
+            }],
+            series: [{
+                name:"电信",
+                // 根据名字对应到相应的系列
+                data: res
+            }]
+        });
+    });
+    setTimeout(function () {
+        window.onresize = function () {
+            cmcc.resize();
+            cucc.resize();
+            ctcc.resize();
+        }
+    }, 1500);
+
+</script>
+</html>

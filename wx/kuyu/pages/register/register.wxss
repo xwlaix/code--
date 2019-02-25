@@ -1,0 +1,205 @@
+.TotalContentBox {
+    background: #f0f1f3;
+}
+.Authentication-top {
+    width: auto;
+    background: #fdaa42;
+    padding: 10px;
+}
+.icon-left {
+    width: 30px;
+    height: 40px;
+    float: left;
+    text-align: right;
+    display: inline-block;
+}
+.icon-zhuyi {
+    color: #fff;
+    font-size: 13px;
+    margin-top: 3px;
+    display: block;
+    margin-right: 5px;
+}
+.img,.icon-cankao{
+    height: 130px!important;
+}
+.RightTip {
+    display: inherit;
+    color: rgb(255, 235, 218);
+    font-size: 13px;
+    font-family: 微软雅黑;
+    margin-left: 30px;
+}
+.toast_content_box {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 999;
+}
+.toast_content {
+    width: 50%;
+    padding: 30rpx;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 20rpx;
+}
+.toast_content_text {
+    height: 100%;
+    width: 100%;
+    color: #fff;
+    font-size: 28rpx;
+    text-align: center;
+}
+.Authentication-forms {
+    width: 100%;
+    margin: 0 auto;
+    background: #fff;
+    border-bottom: 1px solid #E7E7E7;
+}
+.ietmOBX {
+    width: 96%;
+    margin: 0 auto;
+    height: 40px;
+    border-bottom: 1px solid #E7E7E7;
+    background: #FFFFFF;
+}
+.name {
+    width: 25%;
+    display: inline-block;
+    line-height: 40px;
+    font-size: 14px;
+    height:100%;
+    font-family: 微软雅黑;
+    color: rgb(0, 0, 0);
+    float: left;
+}
+#password{
+    width: 50%;
+}
+/*.hidden{*/
+    /*display: none!important;*/
+/*}*/
+.text {
+    font-family: 微软雅黑;
+    color: rgb(0, 0, 0);
+    width: 70%;
+    font-size: 14px;
+    display: inline-block;
+    height:100%;
+    border-width: initial;
+    border-style: none;
+    border-color: initial;
+    border-image: initial;
+    background: rgb(255, 255, 255);
+}
+.placeholder{
+    color: #ddd;
+    font-size: 14px;
+}
+.hide {
+    display: none;
+}
+.user-register {
+    line-height: 40px;
+    color: #de1c4d;
+    font-size: 14px;
+}
+.color-danger{
+	color:#f6383a
+}
+.success,.danger {
+    float: right;
+    display: inline-block;
+    line-height: 38px;
+    font-size: 14px;
+    font-family: 微软雅黑;
+}
+.UploadID-BOX {
+    width: 100%;
+    margin-top: 10px;
+    background: #fff;
+    padding-bottom: 10px;
+}
+.UploadID {
+    width: 96%;
+    margin: 0 auto;
+}
+.title {
+    font-family: '微软雅黑';
+    font-size: 14px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: block;
+    color: #000;
+}
+.clearfix {
+    clear: both;
+}
+.box {
+    width: 45%;
+    height: 130px;
+    display: inline-flex;
+    border: 1px dashed #E7E7E7;
+    position: relative;
+    text-align: center;
+}
+.rightBOX {
+    float: right;
+}
+.icon-shagnchuan {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 35px;
+    position: absolute;
+    left: 50%;
+    margin-left: -25px;
+    top: 50%;
+    margin-top: -35px;
+    color: #d5d9dc;
+    z-index: 50;
+}
+.shangchuan {
+    left: 0;
+    width: 100%;
+    position: absolute;
+    bottom: 21px;
+    font-size: 14px;
+    color: #d5d9dc;
+}
+.Authentication-footer {
+    width: 96%;
+    text-align: center;
+    font-size: 16px;
+    color: rgb(255, 255, 255);
+    font-family: 微软雅黑;
+    padding: 11px 0;
+    margin: 20px auto 0;
+    background: rgb(50, 163, 239);
+    border-radius: 6px;
+}
+.toast_content_box {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 999;
+}
+.toast_content {
+    width: 50%;
+    padding: 20rpx;
+    background: rgba(0, 0, 0, .65);
+    border-radius: 8rpx;
+}
+.toast_content_text {
+    height: 100%;
+    width: 100%;
+    color: #fff;
+    font-size: 28rpx;
+    text-align: center;
+} 

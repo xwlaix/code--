@@ -1,0 +1,396 @@
+<template>
+  <view class="main-detail">
+    <view class="weui-panel">
+      <block wx:if="{{banners && banners.length}}">
+        <view class="detail-cover">
+        </view>
+      </block>
+      <block wx:else>
+        <image src="{{book.image|| img_banner}}" class="detail-cover" mode="aspectFit"/>
+      </block>
+      <view class="weui-media-box weui-media-box_text weui-cells_in-small-appmsg">
+        <view class="h3 color-333">{{book.name}}</view>
+        <view class="detail-info">
+          <view>书名：{{book.title}}</view>
+          <view>作者：{{book.author}}</view>
+          <view>出版社：{{book.publisher}}</view>
+          <view>出版时间：{{book.pubdate}}</view>
+          <view>分类：{{book.sort.name}}</view>
+          <view>ISBN编码：{{book.isbn}}</view>
+          <view class="font_32">所属书房：{{book_library.library.name}}</view>
+          <!--<view class="icon-edit">-->
+            <!--<image class="" src="../../images/icon/icon-edit.png" />-->
+          <!--</view>-->
+        </view>
+        <view class="detail-tags">
+          <text wx:for="{{book.tags}}" wx:key="index" wx:for-item="tag" class="tag">{{tag}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="weui-panel">
+      <view class="weui-media-box weui-media-box_text">
+          <view class="detail-desc-title">简介：</view>
+          <view class="detail-desc">
+            <block wx:for="{{description}}" wx:key="index" wx:for-item="desc">
+              <view class="detail-text" wx:if="{{desc.type === 'text'}}">{{book.summary}}</view>
+              <image wx:elif="{{desc.type === 'image'}}" class="detail-image"
+               src="{{desc.value || img_banner}}" mode="widthFix"/>
+            </block>
+          </view>
+      </view>
+    </view>
+    <view wx:if="{{book.book_libraries.length>0}}" class="weui-panel weui-panel_access">
+      <view class="weui-panel__hd">
+        其他馆藏
+      </view>
+      <view class="weui-panel__bd">
+         <view wx:for="{{book.book_libraries}}" wx:key="id" url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+             <view class="weui-media-box__hd weui-media-box__hd_in-appmsg" @tap="link({{item.library_id}},{{item.book_id}},{{item.member}})">
+                 <image class="weui-media-box__thumb" src="{{item.library.logo}}" mode="aspectFit" />
+             </view>
+             <view class="weui-media-box__bd weui-media-box__bd_in-appmsg" @tap="link({{item.library_id}},{{item.book_id}},{{item.member}})">
+                <view class="weui-media-box__title">{{item.library.name}}</view>
+                <view class="weui-media-box__desc">册数：共{{item.num}}册<span wx:if="{{item.lent_num}}">(已借出{{item.lent_num}}册)</span></view>
+                <view class="weui-media-box__desc" wx:if="{{item.library.intro}}">{{item.library.intro}}</view>
+             </view>
+           <!--<view>-->
+             <!--<button class="weui-btn mini-btn" @tap="toAdd({{book}}, {{item}})" type="primary" size="mini" style="float:right;margin-left: 12rpx;">借阅 {{item.lent_num}}/{{item.num}}</button>-->
+           <button class="weui-btn mini-btn btn-blue_l" @tap="goto('/pages/book/detail?id={{item.book_id}}&library_id={{item.library_id}}')" type="primary" size="mini" style="float:right;margin-left: 12rpx;">借阅 {{item.lent_num}}/{{item.num}}</button>
+
+           <!--</view>-->
+           <!--<view>-->
+             <!--<button class="weui-btn mini-btn" @tap="goto('/pages/book/comment?id={{book.id}}')" type="primary" size="mini" style="float:right" disabled>已借阅</button>-->
+           <!--</view>-->
+           <!--<view class="weui-cell__ft weui-cell__ft_in-access"></view>-->
+         </view>
+      </view>
+    </view>
+    <view class="weui-panel weui-panel_access">
+      <view class="weui-panel__hd">
+        图书评论
+        <!--<button class="weui-btn mini-btn" @tap="goto('/pages/book/comment?id={{book.id}}')" type="primary" size="mini" style="float:right">写评论</button>-->
+        <!--<button  class="weui-btn mini-btn" @tap="goto('/pages/library/book_edit?id={{book.id}}&library_id={{library_id}}')" type="danger" size="mini" style="float:right;margin-right: 12rpx" >编辑</button>-->
+        <view class="clearfloat"></view>
+      </view>
+      <view class="weui-panel__bd">
+         <navigator wx:for="{{book.comments}}" wx:key="id" url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+             <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+                 <image class="weui-media-box__thumb" src="{{item.user.wechat.avatar}}" />
+             </view>
+             <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+                 <view class="weui-media-box__title">{{item.user.name}}</view>
+                 <view class="weui-media-box__info">{{item.comment}}</view>
+             </view>
+         </navigator>
+      </view>
+      <view class="weui-panel__ft">
+         <navigator class="weui-cell weui-cell_access weui-cell_link" url="/pages/book/comments?id={{book.id}}">
+             <view class="weui-cell__bd">更多评论</view>
+             <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+         </navigator>
+      </view>
+      <view class="comment_btn" @tap="goto('/pages/book/comment?id={{book.id}}')">
+        <image class="" src="../../images/icon/icon-comment.png" />
+      </view>
+    </view>
+    <view style="height: 120rpx;"></view>
+    <view style="position: fixed; left: 0;bottom: 0;width: 100%;" wx:if="{{book_library !== null}}">
+      <button class="weui-btn btn-blue_l" @tap="toAdd({{book_library}}, {{book_library}})" type="primary" style="margin: 22rpx;">借阅 {{book_library.lent_num}}/{{book_library.num}}</button>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { service } from '../../config.js'
+  import http from '../../mixins/http'
+  import base from '../../mixins/base'
+  // import cart from '../../mixins/cart'
+  import user from '../../mixins/user'
+  import Screen from '../../components/screen'
+  import ShareMessage from '../../mixins/ShareMessage'
+
+  export default class mainDetail extends wepy.page {
+    mixins = [base, http, user, ShareMessage]
+    config = {
+      navigationBarTitleText: '图书详情'
+    }
+    data = {
+      img_banner: '',
+      icon_star: '/images/icon/icon-star@2x.png',
+      icon_star_active: '/images/icon/icon-star-active@2x.png',
+      icon_shelf: '/images/tabbars/icon-shelf@2x.png',
+      navigate: false,
+      book: {},
+      id: 0,
+      library_id: 0,
+      title: '',
+      book_library: []
+    }
+
+    computed = {
+      banners () {
+        return this.getArray(this.book && this.book.images)
+      },
+      description() {
+        const desc = this.book && this.book.desc
+        return desc || [{
+          type: 'text',
+          value: '暂无图书简介'
+        }]
+      },
+      isCollect() {
+        return Boolean(this.book && +this.book.collected)
+      }
+    }
+
+    onLoad(query) {
+      this.book.id = query.id
+      if (query && query.library_id) {
+//        debugger
+        this.library_id = query.library_id
+      }
+      this.$apply()
+      this.book.title = query && query.title
+    }
+    onShareAppMessage(res) {
+      return this.$parent.onShareAppMessage(this.config.navigationBarTitleText)
+    }
+    onShow() {
+      this.initPageData()
+      // google analytics
+      this.$parent.getTracker(this.$root.$name, this.config.navigationBarTitleText)
+    }
+
+    onPullDownRefresh() {
+      this.initPageData()
+    }
+
+    // 初始化页面数据
+    initPageData() {
+      // 请求图书详情
+      this.getDetail()
+    }
+
+    // 获取图书信息
+    getDetail() {
+      // 获取图书详情
+      let data = {}
+      if (this.library_id) {
+        data = {
+          library_id: this.library_id
+        }
+      }
+      this.$get({url: service.books + '/' + this.book.id + '/v2', data}, {
+        success: ({code, data}) => {
+          this.book = data
+          this.book_library = data.book_library
+//          this.library_id = data.library_book.library_id
+//          debugger
+        }
+      })
+
+      // 获取书架状态，优化本页交互
+      // const ids = this.getCartList().filter(({good}) => good).map(({good}) => this.getString(good.id))
+      // 标识本商品已存在书架中
+      /* if (ids.indexOf(this.getString(this.book.id)) > -1) {
+        this.book.exist = 1
+      } */
+      // 切换展示库存: 0/1
+      // this.book.stock = Math.abs(this.book.stock - 1)
+
+      // ===== 随机示例：借完 -> 已加 -> 可借 -> 借完~ =====
+      // const stock = this.book.stock
+      // const exist = this.book.exist
+      // this.book.stock = exist
+      // this.book.exist = (stock + exist) % 2
+
+      // 停止下拉状态
+      wx.stopPullDownRefresh()
+    }
+
+    methods = {
+      link(_id, bookid, member) {
+//        if (member && member.status == 'ADMIN') {
+//          wx.navigateTo({url: '/pages/library/book?library_id=' + _id + '&id=' + bookid})
+//        } else {
+//          console.log(bookid)
+        wx.navigateTo({url: '/pages/library/library?id=' + _id})
+//        }
+      },
+      toStar() {
+        // 将要发生的收藏动作
+        const newType = this.isCollect ? 0 : 1
+        const newTypeText = newType ? '添加' : '取消'
+
+        // 根据业务接口处理数据
+        // this.$post({url: service.collect, data: {}}, {
+        //   success: ({code, data}) => {},
+        //   fail: ({code, data}) => {}
+        // })
+
+        // ===== 以下随机示例 =====
+        // 重置本书收藏状态
+        this.book.collected = newType
+        wx.showToast({
+          title: `${newTypeText}收藏！`,
+          icon: 'success',
+          duration: 1000
+        })
+      },
+      toBorrow() {
+        // 查看书架
+        wx.switchTab({url: '/pages/borrow'})
+      },
+      goto(url) {
+        // url jump
+        wx.navigateTo({url: url})
+      },
+      toAdd(book, item) {
+        if (item.member) {
+          var that = this
+          wx.showModal({
+            title: '借阅确认',
+            content: '是否借阅该本书？',
+            showCancel: true,
+            success: function(res) {
+              if (res.confirm) {
+                that.$post({url: service.libraries + '/' + item.library_id + '/books/' + book.book_id + '/reserve'}, {
+                  success: ({code, data}) => {
+//                    wx.showModal({
+//                      title: '预约借书成功',
+//                      content: '请找管理员取书！'
+//                    })
+                    wx.redirectTo({
+                      url: '/pages/user/borrows'
+                    })
+                    that.library_id = item.library_id
+                    that.$apply()
+                    that.getDetail()
+                  }
+                })
+              }
+            }
+          })
+        } else {
+          wx.showModal({
+            title: '提示',
+            content: '你还不是该书房的会员...',
+            showCancel: true,
+            confirmText: '去申请',
+            success: function(res) {
+              if (res.confirm) {
+                wx.navigateTo({url: '/pages/library/library?id=' + item.library_id})
+              }
+            }
+          })
+        }
+      }
+    }
+    components = {
+      Screen
+    }
+  }
+</script>
+
+<style lang="less">
+@import "../../styles/custom/fn.less";
+
+.main-detail{
+
+  .detail-cover{
+    display: block;
+    margin: 40rpx auto 0;
+  }
+  .detail-tags{
+    .h4();
+    padding: 0.4em 0;
+  }
+
+  .detail-desc-title{
+    .h4();
+    color: #ccc;
+    // margin-bottom: 0.5em;
+  }
+  .detail-info,
+  .detail-desc{
+    color: #aaa;
+    font-size: 12px;
+    line-height: 1;
+    // line-height: 0;
+    padding: 0.5em 0;
+    overflow: hidden;
+    text-align: center;
+  }
+  .detail-info,
+  .detail-text{
+    text-align: left;
+    line-height: 1.5;
+  }
+  .detail-text{
+    // text-indent: 2em;
+    & + .detail-image{
+      margin-top: 0.5em;
+    }
+  }
+  .detail-image{
+    width:100%;
+    // margin: 0.5em 0;
+    & + .detail-text{
+      margin-top: 0.5em;
+    }
+  }
+
+  .btn-flex-1{
+    padding: 0;
+    width: 3.5em;
+    line-height: 1.6;
+    overflow: hidden;
+  }
+  .btn-flex-full{
+    flex: 1 1 auto;
+  }
+  .btn-text-bottom{
+    .h5();
+    line-height: 1;
+    color: #777;
+  }
+  .clearfloat {clear:both}
+  .comment_btn {
+    width:120rpx;
+    height:120rpx;
+    border-radius:50%;
+    background:-webkit-gradient(linear, 0 0, 0 100%, from(#cfb64c), to(#e690a2));
+    text-align:center;
+    color:white;
+    position:fixed;
+    right:42rpx;
+    bottom:140rpx;
+    box-shadow: -1rpx 6rpx 16rpx #a3a3a3;
+
+  }
+  .comment_btn image{
+    width: 72rpx;
+    height: 82rpx;
+    margin-top: 26rpx;
+  }
+  .comment_btn:active {
+    transform: scale(1.1,1.1)
+  }
+  .icon-edit:active {
+    transform: scale(1.1,1.1)
+  }
+  .icon-edit {
+    float: right;
+    margin: -52rpx 8rpx 6rpx 0rpx;
+    border-radius: 8rpx;
+    box-shadow: -1rpx 6rpx 12rpx #b7b7b7;
+    padding: 0rpx 8rpx;
+  }
+  .icon-edit image{
+    width: 72rpx;
+    height: 68rpx;
+  }
+  }
+</style>

@@ -1,0 +1,20 @@
+.changeList {
+    top: 0 !important;
+    height: 100% !important;
+}
+
+.package_content:after {
+    bottom: 0;
+    border-bottom: 1px solid #e5e5e5;
+    -webkit-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+}
+.weui-media-box__title:nth-of-type(1){
+    font-size: 24px;
+}
+.weui-media-box__title{
+    height:auto!important;
+    line-height:1;
+}

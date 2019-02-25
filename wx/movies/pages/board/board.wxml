@@ -1,0 +1,49 @@
+<view class="container">
+    <view class="slide">
+        <swiper indicator-dots="true" autoplay="true" interval="8000" duration="1000" class='swiper'>
+            <block wx:for="{{ imgUrls }}">
+                <swiper-item>
+                    <image src="{{ item.images.large }}" class="slide-image" mode=''/>
+                    </swiper-item>
+                </block>
+            </swiper>
+        </view>
+        <view class="board">
+          <navigator url='../list/list?type=in_theaters&name='>
+                <view class="btn">
+                  <text>
+                      正在热映
+                  </text>
+                  <image style="" mode="aspectFill" src="../../images/arrowright.png" binderror="" bindload="">
+                  </image>
+              </view>
+          </navigator>
+           <navigator url='../list/list'>
+                <view class="btn">
+                   <text>
+                       即将上映
+                   </text>
+                   <image style="" mode="aspectFill" src="../../images/arrowright.png" binderror="" bindload="">
+                   </image>
+               </view>
+           </navigator>
+           <navigator url='../list/list'>
+                <view class="btn">
+                   <text>
+                       TOP250
+                   </text>
+                   <image style="" mode="aspectFill" src="../../images/arrowright.png" binderror="" bindload="">
+                   </image>
+               </view>
+           </navigator>
+           <navigator url='../list/list'>
+                <view class="btn">
+                   <text>
+                       北美票房榜
+                   </text>
+                   <image style="" mode="aspectFill" src="../../images/arrowright.png" binderror="" bindload="">
+                   </image>
+               </view>
+           </navigator>
+        </view>
+    </view>

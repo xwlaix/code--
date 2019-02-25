@@ -1,0 +1,114 @@
+.table_auto {
+    margin-top: 0;
+}
+
+.table_auto .th-inner {
+    height: 36px;
+    line-height: 36px;
+}
+
+.modal-body {
+    margin-left: 95px !important;
+    position: relative;
+    padding: 15px;
+}
+
+.msgWrap label {
+    width: 90px;
+    white-space: nowrap;
+    margin-bottom: 0;
+    height: 30px;
+    line-height: 30px;
+}
+
+.msgWrap .modal-content div {
+    margin-bottom: 15px;
+}
+
+.msgWrap input[type='text'] {
+    height: 34px !important;
+    width: 150px;
+    background-color: #fff;
+    border: 1px solid #D7D7D7;
+    border-radius: 3PX;
+    padding: 0 2px;
+    line-height: 14PX;
+    font-size: 12px;
+    display: inline-block;
+    box-sizing: border-box;
+    padding-left: 5px;
+    text-indent: 8px;
+}
+
+select {
+    border: 1px solid #D7D7D7;
+    padding: 4px 6px 6px 4px;
+    border-radius: 3px;
+}
+
+.table_auto tr td, .table_auto tr th {
+    padding: 0  3px!important;
+    text-align: center;
+    white-space: nowrap;
+    width: 60px !important;
+    height: 36px !important;
+    line-height: 36px !important;
+}
+
+.table_auto .btn {
+    margin: 3px !important;
+}
+.msgWrap select {
+    width: 150px;
+    height: 34px;
+    line-height: 34px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(215, 215, 215);
+    border-image: initial;
+    padding: 4px 6px 6px 4px;
+    border-radius: 3px;
+}
+.msgWrap .card-group label{
+    width: 58px;
+}
+.msgWrap .card-group div{
+    margin: 10px 0;
+}
+.excel {
+    display: inline-block;
+    vertical-align: bottom;
+    font-size: 12px;
+    line-height: 1.5;
+    padding: 0 12px;
+    border-radius: 3px;
+    margin-right: 10px;
+}
+.excel label {
+    font-weight: normal!important;
+    margin-bottom: 0;
+    height: 34px;
+    line-height: 34px;
+    white-space: nowrap;
+    display: inline-block;
+    max-width: 100%;
+    width: 76px;
+}
+.form-group .import{
+    margin-right: 10px;
+}
+.alert_info:hover {
+    background: rgba(248, 184, 58,0.3);
+}
+.alert_info {
+    font-size: 12px;
+    background: rgba(248, 184, 58,0.2);
+}
+ol {
+    padding: 0;
+    margin: 0 0 0 25px
+}
+.card-group div{
+    float: left;
+    margin-left: 15px!important;
+}

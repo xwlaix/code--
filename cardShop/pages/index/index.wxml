@@ -1,0 +1,110 @@
+<image class="image" mode="widthFix" src="../../image/banner.jpg">
+</image>
+<view class=" weui-dialog--visible weui-width">
+    <view class="weui-dialog__hd cmcc">
+        <strong class="weui-dialog__title" >
+            移动叠加卡
+        </strong>
+    </view>
+    <view class="weui-dialog__bd" style="padding: 0.8em 0.8em 0 0.8em;">
+        <view class="Tip">
+            <view class="RightTip">
+                <p>
+                    零月租
+                </p>
+                <p>
+                    自由叠加
+                </p>
+                <p>
+                    自由实名认证
+                </p>
+                <p>
+                    即插即用
+                </p>
+            </view>
+            <view class="leftPic">
+                <image class="leftImage" mode=" widthFix" src="../../image/cmcc.png">
+                </image>
+            </view>
+        </view>
+    </view>
+    <view class="weui-dialog__ft">
+        <view bindtap="order" class="weui-dialog__btn primary" data-value="cmcc" data-name="移动无限流量卡" hover-class="navigator-hover">
+            <view class="order">
+                立即购买
+            </view>
+        </view>
+    </view>
+</view>
+<view class=" weui-dialog--visible weui-width">
+    <view class="weui-dialog__hd ctcc">
+        <strong class="weui-dialog__title">
+            电信49包100Ｇ
+        </strong>
+    </view>
+    <view class="weui-dialog__bd" style="padding: 0.8em 0.8em 0 0.8em;">
+        <view class="Tip">
+            <view class="RightTip">
+                <p>
+                    每月49元包100G
+                </p>
+                <p>
+                    第一个月60G
+                </p>
+                <p>
+                    第二个月80G
+                </p>
+                <p>
+                    第三个月100G
+                </p>
+            </view>
+            <view class="leftPic">
+                <image class="leftImage" mode=" widthFix" src="../../image/ctcc.png">
+                </image>
+            </view>
+        </view>
+    </view>
+    <view class="weui-dialog__ft">
+        <view bindtap="order" class="weui-dialog__btn primary" data-value="ctcc" hover-class="navigator-hover" data-name="电信49包100Ｇ" >
+            <view class="order">
+                立即购买
+            </view>
+        </view>
+    </view>
+</view>
+<view class=" weui-dialog--visible weui-width">
+    <view class="weui-dialog__hd cucc">
+        <strong class="weui-dialog__title">
+            联通30包无限
+        </strong>
+    </view>
+    <view class="weui-dialog__bd" style="padding: 0.8em 0.8em 0 0.8em;">
+        <view class="Tip">
+            <view class="RightTip">
+                <p>
+                    每月30元全国无限量
+                </p>
+                <p>
+                    视频随时随地尽情看
+                </p>
+                <p>
+                    自由免实名认证
+                </p>
+                <p>
+                    即插即用
+                </p>
+            </view>
+            <view class="leftPic">
+                <image class="leftImage" mode=" widthFix" src="../../image/cucc.png">
+                </image>
+            </view>
+        </view>
+    </view>
+    <view class="weui-dialog__ft">
+        <view bindtap="order" class="weui-dialog__btn primary" data-value="cucc" hover-class="navigator-hover" data-name="联通30包无限" >
+            <view class="order">
+                立即购买
+            </view>
+        </view>
+    </view>
+</view>

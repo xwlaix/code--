@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../static/css/recharge.css?v1.1"/>
+    <link rel="stylesheet" href="../../static/css/mtV2.css?v1.0"/>
+
+    <title>套餐列表</title>
+</head>
+<body style="height:auto" ontouchstart>
+<div class="weui-tab body-margin">
+    <div class="weui-navbar">
+        <a class="weui-navbar__item weui-bar__item--on basic" href="#tab1" id="tab1_title">
+            基本套餐
+            <hr class="active_hengxian">
+        </a>
+        <a class="weui-navbar__item" href="#tab2" id="tab2_title">
+            叠加套餐
+            <hr class="active_hengxian hidden">
+        </a>
+    </div>
+    <div class="weui-tab__bd " id="template">
+        <div id="tab1" class="weui-tab__bd-item weui-tab__bd-item--active add">
+            <div class="rechargeSingleMonthPage" id="tab1_li">
+                <div class="weui-panel__hd package_title"></div>
+            </div>
+        </div>
+        <div id="tab2" class="weui-tab__bd-item">
+            <div class="weui-panel weui-panel_access">
+                <div class="weui-panel__hd package_title hidden title_one">推荐套餐：</div>
+                <div class="weui-panel__bd " id="tab2_spec">
+
+                </div>
+            </div>
+            <div class="weui-panel weui-panel_access margin">
+                <div class="weui-panel__hd package_title "></div>
+                <div class="weui-panel__bd" id="tab2_normal">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="goPage">
+    <div type="button" id="nextRecharge" class="hidden">预购套餐</div>
+    <div type="button" id="goRecharge">确认续费</div>
+</div>
+<script type="text/html" id="special">
+    <div class="content-renzheng content-renzheng_left ">
+        <div class="content-dangqian content-dangqian_left">
+            <div class="content-dangqian-list">
+                <div class="packageInfo" style="margin: 5px 0;">
+                    <div class=" packagename titleBOX" data-bind="packagename">{{name}}</div>
+                    <div style="color: #959595; font-size: 13px;" class="titleBOX left_info">
+                        本套餐流量适用于国内2G/3G/4G网络流量（不含港澳台地区），当月开通一次到账，月底清零，次月从账户中扣取套餐费。可叠加。
+                    </div>
+                </div>
+            </div>
+            <div class="info_right">
+                <div class="right">
+                    <div class="right_price">
+                        <span class="saleAfter ">￥<span data-bind="price" class="prices">{{price}}</span></span><br>
+                        <span class="saleBefore ">￥<span data-bind="old_price">{{old_price}}</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="packageId hidden" data-bind="id">{{id}}</div>
+    </div>
+</script>
+<script type="text/html" id="spec">
+    {{each list as value index}}
+    <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg package_content">
+        <div class="special">特惠
+            <div></div>
+        </div>
+        <div class="choose hidden">
+            <img src="../../static/img/check.png" alt="">
+        </div>
+        {{if value.flow == '∞'}}
+        <div class="weui-media-box__hd flow infinite">
+            {{value.flow}}
+        </div>
+        <div class="weui-media-box__bd">
+            <h4 class="weui-media-box__title">{{value.name}}
+                <span class="weui-media-box__desc">
+                  （{{value.usetime}}）
+                </span>
+            </h4>
+            <div class="price"><span class="yuan">￥</span><span class="prices">{{value.price}}</span></div>
+            <p class="weui-media-box__desc old_price">￥{{value.old_price}}</p>
+        </div>
+        {{/if}}
+        {{if value.flow != '∞'}}
+        <div class="weui-media-box__hd flow ">
+            {{value.flow}}
+        </div>
+        <div class="weui-media-box__bd">
+            <h4 class="weui-media-box__title">{{value.name}}
+                <span class="weui-media-box__desc">
+                    （{{value.usetime}}）
+                </span>
+            </h4>
+            <div class="price"><span class="yuan">￥</span><span class="prices">{{value.price}}</span></div>
+            <p class="weui-media-box__desc old_price">￥{{value.old_price}}</p>
+        </div>
+        {{/if}}
+
+        <div class="packageId hidden">{{value.id}}</div>
+        <div class="packageNum hidden">{{value.count}}</div>
+    </a>
+    {{/each}}
+</script>
+<script type="text/html" id="normal">
+    {{each list as value index}}
+    {{if value.is_dis == 1}}
+    <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg package_content">
+        {{if value.sort == 88}}
+        <div class="special">推荐
+            <div></div>
+        </div>
+        {{/if}}
+        <div class="choose hidden">
+            <img src="../../static/img/check.png" alt="">
+        </div>
+        {{if value.flow == '∞'}}
+        <div class="weui-media-box__hd flow infinite">
+            {{value.flow}}
+        </div>
+        <div class="weui-media-box__bd">
+            <h4 class="weui-media-box__title">{{value.name}}
+                <span class="weui-media-box__desc">
+                    （{{value.usetime}}）
+                </span>
+            </h4>
+            <div class="price"><span class="yuan">￥</span><span class="prices">{{value.price}}</span></div>
+            <p class="weui-media-box__desc old_price">￥{{value.old_price}}</p>
+        </div>
+        {{/if}}
+        {{if value.flow != '∞'}}
+        <div class="weui-media-box__hd flow ">
+            {{value.flow}}
+        </div>
+        <div class="weui-media-box__bd">
+            <h4 class="weui-media-box__title">
+                {{value.name}}
+                <span class="weui-media-box__desc">
+                     （{{value.usetime}}）
+                </span>
+            </h4>
+            <div class="price"><span class="yuan">￥</span><span class="prices">{{value.price}}</span></div>
+            <p class="weui-media-box__desc old_price">￥{{value.old_price}}</p>
+        </div>
+        {{/if}}
+        <div class="packageId hidden">{{value.id}}</div>
+        <div class="packageNum hidden">{{value.count}}</div>
+    </a>
+    {{/if}}
+    {{/each}}
+</script>
+<script src="../../common/js/jquery-3.1.1.min.js"></script>
+<script src="../../static/js/mobileCommon.js?v2.2"></script>
+<script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+<script src="../../common/js/artTemplate.js"></script>
+<script type="text/javascript">
+
+    $.showLoading();
+
+    //选项卡点击切换
+    $('.weui-navbar__item').click(function () {
+        if ($(this).hasClass('basic')) {
+            $("#goRecharge").text('确认续费')
+        } else {
+            $("#goRecharge").text('确认订购');
+            $("#nextRecharge").removeClass('hidden')
+        }
+        $(this).children('hr').removeClass('hidden').end().siblings().children('hr').addClass('hidden')
+    });
+    var id, price, packageNum, flag, 
+        fid = sessionStorage.getItem("fid"),
+        sid = sessionStorage.getItem("sid"),
+        tid = sessionStorage.getItem("tid"),
+        type = sessionStorage.getItem("type"),
+        iccid = sessionStorage.getItem("iccid"),
+        cardid = sessionStorage.getItem("cardid"),
+        amount = sessionStorage.getItem("amount"),
+        operatorid = sessionStorage.getItem("operatorid"),
+        cardPackage = 0, dispackage = 0;
+
+    //获取卡片信息
+    if (operatorid == 114) {
+        $(".goPage").hide()
+    }
+    //密码验证
+    //    psw();
+    //渲染流量
+    function loadFlow(data) {
+        if (data.is_infinite == 2) {
+            data.flow = "∞"
+        } else if (data.flow / 1024 >= 1) {
+            data.flow = Math.floor(data.flow / 1024) + "G";
+        } else {
+            data.flow = parseInt(data.flow) + "M"
+        }
+        if (data.usetime < 30) {
+            data.usetime = '当月' +data.usetime+ '天有效'
+        } else if (type == 4) {
+            data.usetime = '当月有效'
+        }else{
+            data.usetime = data.usetime+ '天有效'
+        }
+    }
+
+    //获取普通套餐
+    $get('?r=wms/personal/get-card-package', function (res) {
+        if (res.code == 0) {
+            cardPackage = 1;
+            return
+        }
+        if (!res.data.length) {
+            cardPackage = 1;
+            return
+        }
+        var lib = {tab: []};
+        $.each(res.data, function (i, data) {
+            loadFlow(data);
+            if (type == 4) {
+                $("#tab2_title").text('包月套餐');
+                $("#tab1_title").remove();
+                $("#nextRecharge").removeClass('hidden')
+                if (data.base == 2) {
+                    lib['tab'].push(res.data[i]);
+                }
+            }else {
+                if (operatorid != 129) {
+                    if (data.type == 1) {
+                        lib['tab'].push(res.data[i]);
+                    }
+                } else {
+                    if (data.id == 945) {
+                        lib['tab'].push(res.data[i]);
+                    }
+                    if (data.id == 942) {
+                        lib['tab'].push(res.data[i]);
+                    }
+                    if (data.id == 941) {
+                        lib['tab'].push(res.data[i]);
+                    }
+                    if (data.id == 940) {
+                        lib['tab'].push(res.data[i]);
+                    }
+                }
+            }
+
+
+        });
+        if (!lib.tab.length) {
+            return
+        }
+        $("#tab2_normal").append($(template("normal", {list: lib.tab}))).prev(".normal").removeClass('hidden');
+        $(".weui-navbar__item").eq(0).click();
+
+        $.hideLoading();
+    });
+    //获取优惠套餐
+    $get('?r=wms/personal/getcard-dispackage', function (res) {
+        if (res.code == 0) {
+            dispackage = 1;
+            return
+        }
+        if (!res.data.length) {
+            dispackage = 1;
+            return
+        }
+        var lib = {tab: []};
+        $.each(res.data, function (i, data) {
+            loadFlow(data);
+            lib['tab'].push(res.data[i]);
+        });
+        $("#tab2_spec").append($(template("spec", {list: lib.tab}))).prev(".package_title").removeClass('hidden');
+        $("#tab2_normal").prev(".package_title").text('普通套餐：');
+        $.hideLoading();
+    });
+    if (type != 4) {
+        //获取基本套餐
+        $get("?r=wms/personal/get-base-package", function (res) {
+            if (res.code == 0) {
+                basePackage = 1;
+                $("#tab1_title").remove();
+                return false
+            }
+            if (res.data.flow / 1024 >= 1) {
+                res.data.flow = Math.floor(res.data.flow / 1024) + "G";
+            } else {
+                res.data.flow = parseInt(res.data.flow) + "M"
+            }
+            $("#tab1_li").append($(template("special", res.data)));
+            $.hideLoading();
+        });
+    }
+    //判定获取是否成功
+    setTimeout(function () {
+        if (dispackage && cardPackage && basePackage) {
+            $.toptip('获取套餐失败', 2000, 'error');
+            $.hideLoading();
+        }
+    }, 3000);
+    //点击套餐获取其信息
+    $("#template").on('click', '.package_content', function () {
+        var This = $(this);
+        $("#template").find(".active")
+            .removeClass("active").find(".choose").addClass('hidden');
+        This.addClass('active').find(".choose").removeClass('hidden');
+        $(".content-renzheng").removeClass("content_active");
+        id = This.find(".packageId").text();
+        price = This.find(".prices").text();
+        packageNum = This.find(".packageNum").text();
+        if (operatorid == 105) {
+            if (!id) {
+                $.toptip('请选择套餐', 2000, 'error');
+                return false
+            }
+            if (packageNum == 0) {
+                $.toptip('该套餐已售完，请选择其他套餐', 2000, 'error');
+                return false
+            }
+        }
+        if (amount != 0.00) {
+            if (price - amount <= 0) {
+                flag = 'true'
+            } else {
+                flag = accSub(amount, price)
+            }
+        } else {
+            flag = 'false'
+        }
+    }).on('click', '.content-renzheng', function () {
+        var This = $(this);
+        This.addClass("content_active");
+        $(".active").removeClass("active").find(".choose").addClass('hidden');
+        id = This.find(".packageId").text();
+        price = This.find(".prices").text();
+        flag = 'false'
+    });
+    //提交订单
+    $('#goRecharge').click(function () {
+        if (!id) {
+            $.toptip('请选择套餐', 2000, 'error');
+            return false
+        }
+        if (!price) {
+            $.toptip('获取套餐价格失败', 2000, 'error');
+            return false
+        }
+        if (!cardid) {
+            $.toptip('获取卡号失败', 2000, 'error');
+            return false
+        }
+        $post("?r=home/order/add",
+            {
+                type: 0,
+                count: 1,
+                fid: fid,
+                sid: sid,
+                tid: tid,
+                money: price,
+                iccid: iccid,
+                packageid: id,
+                trade_type: 1,
+                cardid: cardid,
+                operatorid: operatorid,
+                uid: sessionStorage.getItem("id")
+            }, function (data) {
+                if (data.code == 0) {
+                    $.toptip(data.msg, 2000, 'error');
+                    return false;
+                }
+                var ids = data.data.id;
+                sessionStorage.setItem("pay", 'false');
+                if (ids) {
+                    window.location.href = urlPrl + '/coolfish/pay/?id=' + ids + "&flag=" + flag
+                } else if (data.data.link) {
+                    sessionStorage.setItem('order_type', '');
+                    sessionStorage.setItem('flag', flag);
+                    window.location.href = data.data.link;
+                }
+            }
+        )
+    })
+</script>
+
+</body>
+</html>
+

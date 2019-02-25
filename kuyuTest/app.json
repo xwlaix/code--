@@ -1,0 +1,9 @@
+{
+    "pages": ["pages/index/index", "pages/shopCard/shopCard"],
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "WeChat",
+        "navigationBarTextStyle": "black"
+    }
+}

@@ -1,0 +1,69 @@
+<scroll-view class="container" style="height: 100%;">
+    <view class="search-header">
+        <view class="input-box">
+            <image class="icon" src="http://yanxuan.nosdn.127.net/hxm/yanxuan-wap/p/20161201/style/img/icon-normal/search2-2fb94833aa.png"></image>
+            <input name="input" class="keywrod" focus="true" value="{{cardNo}}" confirm-type="search" bindinput="inputChange" bindconfirm="onKeywordConfirm"
+                placeholder="请输入要充值订购的卡片" />
+            <image class="del" wx:if="{{cardNo}}" bindtap="clearCardNo" src="http://nos.netease.com/mailpub/hxm/yanxuan-wap/p/20150730/style/img/icon-normal/clearIpt-f71b83e3c2.png"></image>
+        </view>
+        <view class="right" bindtap="goSearch">搜索</view>
+    </view>
+    <view class="a-section a-popular" wx:if="{{ searchStatus && package.length&&complete}}">
+        <view class="h flex-wrp" style="flex-direction:row;">
+            <block wx:for="{{title}}" wx:for-item="item" wx:key="itemID">
+                <view class="txt flex-item {{item.active ? 'active' : ''}}" bindtap='activeTitle' data-url='{{item.url}}'>
+                    {{item.title}}
+                    <view class="{{item.active ? 'active_hengxian' : ''}}"></view>
+                </view>
+            </block>
+        </view>
+        <view class="b">
+            <block class="item  {{item.text ? '' : 'item-b'}}" wx:for="{{libArr}}" wx:for-index="libKey" wx:for-item="tab" wx:key="id"
+                wx:if='{{libKey==showTab}}'>
+                <block wx:for="{{tab}}" wx:for-item="item" wx:key="itemID">
+                    <view class="item  {{item.text ? '' : 'item-b'}} {{item.active==true?'itemActive':''}}" bindtap='active' data-id='{{item.id}}'>
+                        <view class="choose" wx:if='{{item.active==true}}'>
+                            <image src="../../static/images/check.png" alt="" class="image" mode='aspectFill'></image>
+                        </view>
+                        <view class=" flow img {{item.flow=='∞'?'infinite':''}}">
+                            {{item.flow}}
+                        </view>
+                        <view class=" right" style="height: auto;">
+                            <view class=" name">{{item.name}}</view>
+                            <view class="usetime">{{item.usetime}}</view>
+                        </view>
+                        <view class=" right" style="height: auto;">
+                            <text class="desc">{{item.text}}</text>
+                        </view>
+                        <view class="right" style="height: auto;">
+                            <view class="price">￥{{item.price}}</view>
+                            <view class=" old_price">￥{{item.oldPrice}}</view>
+                        </view>
+                    </view>
+                </block>
+            </block>
+        </view>
+
+        <view class="goPage" bindtap='order'>
+            <view type="button" id="goRecharge">确认订购</view>
+        </view>
+    </view>
+    <view class="search-result-empty" wx:if="{{!package.length && searchStatus&&complete}}">
+        <image class="icon" src="http://yanxuan.nosdn.127.net/hxm/yanxuan-wap/p/20161201/style/img/icon-normal/noSearchResult-7572a94f32.png"></image>
+        <text class="text">{{infoText}}</text>
+    </view>
+</scroll-view>
+<easy-modal  
+      id="easyModal" 
+      title="请选择生效时间"   
+      bind:cancelEvent="_cancelEvent"  
+      bind:confirmEvent="_confirmEventFirst"  
+      >
+      <view class='modal-content'>
+            <radio-group class="radio-group" bindchange="radioChange">
+                <label class="radio">立即生效<radio value="1" checked="" /></label>
+                <label class="radio">次月生效<radio value="2" checked="" /></label>
+            </radio-group>                                            
+      </view>    
+
+</easy-modal>

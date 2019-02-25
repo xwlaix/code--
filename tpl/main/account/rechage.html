@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>酷鱼账号充值</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/account_list.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/My97DatePicker/WdatePicker.js"></script>
+
+</head>
+
+<body>
+<div class="header_top">
+    <div class="header_left"></div>
+    <div class="header_right">
+        <ul class="ul">
+            <li><a href="account.html">账号管理</a></li>
+            <li><a href="#">充值管理</a></li>
+            <li><a href="javascript:logout()">退出</a></li>
+        </ul>
+    </div>
+</div>
+<div class="header">
+
+
+    <div class="sub">
+        <p class="sub_title">充值处理</p>
+        <span class="underline2"></span>
+    </div>
+    <form id="rechargeForm">
+        <div style="margin-left:90px">
+            <div class="form-group">
+                <label>账号：</label>
+                <input type="text" name="uname" class="form-control" placeholder="请输入账号">
+                <button type="button" id="search" class="btn  btn-sm btn-primary search">搜索</button>
+            </div>
+            <div class="form-group">
+                <label>金额(元)：</label>
+                <input type="text" name="amoun" class="form-control" placeholder="请输入金额">
+            </div>
+            <div class="form-group">
+                <label for="date_begin" class="span_title" title="时间">时间：</label>
+                <input id="date_begin" class="Wdate" name="starttime" type="text"
+                       onFocus="var date_begin=$dp.$('date_end');
+                       WdatePicker({onpicked:function(){date_end.focus();},
+                       maxDate:'#F{$dp.$D(\'date_end\')}'})"/>
+                <label for="date_end"
+                       style="display:-moz-inline-box;display:inline-block;width: 10px;text-align:right;">~</label>
+                <input id="date_end" class="Wdate" name="endtime" type="text"
+                       onFocus="WdatePicker({minDate:'#F{$dp.$D(\'date_begin\')}'})"/>
+                <button type="button" id="btn_affirm" class="btn  btn-sm btn-primary  affirm">确认</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="header table-over">
+    <div class="sub">
+        <p class="sub_title">充值记录</p>
+        <span class="underline2"></span>
+    </div>
+
+    <table id="tb_dept" data-bind="myBootstrapTable:$root">
+
+    </table>
+</div>
+<div class="foot">
+    <div class="foot_cont">
+        Copyright © 2017.深圳市酷鱼互动科技有限公司 版权所有 
+    </div>
+</div>
+</body>
+
+<script>
+    //获取参数
+    var id = getUrlParam('id'),
+        username = getUrlParam('username');
+    $("input[name='uname']").val(username);
+
+    function logout() {
+        layer.confirm('您确定要退出吗？', {
+            btn: ['确定', '取消'], //按钮
+            shade: false //不显示遮罩
+        }, function () {
+            location.href = "accLogin.html";
+        });
+    }
+    //检查是否登陆
+    $(function () {
+        var tag = getCookie("name");
+        if (!tag) {
+            alert("请先登录");
+            window.location.href = "accLogin.html";
+            return false;
+        }
+    });
+
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateSec();
+            this.operateAdd();
+        },
+        //搜索
+        operateSec: function () {
+            $("#search").on('click', function () {
+                var This = $(this),
+                    uname = $.trim($("input[name='uname']").val()),
+                    sceData = {
+                        username: uname
+                    };
+                This.addClass('disabled');
+                var index = layer.load(2, {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                });
+                $post(urlPrefix + "?r=ams/recharge/seach",
+                    sceData,
+                    function (res) {
+                        This.removeClass('disabled');
+                        layer.close(index);
+                        if (res.code == 1) {
+                            layer.msg('搜索成功', {time: 1000});
+                            tableInit.myViewModel.load(res.data);
+                        } else {
+                            layer.msg('搜索失败', {time: 1000});
+                        }
+                    }, function () {
+                        layer.close(index);
+                        layer.msg('搜索失败', {time: 1000});
+                    })
+            })
+        },
+        //充值
+        operateAdd: function () {
+            $("#btn_affirm").on('click', function () {
+                var This = $(this),
+                    uname = $.trim($("input[name='uname']").val()),
+                    amoun = $.trim($("input[name='amoun']").val()),
+                    starttime = $.trim($("input[name='starttime']").val()),
+                    endtime = $.trim($("input[name='endtime']").val()),
+                    Data = {
+                        username: uname,
+                        amount: amoun,
+                        starttime: starttime,
+                        endtime: endtime
+                    };
+                if (!uname) {
+                    return false
+                }
+                if (isNaN(amoun)) {
+                    layer.msg('请输入正确的金额');
+                    This.removeClass('disabled');
+                    return false
+                }
+                This.addClass('disabled');
+                $post(urlPrefix + "?r=ams/recharge/add",
+                    Data,
+                    function (res) {
+                        var index = layer.load(1, {
+                            shade: [0.1, '#fff'] //0.1透明度的白色背景
+                        });
+                        if (res.code == 1) {
+                            layer.close(index);
+                            layer.msg("操作成功", {time: 1000});
+                            $.ajax({
+                                url: urlPrefix + "?r=ams/recharge/seach",
+                                type: 'POST',
+                                crossDomain: true,
+                                xhrFields: {
+                                    withCredentials: true
+                                },
+                                async: true,
+                                data: {
+                                    username: uname
+                                },
+                                success: function (res) {
+                                    This.removeClass('disabled');
+                                    var index = layer.load(1, {
+                                        shade: [0.1, '#fff'] //0.1透明度的白色背景
+                                    });
+                                    if (res.code == 1) {
+                                        layer.close(index);
+                                        tableInit.myViewModel.load(res.data);
+                                        $("input").val("");
+                                    } else {
+                                        layer.close(index);
+                                        $("input").val("");
+                                    }
+                                }
+                            })
+                        } else {
+                            layer.close(index);
+                            layer.msg("充值失败", {time: 1000});
+                            This.removeClass('disabled');
+                            $("input").val("");
+                        }
+                    }, function () {
+                        layer.close(index);
+                        layer.msg('操作失败', {time: 2000})
+                    })
+            })
+        }
+    };
+
+    //加载table数据
+    function ajaxRequest(params) {
+        if (!id) {
+            $get(urlPrefix + '?r=ams/recharge/get-all',
+                function (res) {
+                    params.success({
+                        data: res.data
+                    })
+                }, function () {
+                    params.success({data: []})
+                })
+        } else {
+            $post(urlPrefix + '?r=ams/recharge/get',
+                {id: id},
+                function (res) {
+                    params.success({
+                        data: res.data
+                    });
+                    if(res.code==0){
+                        layer.msg(res.msg,{time:2000})
+                    }
+                }, function () {
+                    params.success({data: []})
+                })
+        }
+
+    }
+
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+
+        //2、注册增删改事件
+        operate.operateInit();
+
+
+    });
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                ajax: ajaxRequest,
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                columns: [{
+                    field: 'id',
+                    title: 'ID'
+                }, {
+                    field: 'username',
+                    title: '账号'
+                }, {
+                    field: 'uname',
+                    title: '用户名'
+                }, {
+                    field: 'addtime',
+                    title: '充值时间'
+                }, {
+                    field: 'starttime',
+                    title: '开始时间'
+                }, {
+                    field: 'endtime',
+                    title: '结束时间'
+                }, {
+                    field: 'amount',
+                    title: '金额'
+                }]
+
+            });
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+    //操作
+
+</script>
+</html>

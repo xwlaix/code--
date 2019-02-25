@@ -1,0 +1,1044 @@
+<html class="hb-loaded">
+    <head>
+        <meta charset="utf-8"/>
+        <meta content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no" name="viewport"/>
+        <meta content="telephone=no" name="format-detection"/>
+        <script src="http://api.map.baidu.com/api?v=2.0&ak=WtfAdHwd1tMOCf2dzdRIhNZkSq8V7o5W" type="text/javascript">
+        </script>
+        <script src="http://api.map.baidu.com/getscript?v=2.0&ak=WtfAdHwd1tMOCf2dzdRIhNZkSq8V7o5W&services=&t=20180130193904" type="text/javascript">
+        </script>
+        <link href="http://www.yaoyue365.com/static/css/reset.css" rel="stylesheet" type="text/css">
+            <title>
+                邀约
+            </title>
+            <link href="http://www.yaoyue365.com/static/css/app.bd54a7ad36bf417787a5446af00f9335.css" rel="stylesheet">
+                <style type="text/css">
+                    .vue-cropper[data-v-7f57ac98] {
+                position:relative;
+                width:100%;
+                height:100%;
+                box-sizing:border-box;
+                user-select:none;
+                -webkit-user-select:none;
+                -moz-user-select:none;
+                -ms-user-select:none;
+                direction:ltr;
+                touch-action:none;
+                background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC")
+            }
+            .cropper-box-canvas[data-v-7f57ac98], .cropper-box[data-v-7f57ac98], .cropper-crop-box[data-v-7f57ac98], .cropper-drag-box[data-v-7f57ac98], .cropper-face[data-v-7f57ac98] {
+                position:absolute;
+                top:0;
+                right:0;
+                bottom:0;
+                left:0;
+                user-select:none
+            }
+            .cropper-box-canvas img[data-v-7f57ac98] {
+                position:relative;
+                user-select:none;
+                transform:none
+            }
+            .cropper-box[data-v-7f57ac98] {
+                overflow:hidden
+            }
+            .cropper-move[data-v-7f57ac98] {
+                cursor:move
+            }
+            .cropper-crop[data-v-7f57ac98] {
+                cursor:crosshair
+            }
+            .cropper-modal[data-v-7f57ac98] {
+                background:rgba(0, 0, 0, .5)
+            }
+            .cropper-view-box[data-v-7f57ac98] {
+                display:block;
+                overflow:hidden;
+                width:100%;
+                height:100%;
+                outline:1px solid #39f;
+                outline-color:rgba(51, 153, 255, .75);
+                user-select:none
+            }
+            .cropper-view-box img[data-v-7f57ac98] {
+                user-select:none
+            }
+            .cropper-face[data-v-7f57ac98] {
+                top:0;
+                left:0;
+                background-color:#fff;
+                opacity:.1
+            }
+            .crop-info[data-v-7f57ac98] {
+                position:absolute;
+                left:0;
+                min-width:65px;
+                text-align:center;
+                color:#fff;
+                line-height:20px;
+                background-color:rgba(0, 0, 0, .8);
+                font-size:12px
+            }
+            .crop-line[data-v-7f57ac98] {
+                position:absolute;
+                display:block;
+                width:100%;
+                height:100%;
+                opacity:.1
+            }
+            .line-w[data-v-7f57ac98] {
+                top:-3px;
+                left:0;
+                height:5px;
+                cursor:n-resize
+            }
+            .line-a[data-v-7f57ac98] {
+                top:0;
+                left:-3px;
+                width:5px;
+                cursor:w-resize
+            }
+            .line-s[data-v-7f57ac98] {
+                bottom:-3px;
+                left:0;
+                height:5px;
+                cursor:s-resize
+            }
+            .line-d[data-v-7f57ac98] {
+                top:0;
+                right:-3px;
+                width:5px;
+                cursor:e-resize
+            }
+            .crop-point[data-v-7f57ac98] {
+                position:absolute;
+                width:8px;
+                height:8px;
+                opacity:.75;
+                background-color:#39f;
+                border-radius:100%
+            }
+            .point1[data-v-7f57ac98] {
+                top:-4px;
+                left:-4px;
+                cursor:nw-resize
+            }
+            .point2[data-v-7f57ac98] {
+                top:-5px;
+                left:50%;
+                margin-left:-3px;
+                cursor:n-resize
+            }
+            .point3[data-v-7f57ac98] {
+                top:-4px;
+                right:-4px;
+                cursor:ne-resize
+            }
+            .point4[data-v-7f57ac98] {
+                top:50%;
+                left:-4px;
+                margin-top:-3px;
+                cursor:w-resize
+            }
+            .point5[data-v-7f57ac98] {
+                top:50%;
+                right:-4px;
+                margin-top:-3px;
+                cursor:w-resize
+            }
+            .point6[data-v-7f57ac98] {
+                bottom:-5px;
+                left:-4px;
+                cursor:sw-resize
+            }
+            .point7[data-v-7f57ac98] {
+                bottom:-5px;
+                left:50%;
+                margin-left:-3px;
+                cursor:s-resize
+            }
+            .point8[data-v-7f57ac98] {
+                bottom:-5px;
+                right:-4px;
+                cursor:nw-resize
+            }
+            @media screen and (max-width:500px) {
+                .crop-point[data-v-7f57ac98] {
+                    position:absolute;
+                    width:20px;
+                    height:20px;
+                    opacity:.45;
+                    background-color:#39f;
+                    border-radius:100%
+                }
+                .point1[data-v-7f57ac98] {
+                    top:-10px;
+                    left:-10px
+                }
+                .point2[data-v-7f57ac98], .point4[data-v-7f57ac98], .point5[data-v-7f57ac98], .point7[data-v-7f57ac98] {
+                    display:none
+                }
+                .point3[data-v-7f57ac98] {
+                    top:-10px;
+                    right:-10px
+                }
+                .point4[data-v-7f57ac98] {
+                    top:0;
+                    left:0
+                }
+                .point6[data-v-7f57ac98] {
+                    bottom:-10px;
+                    left:-10px
+                }
+                .point8[data-v-7f57ac98] {
+                    bottom:-10px;
+                    right:-10px
+                }
+            }
+            .swiper-container.swiper-container-vertical.swiper-container-autoheight{
+			    top: 0!important;
+            }
+            .phone_screen.item{
+   				top: 5%;
+			    display: block;
+			    width: 100%;
+			    height: 100%;
+			    position: relative;
+			    background-size: cover;
+			    background-repeat: no-repeat;
+			    overflow: hidden;
+			    -webkit-user-select: none;
+			    -moz-user-select: none;
+			    -ms-user-select: none;
+            }
+            .phone_screen.current,.phone_screen.item,#mainedit{
+            	background: url("9f152074cac2284742b71d3983de11fd.jpg") left top / cover no-repeat; z-index: 888
+			}
+			.j_screen{
+				position: relative;
+			}
+			.audio_btn[data-v-498eaa06]{
+				top: 15px!important;
+				right: 15px!important;
+			}
+                </style>
+            </link>
+        </link>
+    </head>
+</html>
+<body huaban_collector_injected="true">
+    <div id="mainedit">
+        <div class="swiper-container swiper-container-vertical swiper-container-autoheight" data-v-498eaa06="" style="height: 100%; width: 100%; top: 97px;">
+            <div class="swiper-wrapper" style="height: 100%; transform: translate3d(0px, 0px); transition-duration: 0ms;">
+                <div class="swiper-slide " data-v-498eaa06="" style="height: 100%;">
+                    <div class="phone_screen current" data-v-498eaa06="" id="phone_screen" style=";">
+                        <div class="j_screen" data-v-498eaa06="">
+                            <ul data-v-498eaa06="" style="transform-origin: 0px 0px 0px; transform: scale(0.5);">
+                                <li class="item_wrapper1" data-v-498eaa06="" index="0" style="position: absolute; width: 746px; height: 1044px; top: -275px; left: -52px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: fadeInNormal 1s 1s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/e473f629846a62ed0da84a2e0b07db9d.gif" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="1" style="position: absolute; width: 585px; height: 585px; top: 172px; left: 26px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: zoomIn 1s 0.6s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/a7a910b5931113ee01235ea4610dc69b.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="2" style="position: absolute; width: 525px; height: 525px; top: 190px; left: 56px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: rotateIn 3s 1s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/b05143dab2c3b53453fa9a32f8398658.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="3" style="position: absolute; width: 259px; height: 289px; top: 198px; left: 139px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: rotateInDownLeft 1s 1.4s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/1eeef80c9a9fc53ff12cf0bb3f3ca6ab.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="4" style="position: absolute; width: 315px; height: 297px; top: 387px; left: 269px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: rotateInDownRight 1s 1.8s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/1e71e8c8276ebbca5e85f2ee84d44aff.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="5" style="position: absolute; width: 274px; height: 339px; top: 95px; left: 416px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: pullDown 1s 1.1s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/3ed2979aac311fcfe7bb7eece65435f2.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="6" style="position: absolute; width: 192px; height: 358px; top: 68px; left: 498px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: pullDown 1s 0.8s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/d1a3d91bf56fe6dcb6dacebdfb766e76.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="7" style="position: absolute; width: 200%; height: 224px; top: -35px; left: 0; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: pullDown 1s 0.6s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/c54c4d9c8deeee164eba8274b0063b8f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="8" style="position: absolute; width: 200%; height: 72px; top: 757px; left: 9px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="2">
+                                    <div class="content" data-v-498eaa06="" style="animation: flipInY 1s 2s 1 both running;">
+                                        <!-- -->
+                                        <div contenteditable="false" data-v-498eaa06="" style="background: none; overflow: hidden; width: 100%; height: 72px; font-family: _font_18; border-color: rgb(0, 0, 0); border-style: none; border-radius: 0px; font-style: normal; font-weight: normal; text-align: center; color: rgb(255, 241, 222); font-size: 40px; line-height: 1.8; box-shadow: black 0px 0px 0px; letter-spacing: 0px; top: 0px; left: 0px;">
+                                            深圳市酷鱼互动科技有限公司
+                                        </div>
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="9" style="position: absolute; border-radius: 0px; border-color: rgb(0, 0, 0); border-style: solid; border-width: 0px; box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 0px; color: rgb(103, 103, 103); height: 180px; left: 6px; line-height: 1; opacity: 1; padding-bottom: 0px; padding-top: 0px; text-align: left; top: 829px; transform: rotateZ(0deg); width: 200%; z-index: 0;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: slideUp 2s 1s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/50f403f8df91e138f3ecf752a51bcf70.png" style="height: 100%; width: 100%; margin-left: 0px; margin-top: 0px; top: 0px; left: 0px;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide" data-v-498eaa06="" style="height: 100%;">
+                    <div 201712="" 888;"="" 9f152074cac2284742b71d3983de11fd.jpg")="" bg="" class="phone_screen item" cover="" data-v-498eaa06="" http:="" left="" no-repeat;="" res.yaoyue365.com="" style="background: url(" syspic="" top="" z-index:="">
+                        <div class="j_screen" data-v-498eaa06="">
+                            <ul data-v-498eaa06="" style="transform-origin: 0px 0px 0px; transform: scale(0.5);">
+                                <li class="item_wrapper1" data-v-498eaa06="" index="0" style="position: absolute; width: calc(186% - 172px); height: 3px; top: 150px; left: 6%;    margin-left: 86px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: zoomIn 1s 1.5s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/3ea88b261b772ba7310249682ba4bb6a.jpg" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="1" style="position: absolute; width: 86px; height: 167px; top: 96px; left: 6%; opacity: 1; transform: rotateZ(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: pullDown 1s 2.5s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/a56d1dcd62cd64f9ff4f86c34184a42f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="2" style="position: absolute; width: 86px; height: 167px; top: 102px; left: 170%; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: pullDown 1s 2.5s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/a562c58e4bdc0308e017367f6e64c0cb.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="3" style="position: absolute; width: 235px; height: 122px; top: 37px;left: 100%;margin-left: -122px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="2">
+                                    <div class="content" data-v-498eaa06="" style="animation: fadeInRight 1.3s 2.6s 1 both running;">
+                                        <!-- -->
+                                        <div contenteditable="false" data-v-498eaa06="" style="background: none; overflow: hidden; width: 235px; height: 122px; font-family: _font_12; border-color: rgb(0, 0, 0); border-style: none; border-radius: 0px; font-style: normal; font-weight: normal; text-align: center; color: rgb(255, 241, 222); font-size: 66px; line-height: 1.8; box-shadow: black 0px 0px 0px; letter-spacing: 0px; top: 0px; left: 0px;">
+                                            邀请函
+                                        </div>
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="4" style="position: absolute; width: 357px; height: 64px; top: 199px; left: 53px; opacity: 1; transform: rotateZ(0deg); border-radius: 0px;" type="2">
+                                    <div class="content" data-v-498eaa06="" style="animation: stretchRight 1.5s 3.2s 1 both running;">
+                                        <!-- -->
+                                        <div contenteditable="false" data-v-498eaa06="" style="background: none; overflow: hidden; width: 357px; height: 64px; font-family: _font_38; border-color: rgb(0, 0, 0); border-style: none; border-radius: 0px; font-style: normal; font-weight: normal; text-align: center; color: rgb(255, 241, 222); font-size: 40px; line-height: 1.8; box-shadow: black 0px 0px 0px; letter-spacing: 0px;">
+                                            尊敬的各位领导
+                                            <div>
+                                                尊敬的各位领导
+                                            </div>
+                                        </div>
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="5" style="position: absolute; width: 521px; height: 500px; top: 295px; left:  calc(6% + 90px); opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="2">
+                                    <div class="content" data-v-498eaa06="" style="animation: stretchLeft 1.5s 3.4s 1 both running;">
+                                        <!-- -->
+                                        <div contenteditable="false" data-v-498eaa06="" style="background: none; overflow: hidden; width: 521px; height: 500px; font-family: _font_38; border-color: rgb(0, 0, 0); border-style: none; border-radius: 0px; font-style: normal; font-weight: normal; text-align: left; color: rgb(255, 241, 222); font-size: 40px; line-height: 1.8; box-shadow: black 0px 0px 0px; letter-spacing: 0px; top: 0px; left: 0px;">
+                                            2017年对于我公司来说是个精彩而又激动的一年，回首往事，点滴精彩。大家工作的勤奋、成功与挫折给公司留下了发展的足迹，大家辛勤的汗水给公司留下了许多值得赞赏的故事。
+                                        </div>
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide" data-v-498eaa06="" style="height: 100%;">
+                    <div 201712="" 888;"="" 9f152074cac2284742b71d3983de11fd.jpg")="" bg="" class="phone_screen item" cover="" data-v-498eaa06="" http:="" left="" no-repeat;="" res.yaoyue365.com="" style="background: url(" syspic="" top="" z-index:="">
+                        <div class="j_screen" data-v-498eaa06="">
+                            <ul data-v-498eaa06="" style="transform-origin: 0px 0px 0px; transform: scale(0.5);">
+                                <li class="item_wrapper1" data-v-498eaa06="" index="0" style="position: absolute; width: calc(186% - 172px); height: 3px; top: 150px; left: 6%;    margin-left: 86px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: zoomIn 1s 1.5s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/3ea88b261b772ba7310249682ba4bb6a.jpg" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="1" style="position: absolute; width: 86px; height: 167px; top: 96px; left: 6%; opacity: 1; transform: rotateZ(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: pullDown 1s 2.5s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/a56d1dcd62cd64f9ff4f86c34184a42f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="2" style="position: absolute; width: 86px; height: 167px; top: 94px; left: 170%; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: pullDown 1s 2.5s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/a562c58e4bdc0308e017367f6e64c0cb.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="3" style="position: absolute; width: 545px; height: 518px; top: 312px; left: calc(12% + 68px); opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="2">
+                                    <div class="content" data-v-498eaa06="" style="animation: stretchLeft 1.5s 3.4s 1 both running;">
+                                        <!-- -->
+                                        <div contenteditable="false" data-v-498eaa06="" style="background: none; overflow: hidden; width: 545px; height: 518px; font-family: _font_38; border-color: rgb(0, 0, 0); border-style: none; border-radius: 0px; font-style: normal; font-weight: normal; text-align: left; color: rgb(255, 241, 222); font-size: 40px; line-height: 1.8; box-shadow: black 0px 0px 0px; letter-spacing: 0px; top: 0px; left: 0px;">
+                                            <div>
+                                                地址：深圳市龙岗区坂田街道五和大道南80号五和商业广场（阳光湾畔测）
+                                                <div>
+                                                    时间：2018年1月7日 18:30
+                                                    <div>
+                                                        <div>
+                                                            诚邀您拨冗出席
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="4" style="position: absolute; width: 494px; height: 90px; top: 55px; left:  calc(12% + 86px); opacity: 1; transform: rotate(0deg);" type="2">
+                                    <div class="content" data-v-498eaa06="">
+                                        <!-- -->
+                                        <div contenteditable="false" data-v-498eaa06="" style="background: none; overflow: hidden; width: 494px; height: 90px; font-family: yuanhei; border-color: rgb(0, 0, 0); border-style: none; border-radius: 0px; font-style: normal; font-weight: bold; text-align: left; color: rgb(255, 255, 255); font-size: 46px; line-height: 1.5; box-shadow: black 0px 0px 0px; letter-spacing: 0px; top: 0px; left: 0px;">
+                                            深圳酷鱼2018迎新晚宴
+                                        </div>
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide" data-v-498eaa06="" style="height: 100%;">
+                    <div 201712="" 888;"="" 9f152074cac2284742b71d3983de11fd.jpg")="" bg="" class="phone_screen item" cover="" data-v-498eaa06="" http:="" left="" no-repeat;="" res.yaoyue365.com="" style="background: url(" syspic="" top="" z-index:="">
+                        <div class="j_screen" data-v-498eaa06="">
+                            <ul data-v-498eaa06="" style="transform-origin: 0px 0px 0px; transform: scale(0.5);">
+                                <li class="item_wrapper1" data-v-498eaa06="" index="0" style="position: absolute; width: calc(186% - 172px); height: 3px; top: 150px; left: 6%;    margin-left: 86px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: zoomIn 1s 1.5s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/3ea88b261b772ba7310249682ba4bb6a.jpg" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="1" style="position: absolute; width: 86px; height: 167px; top: 96px; left: 6%; opacity: 1; transform: rotateZ(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: pullDown 1s 2.5s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/a56d1dcd62cd64f9ff4f86c34184a42f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="2" style="position: absolute; width: 86px; height: 167px; top: 94px; left: 170%; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: pullDown 1s 2.5s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/a562c58e4bdc0308e017367f6e64c0cb.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="3" style="position: absolute; width: 545px; height: 518px; top: 260px; left: calc(12% + 68px); opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="2">
+                                    <div class="content" data-v-498eaa06="" style="animation: stretchLeft 1.5s 3.4s 1 both running;">
+                                        <!-- -->
+                                        <div contenteditable="false" data-v-498eaa06="" style="background: none; overflow: hidden; width: 545px; height: 518px; font-family: _font_38; border-color: rgb(0, 0, 0); border-style: none; border-radius: 0px; font-style: normal; font-weight: normal; text-align: left; color: rgb(255, 241, 222); font-size: 36px; line-height: 1.8; box-shadow: black 0px 0px 0px; letter-spacing: 0px; top: 0px; left: 0px;">
+                                            <div>
+                                                深圳酷鱼是一家专注于通讯产品研发和系统解决方案的高新技术企业，公司面向移动数据信息化及通讯领域提供包括通信移动终端、流量话费、物联网卡及系统平台和各种应用开发，旨在为客户提供最优质的产品设备和系统解决方案，方便客户使用开发、管理及维护。
+                                            </div>
+                                        </div>
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="5" style="position: absolute; border-radius: 0px; border-color: rgb(0, 0, 0); border-style: solid; border-width: 0px; box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 0px; color: rgb(103, 103, 103); height: 194px; left: 50%; line-height: 1; opacity: 1; padding-bottom: 0px; padding-top: 0px; text-align: left; top: 800px; transform: rotateZ(0deg); width: 328px; z-index: 0;" type="4">
+                                    <div class="content" data-v-498eaa06="">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/user/2018/0131/a7f22c2a8542468cc9528764f90a5c80.jpg" style="height: 100%; width: 100%; margin-left: 0px; margin-top: 0px; top: 0px; left: 0px;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="4" style="position: absolute; width: 494px; height: 90px; top: 55px; left:  calc(12% + 86px); opacity: 1; transform: rotate(0deg);" type="2">
+                                    <div class="content" data-v-498eaa06="">
+                                        <!-- -->
+                                        <div contenteditable="false" data-v-498eaa06="" style="background: none; overflow: hidden; width: 494px; height: 90px; font-family: yuanhei; border-color: rgb(0, 0, 0); border-style: none; border-radius: 0px; font-style: normal; font-weight: bold; text-align: center; color: rgb(255, 255, 255); font-size: 46px; line-height: 1.5; box-shadow: black 0px 0px 0px; letter-spacing: 0px; top: 0px; left: 0px;">
+                                            公司简介
+                                        </div>
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide" data-v-498eaa06="" style="height: 100%;">
+                    <div 201712="" 888;"="" 9f152074cac2284742b71d3983de11fd.jpg")="" bg="" class="phone_screen current" cover="" data-v-498eaa06="" http:="" left="" no-repeat;="" res.yaoyue365.com="" style="background: url(" syspic="" top="" z-index:="">
+                        <div class="j_screen" data-v-498eaa06="">
+                            <ul data-v-498eaa06="" style="transform-origin: 0px 0px 0px; transform: scale(0.5);">
+                                <li class="item_wrapper1" data-v-498eaa06="" index="0" style="position: absolute; width: calc(186% - 172px); height: 3px; top: 150px; left: 6%;    margin-left: 86px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: zoomIn 1s 1.5s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/3ea88b261b772ba7310249682ba4bb6a.jpg" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="1" style="position: absolute; width: 86px; height: 167px; top: 96px; left: 6%; opacity: 1; transform: rotateZ(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: pullDown 1s 2.5s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/a56d1dcd62cd64f9ff4f86c34184a42f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="2" style="position: absolute; width: 86px; height: 167px; top: 102px; left: 170%; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: pullDown 1s 2.5s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/a562c58e4bdc0308e017367f6e64c0cb.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="4" style="position: absolute; width: 163px; height: 16px; top: 680px; left: -8px; opacity: 1; transform: rotateZ(148deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: fadeInRight 2s 5.6s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/23c3c83fcc96b3a68802762142ad6b7f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="5" style="position: absolute; width: 163px; height: 16px; top: 543px; left: 520px; opacity: 1; transform: rotateZ(148deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: fadeInRight 2s 6s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/23c3c83fcc96b3a68802762142ad6b7f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="6" style="position: absolute; width: 163px; height: 16px; top: 425px; left: 503px; opacity: 1; transform: rotateZ(148deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: fadeInRight 2s 5.9s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/23c3c83fcc96b3a68802762142ad6b7f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="7" style="position: absolute; width: 42px; height: 43px; top: 401px; left: 581px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: fadeInNormal 1s 5.7s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/640cac092307ab6a3b2e5a749dccb80f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="8" style="position: absolute; width: 301px; height: 110px; top: 193px;  left: 100%;margin-left: -120px;opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="2">
+                                    <div class="content" data-v-498eaa06="" style="animation: fadeInRight 1.3s 2.6s 1 both running;">
+                                        <!-- -->
+                                        <div contenteditable="false" data-v-498eaa06="" style="background: none; overflow: hidden; width: 301px; height: 110px; font-family: _font_12; border-color: rgb(0, 0, 0); border-style: none; border-radius: 0px; font-style: normal; font-weight: normal; text-align: center; color: rgb(255, 241, 222); font-size: 66px; line-height: 1.8; box-shadow: black 0px 0px 0px; letter-spacing: 0px; top: 0px; left: 0px;">
+                                            报名方式
+                                        </div>
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="9" style="position: absolute; width: 305px; height: 122px; top: 193px; left: 100%;margin-left: -120px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="2">
+                                    <div class="content" data-v-498eaa06="" style="animation: fadeInLeft 1.3s 2.6s 1 both running;">
+                                        <!-- -->
+                                        <div contenteditable="false" data-v-498eaa06="" style="background: none; overflow: hidden; width: 305px; height: 122px; font-family: _font_12; border-color: rgb(0, 0, 0); border-style: none; border-radius: 0px; font-style: normal; font-weight: normal; text-align: center; color: rgb(255, 241, 222); font-size: 66px; line-height: 1.8; box-shadow: black 0px 0px 0px; letter-spacing: 0px; top: 0px; left: 0px;">
+                                            报名方式
+                                        </div>
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="10" style="position: absolute; width: 200%; height: 84px; top: 282px; left: 31px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: zoomIn 1s 3.2s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/65da94f73c8b84d761dbfb763a42f725.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="11" style="position: absolute; width: 163px; height: 16px; top: 797px; left: 215px; opacity: 1; transform: rotate(148deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: fadeInRight 2s 5.6s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/23c3c83fcc96b3a68802762142ad6b7f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="12" style="position: absolute; width: 42px; height: 43px; top: 804px; left: 243px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: rotateIn 1s 5.4s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/640cac092307ab6a3b2e5a749dccb80f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="13" style="position: absolute; width: 163px; height: 16px; top: 888px; left: 4px; opacity: 1; transform: rotate(148deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: fadeInRight 2s 5.6s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/23c3c83fcc96b3a68802762142ad6b7f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="14" style="position: absolute; width: 42px; height: 43px; top: 895px; left: 32px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: rotateIn 1s 5.4s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/640cac092307ab6a3b2e5a749dccb80f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="15" style="position: absolute; width: 163px; height: 16px; top: 858px; left: 424px; opacity: 1; transform: rotate(148deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: fadeInRight 2s 5.6s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/23c3c83fcc96b3a68802762142ad6b7f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="16" style="position: absolute; width: 42px; height: 43px; top: 865px; left: 452px; opacity: 1; transform: rotate(0deg); border-radius: 0px;" type="4">
+                                    <div class="content" data-v-498eaa06="" style="animation: rotateIn 1s 5.4s 1 both running;">
+                                        <img data-v-498eaa06="" id="dsds" src="http://res.yaoyue365.com/syspic/201712/img/640cac092307ab6a3b2e5a749dccb80f.png" style="width: 100%; height: 100%; top: 0px; left: 0px; border-radius: 0px; box-shadow: black 0px 0px 0px; border-style: none;">
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                            <!-- -->
+                                        </img>
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="17" style="position: absolute; width: 400px; height: 72px; top: 406px; left: 50%; opacity: 1; transform: rotate(0deg);" type="i">
+                                    <div class="content" data-v-498eaa06="">
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <div class="inputs" contenteditable="false" data-v-498eaa06="" style="position: relative;">
+                                            <input data-v-498eaa06="" id="1506310907576" style="position: absolute; width: 400px; height: 72px; border-width: 2px; border-color: rgb(255, 255, 255); border-style: solid; background: rgb(255, 255, 255); border-radius: 0px; color: rgb(75, 75, 75); font-size: 28px; line-height: 72px; padding: 20px;">
+                                                <span data-v-498eaa06="" style="position: relative; pointer-events: none; opacity: 0.7; padding-left: 20px; height: 72px; font-size: 28px; line-height: 72px;">
+                                                    姓名
+                                                </span>
+                                                <span data-v-498eaa06="" style="position: relative; pointer-events: none; color: red; height: 72px; font-size: 28px; line-height: 72px;">
+                                                    *
+                                                </span>
+                                            </input>
+                                        </div>
+                                        <!-- -->
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="18" style="position: absolute; width: 400px; height: 72px; top: 498px; left: 50%; opacity: 1; transform: rotate(0deg);" type="i">
+                                    <div class="content" data-v-498eaa06="">
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <div class="inputs" contenteditable="false" data-v-498eaa06="" style="position: relative;">
+                                            <input data-v-498eaa06="" id="1506310912301" style="position: absolute; width: 400px; height: 72px; border-width: 2px; border-color: rgb(255, 255, 255); border-style: solid; background: rgb(255, 255, 255); border-radius: 0px; color: rgb(75, 75, 75); font-size: 28px; line-height: 72px; padding: 20px;">
+                                                <span data-v-498eaa06="" style="position: relative; pointer-events: none; opacity: 0.7; padding-left: 20px; height: 72px; font-size: 28px; line-height: 72px;">
+                                                    手机
+                                                </span>
+                                                <span data-v-498eaa06="" style="position: relative; pointer-events: none; color: red; height: 72px; font-size: 28px; line-height: 72px;">
+                                                    *
+                                                </span>
+                                            </input>
+                                        </div>
+                                        <!-- -->
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="19" style="position: absolute; width: 400px; height: 72px; top: 591px; left: 50%; opacity: 1; transform: rotate(0deg);" type="i">
+                                    <div class="content" data-v-498eaa06="">
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <div class="inputs" contenteditable="false" data-v-498eaa06="" style="position: relative;">
+                                            <input data-v-498eaa06="" id="1506310917047" style="position: absolute; width: 400px; height: 72px; border-width: 2px; border-color: rgb(255, 255, 255); border-style: solid; background: rgb(255, 255, 255); border-radius: 0px; color: rgb(75, 75, 75); font-size: 28px; line-height: 72px; padding: 20px;">
+                                                <span data-v-498eaa06="" style="position: relative; pointer-events: none; opacity: 0.7; padding-left: 20px; height: 72px; font-size: 28px; line-height: 72px;">
+                                                    人数
+                                                </span>
+                                                <span data-v-498eaa06="" style="position: relative; pointer-events: none; color: red; height: 72px; font-size: 28px; line-height: 72px;">
+                                                    *
+                                                </span>
+                                            </input>
+                                        </div>
+                                        <!-- -->
+                                    </div>
+                                </li>
+                                <li class="item_wrapper1" data-v-498eaa06="" index="20" style="position: absolute; width: 400px; height: 72px; top: 697px; left: 50%; opacity: 1; transform: rotate(0deg);" type="s">
+                                    <div class="content" data-v-498eaa06="">
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <!-- -->
+                                        <div contenteditable="false" data-v-498eaa06="" style="width: 400px; height: 72px; border-width: 0px; border-color: rgb(255, 255, 255); border-style: solid; text-align: center; background: rgb(217, 72, 87); border-radius: 8px; color: rgb(255, 255, 255); font-size: 32px; line-height: 72px;">
+                                            提交
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="arrow vertical_arrow" data-v-498eaa06="">
+            <img data-v-498eaa06="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAkCAMAAADip6m2AAAAolBMVEUAAAAAAAAAAAAAAAAAAAABAQEAAAAAAAAHBwcAAAD////9/f37+/vt7e25ubn39/cKCgrz8/Pe3t7c3Nz+/v729vbW1tZra2tKSkoAAABpaWlgYGD9/f38/Pz5+fn5+fn39/fz8/Px8fHu7u7q6urm5ubj4+Pd3d3y8vLX19fJycnAwMC4uLisrKyhoaGVlZWGhoajo6MpKSkxMTGAgID///9oDYyzAAAANXRSTlMAAwcLFR0SGRAO+efJbSOcIqBDQvLNbTEpGxEQ9e3h29XDvLOsnJOJiIFpYVlNRkE7MiwfDLl52bwAAAGFSURBVEjH3ZXZboMwFERbHAMhC6EFQtrs+777/3+t98bGjmwqy32plHmLPYfMiYTy9nJ5F/kb693j+O4h7Y567SZjzbYHuDv72WCQxgfSjixpReyRqEWAdmK/YyaTfAHtpivjIo6TUReTZYxxcZzupju/XufP4g660aYD2USmuF13sKeP7Ae6uF13fKZBDRLQ81gTt+rOCmD9MPSBLmaauEV3hWidQOqIr57FLbrpDllCPAghSO9SU7xad3QCNiRQgwAeAn0a6eLVutOC4mRk+SCcToupIW7qsmWnByw25B3Svc6SaeKGbn9LA8UqGsW3fVMc2VJ3eJS6apcUPw5LcVmAq1J30qWBL1mN9gPanZTiUBE3pe5C6cpo4gtRjXkJjtf8cbnSlTHEcz5yTTwBh00UOVToVogfGvibhQq+pCyr0q0Wz1h6kTDsyZObPvn36bckh6qA8YE1eIUEa6GxyyeKEzhC1MLy6byL3yNP4BNn7TSWVRffHYHaI7qq7PB3qMr/mh8s20b2bOZlXQAAAABJRU5ErkJggg==">
+            </img>
+        </div>
+        <div class="audio_btn play" data-v-498eaa06="">
+            <img data-v-498eaa06="" src="data:image/png;base64,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">
+                <img data-v-498eaa06="" src="data:image/png;base64,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" style="display: none;">
+                </img>
+            </img>
+        </div>
+    </div>
+    <script src="manifest.3e84e1c35db6c0cdba7c.js" type="text/javascript">
+    </script>
+    <script src="vendor.403d5549e7502f330338.js" type="text/javascript">
+    </script>
+    <script src="swiper.js" type="text/javascript">
+    </script>
+    <script>
+        var swiper = new Swiper('.swiper-container', {
+            	slideActiveClass : 'swiper-slide-active',
+		      direction: 'vertical',
+		    });
+    </script>
+</body>

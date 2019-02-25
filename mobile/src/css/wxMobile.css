@@ -1,0 +1,186 @@
+.swiper-container {
+    width: 100%;
+}
+.weui-grid.weui-media-box_appmsg{
+    width: 25%!important;
+}
+.swiper-container img {
+    display: block;
+    width: 100%;
+}
+.main-title{
+    color: #d1e5f5;
+}
+.weui-msg__desc.main-title{
+    font-size: 16px;
+    line-height: 16px;
+}
+.main-center{
+    font-size: 36px;
+    line-height: 36px;
+    margin: 0!important;
+    padding: 10px 0;
+}
+.weui-media-box__desc.main-center{
+    font-size: 12px;
+    margin-top: 10px;
+}
+.main-title-small{
+    line-height:inherit;
+    font-size: 12px;
+    color: #d1e5f5;
+}
+.main{
+    background-color: #1b82d2;
+    color: white!important;
+}
+.main h4{
+    color: white!important;
+    font-size: 14px!important;
+    line-height: 14px!important;
+}
+.main .weui-media-box:before{
+    height:0!important;
+    border-top:none!important;
+}
+.weui-media-box__title{
+    overflow:visible;
+}
+body, html {
+    height: 100%;
+    -webkit-tap-highlight-color: transparent;
+    font-size: 14px!important;
+}
+.weui-media-box__desc{
+    font-size: 14px!important;
+     margin-top: 15px;
+}
+.header_psw{
+    color: #757575 !important;
+}
+.changeTitle{
+    color: #3abef9!important;
+}
+#templateList .weui-cell__bd{
+    width:33%!important;
+}
+.wx-title {
+    text-align: center;
+    font-size: 24px;
+    color: #3cc51f;
+    font-weight: 400;
+    margin: 0 15%;
+}
+.record,#template{
+    font-size:14px!important;
+}
+.demos-sub-title {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+}
+
+.demos-header {
+    padding: 35px 0;
+}
+
+.demos-content-padded {
+    padding: 15px;
+}
+
+.demos-second-title {
+    text-align: center;
+    font-size: 24px;
+    color: #3cc51f;
+    font-weight: 400;
+    margin: 0 15%;
+}
+
+footer {
+    text-align: center;
+    font-size: 14px;
+    padding: 20px;
+}
+
+footer a {
+    color: #999;
+    text-decoration: none;
+}
+.flex-side {
+    margin: 5px;
+    padding: 0 10px;
+    height: 2.3em;
+    line-height: 2.3em;
+    text-align: center;
+}
+.input-inline{
+    margin-top: 10px;
+}
+.text-center{
+    text-align: center;
+}
+.right{
+    float:right;
+    color: #3cc51f;
+}
+.margin_top{
+    margin-top: 0;
+}
+.margin_content{
+    margin-top: 50px;
+}
+.content-block{
+    background: url(../img/bg2.png);
+    background-size: 100% 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+.white-bg{
+    background-color: transparent!important;
+    color: #ffFFFF;
+}
+.login_logo{
+    text-align: center;
+}
+.login_logo img {
+    width: 70px;
+    padding: 50px 0;
+}
+img {
+    max-width: 100%;
+    border: 0;
+    vertical-align: bottom;
+}
+.weui-input{
+    text-indent: 5px;
+
+}
+.weui-toast{
+    margin-left: 0;
+}
+.passLabel{
+    color: #2c2c2c;
+}
+.button.weui-btn, input.weui-btn,.weui-btn-area{
+    z-index: 100;
+}
+input[type="button"], input[type="submit"], input[type="reset"] {
+    -webkit-appearance: none;
+}
+.weui-pull-to-refresh__layer .weui-pull-to-refresh__arrow{
+    z-index: 0;
+}
+.hidden{
+    display:none!important
+}
+#change{
+    height: 52px;
+    font-size: 15px;
+    width: 100%;
+    color: #fff;
+    text-align: center;
+    line-height: 52px;
+    background-color: rgb(51,166,240);
+}

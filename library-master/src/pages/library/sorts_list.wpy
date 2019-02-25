@@ -1,0 +1,83 @@
+
+<template>
+  <view class="book-sorts">
+    <ClassifyList :list.sync="list" :library_id.sync="library_id"></ClassifyList>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { service } from '../../config.js'
+  import http from '../../mixins/http'
+  import base from '../../mixins/base'
+  import user from '../../mixins/user'
+  import ShareMessage from '../../mixins/ShareMessage'
+  import ClassifyList from '../../components/classifyList'
+
+  export default class bookSort extends wepy.page {
+    mixins = [base, http, user, ShareMessage]
+    config = {
+      navigationBarTitleText: '图书分类',
+      enablePullDownRefresh: false
+    }
+    components = {
+      ClassifyList: ClassifyList
+    }
+    data = {
+      loading: false,
+      // 图书分类
+      sorts: [],
+      library_id: 0,
+      list: [],
+      library: {}
+    }
+
+    onLoad(options) {
+      this.library_id = options && +options.library_id
+    }
+
+    onShow(options) {
+      // 初始化页面数据
+      this.initPageData()
+    }
+
+    onPullDownRefresh() {
+      this.initPageData()
+    }
+
+    // 初始化页面数据
+    initPageData() {
+      // 获取分类列表
+      this.$get({ url: service.libraries + '/' + this.library_id }, {
+        success: ({code, data}) => {
+          this.sorts = data.sorts
+          this.library = data.library
+          this.list = data.library_sorts
+        },
+        fail: ({code, data}) => {
+          // 失败了什么也不做
+        },
+        complete: () => {
+          this.loading = false
+        }
+      })
+    }
+
+    methods = {
+      add(libraryId) {
+        wx.navigateTo({url: '/pages/library/sort?library_id=' + libraryId})
+      },
+      typing (type, e) {
+        if (this.isDefined(this[type])) {
+          this[type] = e.detail.value
+        }
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+@import "../../styles/custom/fn.less";
+
+
+</style>

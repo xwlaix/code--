@@ -1,0 +1,364 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>实名认证</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/My97DatePicker/WdatePicker.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../static/js/Department.js"></script>
+</head>
+
+
+<body>
+<!--中间部分start!-->
+<div class="main-box" style="width:95%">
+    <div class="msgWrap form">
+        <div class="autonym-group clearfix">
+            <div class="form-group first_group">
+                <label for="statusAutonym">审核状态:</label>
+                <select name="statusAutonym" id="statusAutonym" data-bind="value:statusAutonym">
+                    <option class="statusAutonym" selected="selected" value="">请选择审核状态</option>
+                    <option class="statusAutonym" value="1">未审核</option>
+                    <option class="statusAutonym" value="2">审核通过</option>
+                    <option class="statusAutonym" value="3">审核失败</option>
+                </select>
+            </div>
+            <div class="form-group first_group">
+                <label for="cardNO">身份证号码:</label>
+                <input type="text" name="cardId" class="form-control" id="cardNO">
+            </div>
+            <div class="form-group first_group">
+                <label for="cardid">卡号或接入号:</label>
+                <input type="text" name="cardId" class="form-control" id="cardid">
+            </div>
+            <div class="form-group sec_group">
+                <label for="date_begin" class="span_title" title="时间">时间：</label>
+                <input id="date_begin" class="Wdate form-control" name="starttime" type="text"
+                       onFocus="var date_begin=$dp.$('date_end');
+                                   WdatePicker({onpicked:function(){date_end.focus();},
+                                   maxDate:'#F{$dp.$D(\'date_end\')}'})"/>
+                <label for="date_end" style="display:-moz-inline-box;display:inline-block;width: 8px;text-align:right;">~</label>
+                <input id="date_end" class="Wdate form-control" name="endtime" type="text"
+                       onFocus="WdatePicker({minDate:'#F{$dp.$D(\'date_begin\')}'})"/>
+                <button class=" btn btn-primary btn-sm keydownBtn" id="secAutonym" title="搜索">搜索</button>
+            </div>
+        </div>
+        <table id="tb_dept" data-bind="myBootstrapTable:$root">
+        </table>
+        <div id="toolbar">
+            <button class=" btn btn-primary btn-sm 221" id="addAutonym" title="批量实名认证">批量实名认证</button>
+            <button class=" btn btn-primary btn-sm 221" id="exportAutonym" title="导出实名认证">导出实名认证</button>
+        </div>
+        <div id="addStatus" class="hidden"></div>
+        <div id="realStatus" class="hidden"></div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var noArr = [], thrArr = [], flag_btn = 0;
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if(res.code==0){
+            return
+        }
+        tableInit.Init();
+        operate.operateInit();
+        if(res.data.id == res.data.uid){
+            flag_btn = 1;
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (!nodes[b]["children"][a]["children"][c]["checked"]) {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            } else {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (var e in thrArr) {
+            if (thrArr[e] == 221) {
+                flag_btn = 1
+            }
+        }
+        for (var e in noArr) {
+            if (noArr[e] == 221) {
+                $("." + noArr[e]).remove();
+            }
+        }
+
+    });
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.addAutonym();
+            this.exportAutonym();
+            this.sec();
+            this.DepartmentModel = {
+                uid: ko.observable(),
+                name: ko.observable(),
+                ID: ko.observable(),
+                number: ko.observable()
+            };
+        },
+        //导出实名认证
+        exportAutonym: function () {
+            $('#exportAutonym').on('click', function () {
+                $get(urlPrefix + "?r=sms/card/celebrity/down-all",
+                    function (res) {
+                        if (res.code==1) {
+                            layer.msg(res.msg,
+                                {time: 2000});
+                            window.open(res.data.url, '_self')
+                        } else {
+                            layer.msg(res.msg,
+                                {time:2000})
+                        }
+                    },function(){layer.msg("导出失败",{time:2000})})
+            })
+        },
+        //搜索实名认证
+        sec: function () {
+            $('#secAutonym').on('click', function () {
+                $post(urlPrefix + "?r=sms/card/celebrity/get-all",
+                    {   pageSize: 10,
+                        pageNumber: 1,
+                        card: $.trim($("#cardid").val()),
+                        cardNo: $.trim($("#cardNO").val()),
+                        starttime: $.trim($("#date_begin").val()),
+                        endtime: $.trim($("#date_end").val()),
+                        status: $.trim($("#statusAutonym").val())
+                    },
+                    function (res) {
+                        layer.msg(res.msg, {time: 2000});
+                        if (res.code==1) {
+                            tableInit.myViewModel.load(res.data);
+                        }
+                    },function(){layer.msg("搜索失败",{time:2000})})
+            })
+        },
+        //批量实名认证
+        addAutonym: function () {
+            $('#addAutonym').on('click', function () {
+                layer.open({
+                    type: 2,
+                    title: '批量实名认证',
+                    shadeClose: true,
+                    shade: [0.5, 'rgb(0,0,0)'],
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['100%', '100%'],
+                    content: 'addAutonym.html',
+                    end: function(){
+                        if($("#addStatus").val()){
+                            tableInit.myViewModel.refresh()
+                        }
+                    },
+                    zIndex: layer.zIndex, //重点1
+                    success: function (layero) {
+                        layer.setTop(layero); //重点2
+                    }
+                });
+            })
+        }
+    };
+
+
+    function queryParams(params) {
+        queryData = {
+            pageSize: params.pageSize,
+            pageNumber: params.pageNumber,
+            card: $.trim($("#cardid").val()),
+            cardNo: $.trim($("#cardNO").val()),
+            starttime: $.trim($("#date_begin").val()),
+            endtime: $.trim($("#date_end").val()),
+            status: $.trim($("#statusAutonym").val())
+        };
+        return queryData;
+    }
+
+
+    window.operateEvents = {
+
+        'mouseenter .show': function (e, value, row, index) {
+            var that = this;
+            layer.tips(row.text, that, {
+                tips: 1 //还可配置颜色
+            });
+        },
+        //详情
+        'click #detailsAutonym': function (e, value, row, index) {
+            var id = row.id,text = row.text,cards = row.card;
+            layer.open({
+                type: 2,
+                title: '卡片实名详情',
+                shadeClose: true,
+                shade: [0.5, 'rgb(0,0,0)'],
+                maxmin: true, //开启最大化最小化按钮
+                area: ['100%', '100%'],
+                end: function(){
+                    if($("#realStatus").val()){
+                        $post(urlPrefix + "?r=sms/card/celebrity/get-all",
+                            {card: cards},
+                            function (res) {
+                                if (res.code==1) {
+                                    tableInit.myViewModel.update(index,res.data.rows["0"]);
+                                }
+                            },function(){layer.msg("更新失败，请手动刷新",{time:2000})})
+                    }
+                    $("#realStatus").val('')
+                },
+                content: 'detailsAutonym.html?id=' + id +"&text="+text+"&status="+row.status +"&v=1.0",
+                zIndex: layer.zIndex, //重点1
+                success: function (layero) {
+                    layer.setTop(layero); //重点2
+                }
+            });
+        },
+        //删除
+        'click #delAutonym': function (e, value, row, index) {
+            layer.confirm('你确定要删除吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=sms/card/celebrity/delete",
+                    {id: row.id},
+                    function (res) {
+                        if (res.code==1) {
+                            layer.msg(res.msg, {time: 2000});
+                            tableInit.myViewModel.remove(row.id);
+                        } else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    },function(){layer.msg("删除失败",{time:2000})})
+            })
+        }
+    };
+
+    //初始化表格
+    var tableInit = {
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                search: false,
+                queryParams: queryParams,//传递参数（*）
+                method: "post",
+                url: urlPrefix + '?r=sms/card/celebrity/get-all',
+                onRefresh:function(){
+                    $("#cardid").val('');
+                    $("#cardNO").val('');
+                    $("#date_begin").val('');
+                    $("#date_end").val('');
+                    $("#statusAutonym").val('');
+                },
+                columns: [{
+                    field: 'id',
+                    title: 'ID'
+                }, {
+                    field: 'card',
+                    title: '卡号'
+                }, {
+                    field: 'name',
+                    title: '姓名'
+                }, {
+                    field: 'phone',
+                    title: '电话'
+                }, {
+                    field: 'addtime',
+                    title: '申请时间'
+                }, {
+                    field: 'status',
+                    title: '审核状态',
+                    formatter: operateForStatus
+                }, {
+                    field: 'text',
+                    title: '原因',
+                    formatter: forPackage,
+                    events: operateEvents
+                }, {
+                    field: 'uname',
+                    title: '操作者'
+                },{
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+
+            function operateFormatter(value, row, index) {
+                if(flag_btn){
+                    return [
+                        '<button id="detailsAutonym" type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class="" aria-hidden="true"></span>详情' +
+                        '</button>',
+                        '<button id="delAutonym" type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class="" aria-hidden="true"></span>删除' +
+                        '</button>'
+                    ].join('');
+                }else{
+                    return [
+                        '<button id="detailsAutonym" type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class="" aria-hidden="true"></span>详情' +
+                        '</button>'
+                    ].join('');
+                }
+            }
+            function forPackage(value, row, index) {
+                return ['<span class="text-success show" >' + cutstr(row.text, 20) +
+                '</span>'].join('');
+            }
+            function operateForStatus(value, row, index) {
+                var status = row.status;
+                if (status == 2) {
+                    return ['<span class="text-success">审核通过</span>'
+                    ].join('');
+                } else if (status == 1) {
+                    return ['<span class="text-danger">未审核</span>'
+                    ].join('');
+                } else {
+                    return ['<span class="text-danger">审核失败</span>'
+                    ].join('');
+                }
+
+
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>

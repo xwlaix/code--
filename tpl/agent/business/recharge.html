@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>充值</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../common/js/Select2/select2.min.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/ajaxfileupload.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../common/js/Select2/select2.min.js"></script>
+    <script src="../../common/js/qrcode.js"></script>
+
+</head>
+<body>
+<!--中间部分start!-->
+<div class="main-box" style="width:95%">
+    <div id="main-box-index">
+        <!--中间部分_右侧end!-->
+        <div class="alert alert_info">
+            <strong>提示信息!</strong>
+            <ol>
+                <li class="text-sum">每次充值金额最少100</li>
+                <li>操作步骤:第一步：输入要充值的金额</li>
+                <li>操作步骤:第二步：确定</li>
+                <li>操作步骤:第三步：打开微信扫一扫</li>
+                <li>操作步骤:第四步：支付</li>
+                <li class="text-sum">暂时只支持微信支付，金额实时到账。</li>
+            </ol>
+        </div>
+        <div class="cLineB">
+            <div id="addPackage">
+                <div class="form-group">
+                    <label  for="money">充值的金额:</label>
+                    <input type="text" id="money" placeholder="请输入充值的金额">
+                </div>
+                <div class="form-group">
+                    <label class="pay_label" id="first_pay_label">支付类型:</label>
+                    <!--<input type="radio" name="kind" data-bind="1" value="1" id="amount" checked="checked">-->
+                    <!--<label class="pay_label" for="amount">余额支付</label>-->
+                    <input type="radio" name="kind" data-bind="2" value="2" id="wx" checked="checked">
+                    <label class="pay_label" for="wx">微信支付</label>
+                    <button class="btn btn-info btn-sm " id="orderPackage" style="vertical-align: middle"
+                            title="订购">充值</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="box hidden">
+    <div class="box-title">
+        <img src="../../static/img/WePayLogo.png" alt="">
+        <div class="order">
+            总金额：
+            <span>￥</span>
+            <span class="price"></span>
+        </div>
+    </div>
+    <div class="erweima" id="erweima">
+    </div>
+    <div class="info"><img src="../../static/img/info.png" alt=""></div>
+</div>
+</body>
+
+<script>
+    var qrcode = new QRCode('erweima');
+
+    //批量订购同一个套餐
+    $('#orderPackage').on('click', function () {
+        var index = layer.load(2,  {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        var cardid = $.trim($("#money").val());
+        var kind = $('input[name="kind"]:checked').data('bind');
+        if (!cardid) {
+            layer.tips('请输入金额', '#money', {
+                tips: [2, 'red'],
+                time: 2000
+            });
+            layer.close(index);
+            return false
+        }
+        if (isNaN(cardid)) {
+            layer.tips('请输入正确的金额', '#money', {
+                tips: [1, 'red'],
+                time: 2000
+            });
+            layer.close(index);
+            return false
+        }
+//        if (cardid<100) {
+//            layer.tips('每次充值金额最少100', '#money', {
+//                tips: [1, 'red'],
+//                time: 2000
+//            });
+//            layer.close(index);
+//            return false
+//        }
+        if (!kind) {
+            layer.tips('支付类型', '#orderPackage', {
+                tips: [1, 'red'],
+                time: 2000
+            });
+            layer.close(index);
+            return false
+        }
+        data = {
+            money: cardid
+        };
+        if (kind == 1) {
+//            $('#orderPackage').text('订购中');
+//            $post(urlPrefix + '?r=ems/business/main/order', data, function (res) {
+//                if (res.code == 1) {
+//                    layer.closeAll();
+//                    parent.$("#rechargeStatus").val(1);
+//                    layer.msg(res.msg,
+//                        {time: 2000});
+//                    $('#orderPackage').text('订购');
+//                    setTimeout(function () {
+//                        parent.layer.closeAll();
+//                    }, 2000);
+//                } else if (res.msg != '账户余额不足') {
+//                    layer.close(index);
+//                    layer.msg(res.msg, {time: 2000});
+//                    $('#orderPackage').text('订购');
+//                } else {
+//                    layer.close(index);
+//                    $('#orderPackage').text('订购');
+//                    layer.confirm('余额不足，请用微信支付！', {
+//                        btn: ['确定', '取消'],
+//                        shadeClose: 'true'
+//                    }, function () {
+//                        layer.closeAll();
+//                        wxPay(data, price, cardid)
+//                    })
+//                }
+//            });
+        } else if (kind == 2) {
+            wxPay(data)
+        }
+    });
+
+    function wxPay(data) {
+        layer.closeAll();
+        var index = layer.load(2,  {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        $post(urlPrefix + '?r=ems/agent/account/recharge',
+            data,
+            function (res) {
+                layer.closeAll();
+                if(res.code==0){
+                    layer.msg(res.msg,{time:2000});
+                    return
+                }
+                $('.box').removeClass('hidden');
+                qrcode.makeCode(res[0].code_url);
+                $(".price").text(data.money);
+                layer.open({
+                    title: ['', 'font-size:14px;text-align:center;padding:0px;background:#eee;height:0;'],
+                    type: 1,
+                    anim: 2,
+                    area: ['260px'],
+                    closeBtn: 0,
+                    shadeClose: true,
+                    end: function (layero, index) {
+                        $('.box').addClass('hidden');
+                    },
+                    content: $('.box')
+                });
+                var orderID = res[1];
+
+                function timer() {
+                    setTimeout(function (res) {
+                        $post(urlPrefix + "?r=ems/finance/order/get-all",
+                            {orderID: orderID},
+                            function (data) {
+                                if (data.code == 1 && data.data.total != 0) {
+                                    layer.closeAll();
+                                    var index = layer.load(2,  {
+                                        shade: [0.1, '#fff'] //0.1透明度的白色背景
+                                    });
+                                    layer.msg(res.msg,{time:2000})
+                                } else {
+                                    timer()
+                                }
+                            }
+                        )
+                    }, 10000);
+                }
+
+                timer();
+            },function(){
+                layer.closeAll();
+            }
+        )
+    }
+
+</script>
+</html>
+

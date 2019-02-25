@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../common/css/withdraw.css">
+    <title>提现申请</title>
+</head>
+<body>
+<div class="weui-msg tx">
+    <div class="weui-msg__icon-area">
+        <img src="../../static/css/img/tx.png" alt="">
+    </div>
+    <div class="weui-msg__text-area">
+        <h2 class="weui-msg__title">我的佣金</h2>
+        <h1 class="amountWithdraw">￥<span class="amount"></span></h1>
+    </div>
+    <div class="weui-msg__opr-area">
+        <p class="weui-btn-area">
+            <a href="javascript:;" class="weui-btn weui-btn_primary">提现</a>
+        </p>
+    </div>
+    <div class="weui-msg__extra-area">
+        <div class="weui-footer">
+            <p class="weui-footer__text">Copyright © 2008-2016 流量沟通100</p>
+        </div>
+    </div>
+</div>
+</body>
+<script src="../../common/js/jquery-3.1.1.min.js"></script>
+<script>
+    var amount =  parseFloat(sessionStorage.getItem("amount")).toFixed(2);
+    $('.amount').text(amount);
+</script>
+</html>

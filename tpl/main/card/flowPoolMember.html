@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>流量池成员</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/jquery.validate.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../static/js/provinceCity.js"></script>
+
+</head>
+<body>
+
+<div class="main-box">
+    <div id="main-box-index">
+        <div class="msgWrap form">
+            <div class="form-group">
+                <label for="names">流量池成员:</label>
+                <input type="text" name="names" class="form-control" id="names">
+                <button type="button" id="btn_sec" class="btn btn-primary btn-sm keydownBtn">搜索
+                </button>
+            </div>
+            <table id="tb_dept" data-bind="myBootstrapTable:$root">
+            </table>
+
+            <div id="toolbar">
+                <button class=" btn btn-primary btn-sm 231" id="addProvider" title="添加流量池成员">添加流量池成员</button>
+                <button class=" btn btn-success btn-sm" id="refreshMember" title="刷新流量池成员">刷新流量池成员</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var poolNo = getUrlParam("poolNo");
+    var operator_id = getUrlParam("operator_id");
+    var noArr = [], thrArr = [], flag_btn = 0;
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if(res.code===0){
+            return
+        }
+        tableInit.Init();
+        operate.operateInit();
+        if(res.data.id == res.data.uid){
+            flag_btn = 1;
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (!nodes[b]["children"][a]["children"][c]["checked"]) {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            } else {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (var e in thrArr) {
+            if (thrArr[e] == 231) {
+                flag_btn = 1
+            }
+        }
+        for (var e in noArr) {
+            if (noArr[e] == 231) {
+                $("." + noArr[e]).remove();
+            }
+        }
+    });
+
+    function queryParams(params) {
+        queryData = {
+            pageSize: params.pageSize,
+            pageNumber: params.pageNumber,
+            poolNo: poolNo
+        };
+        return queryData;
+    }
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.btn_sec();
+            this.addMember();
+            this.refreshMember();
+            this.DepartmentModel = {};
+        },
+        //搜索
+        btn_sec: function () {
+            $('#btn_sec').on("click", function () {
+                var card = $.trim($("#names").val());
+                $post(urlPrefix + "?r=sms/business/pool/get-all-card",
+                    {
+                        poolNo: poolNo,
+                        card: card,
+                        operator_id: operator_id
+                    },
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('搜索成功',
+                                {time: 2000});
+                            tableInit.myViewModel.load(res.data);
+                        } else {
+                            layer.msg(res.msg,
+                                {time: 2000})
+                        }
+                    })
+            });
+        },
+        //新增
+        addMember: function () {
+            $('#addProvider').on("click", function () {
+                layer.prompt({
+                        title: '添加流量池卡片',
+                        formType: 0,
+                        value:"输入13位tel值",
+                        area: ['150px', '30px']
+                    }, function (card, index) {
+                        var data = {
+                            card: card,
+                            operator_id: operator_id,
+                            poolNo: poolNo
+                        };
+//                        if(card.length==13){
+                            layer.close(index);
+                            $post(urlPrefix + '?r=sms/business/pool/add-card',
+                                data,
+                                function (res) {
+                                    layer.msg(res.msg, {time: 2000});
+                                    if (res.code == 1) {
+                                        tableInit.myViewModel.refresh()
+                                    }
+                                }
+                            )
+//                        }else{
+//                            layer.msg("输入13位tel值",{time:2000})
+//                        }
+                    }
+                )
+            });
+        },
+        //刷新流量池成员
+        refreshMember: function () {
+            $('#refreshMember').on("click", function () {
+                var index = layer.load(2, {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                });
+                $post(urlPrefix + "?r=sms/business/pool/update-all-card",
+                    {pageSize: 10, pageNumber: 1, operator_id: operator_id, poolNo: poolNo}, function (res) {
+                        layer.close(index);
+                        layer.msg(res.msg, {time: 2000});
+                        if (res.code == 1) {
+                            tableInit.myViewModel.refresh()
+                        }
+                    }, function () {
+                        layer.close(index);
+                        layer.msg("同步失败", {time: 2000})
+                    })
+            });
+        }
+    };
+
+    window.operateEvents = {
+        //删除
+        'click #btn_delete': function (e, value, row, index) {
+
+            layer.confirm('你确定要删除吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=sms/business/pool/delete-card",
+                    {operator_id:row.operatorid,pageSize: 10, pageNumber: 1, poolNo: row.poolNo,card:row.tel},
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('删除成功', {time: 2000});
+                            tableInit.myViewModel.remove(row.id);
+                        } else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    })
+            });
+        },
+        //查询流量
+        'click #jumpTel': function (e, value, row, index) {
+            card = row.tel;
+            layer.open({
+                type: 2,
+                title: '查询流量',
+                shadeClose: true,
+                anim: 2,
+                shade: [0.5, 'rgb(0,0,0)'],
+                maxmin: true, //开启最大化最小化按钮
+                area: ['100%', '100%'],
+                content: '../business/cxGprs.html?card=' + card,
+                zIndex: layer.zIndex, //重点1
+                success: function (layero) {
+                    layer.setTop(layero); //重点2
+                }
+            });
+        },
+        //订购套餐
+        'click #btn_order': function (e, value, row) {
+            layer.open({
+                type: 2,
+                title: '订购套餐',
+                shadeClose: true,
+                anim: 2,
+                shade: [0.5, 'rgb(0,0,0)'],
+                maxmin: true, //开启最大化最小化按钮
+                area: ['100%', '100%'],
+                cancel: function () {
+                    if ($("#rechargeStatus").val()) {
+                        $("#rechargeStatus").val('');
+                        $post(urlPrefix + "?r=sms/business/pool/get-card",
+                            {poolNo: row.poolNo, card: row.card},
+                            function (res) {
+                                tableInit.myViewModel.update(index, res.data[0])
+                            })
+                    }
+                },
+                content: "../business/orderPackage.html?cardid=" + row.tel,
+                zIndex: layer.zIndex, //重点1
+                success: function (layero) {
+                    layer.setTop(layero); //重点2
+                }
+            });
+        },
+        'click #jumpStatus': function (e, value, row, index) {
+            tel = row.tel;
+            var real_status = row.real_status;
+            layer.open({
+                type: 2,
+                title: '卡片实名详情',
+                shadeClose: true,
+                shade: [0.5, 'rgb(0,0,0)'],
+                maxmin: true, //开启最大化最小化按钮
+                area: ['800px', '90%'],
+                content: 'detailsAutonym.html?tel=' + tel+"&real_status="+real_status,
+                zIndex: layer.zIndex, //重点1
+                success: function (layero) {
+                    layer.setTop(layero); //重点2
+                }
+            });
+        }
+    };
+
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                search: false,
+                queryParams: queryParams,//传递参数（*）
+                method: "post",
+                url: urlPrefix + '?r=sms/business/pool/get-all-card',
+                onRefresh:function(){
+                    $("#names").val("");
+                },
+                columns: [{
+                    field: 'id',
+                    title: 'id'
+                }, {
+                    field: 'tel',
+                    title: '成员号码',
+                    events: operateEvents,
+                    formatter: operateForJumpCard
+                }, {
+                    field: 'flow',
+                    title: '流量限额',
+                    formatter: operateForFlow
+                },  {
+                    field: 'amount',
+                    title: '卡片余额'
+                }, {
+                    field: 'card_status',
+                    title: '卡状态',
+                    formatter: operateForStatus
+                },  {
+                    field: 'real_status',
+                    title: '实名状态',
+                    events: operateEvents,
+                    formatter: operateForreal_status
+                }, {
+                    field: 'operator_type',
+                    title: '所属运营商',
+                    formatter: operator_type
+                },  {
+                    field: 'addtime',
+                    title: '添加时间'
+                }, {
+                    field: 'endtime',
+                    title: '结束时间'
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+            function operateForJumpCard(value, row, index) {
+                var tel = row.tel;
+                return [
+                    '<a href="javascript:void(0);" id="jumpTel" >' + tel +
+                    '</a>'
+                ].join('');
+            }
+            function operateForFlow(value, row, index) {
+                var flow ;
+                if(row.flow==-1){
+                    return [
+                        '<span class="text-success">无限量</span>'
+                    ].join('');
+                }else{
+                    return [
+                        row.flow
+                    ].join('');
+                }
+
+            }
+            function operateForreal_status(value, row, index) {
+                var real_status ;
+                if (row.real_status == 1) {
+                    real_status = '未认证';
+                    return [
+                        '<span class="text-danger">' +
+                        real_status +
+                        '</span>'
+                    ].join('');
+                } else {
+                    real_status = '认证';
+                    return [
+                        '<a href="javascript:void(0);" id="jumpStatus" >' +real_status+
+                        '</a>'
+                    ].join('');
+                }
+
+            }
+            function operateForStatus(value, row, index) {
+                var card_status;
+                switch (row.card_status) {
+                    case '1':
+                        card_status = '待激活';
+                        break;
+                    case '2':
+                        card_status = '正常';
+                        break;
+                    case '3':
+                        card_status = '单向停机';
+                        break;
+                    case '4':
+                        card_status = '停机';
+                        break;
+                    case '5':
+                        card_status = '预销号';
+                        break;
+                    case '6':
+                        card_status = '销号';
+                        break;
+                    case '7':
+                        card_status = '过户';
+                        break;
+                    case '8':
+                        card_status = '休眠';
+                        break;
+                    case '9':
+                        card_status = '未知状态';
+                        break;
+                    default:
+                        break;
+                }
+                return ['<span class="text-success">' +
+                card_status +
+                '</span>'
+                ].join('');
+
+            }
+            function operator_type(value, row, index) {
+                var operator_type;
+                if (row.operator_type == 1) {
+                    operator_type = '移动'
+                } else if (row.operator_type == 2) {
+                    operator_type = '电信'
+                } else {
+                    operator_type = '联通'
+                }
+                return [
+                    operator_type
+                ].join('');
+            }
+
+            function operateFormatter(value, row, index) {
+                if(flag_btn){
+                    return [
+                        '<button id="btn_order" type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>订购套餐' +
+                        '</button>',
+                        '<button id="btn_delete" type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>删除' +
+                        '</button>'
+                    ].join('');
+                }
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+        }
+
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+    //操作
+</script>
+
+</html>

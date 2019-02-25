@@ -1,0 +1,290 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>订单管理</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/My97DatePicker/WdatePicker.js"></script>
+</head>
+
+
+<body>
+<!--中间部分start!-->
+<div class="main-box">
+    <div class="msgWrap form">
+        <div class="card-group clearfix">
+            <div class="form-group">
+                <label for="date_begin" class="span_title" title="时间">时间：</label>
+                <input id="date_begin" class="Wdate form-control" name="starttime" type="text"
+                       onFocus="var date_begin=$dp.$('date_end');
+                                   WdatePicker({onpicked:function(){date_end.focus();},
+                                   maxDate:'#F{$dp.$D(\'date_end\')}'})"/>
+                <label for="date_end"
+                       style="display:-moz-inline-box;display:inline-block;width: 8px;text-align:right;">~</label>
+                <input id="date_end" class="Wdate form-control" name="endtime" type="text"
+                       onFocus="WdatePicker({minDate:'#F{$dp.$D(\'date_begin\')}'})"/>
+            </div>
+            <div class="form-group">
+                <label for="iccid">卡号:</label>
+                <input type="text" id="iccid">
+            </div>
+            <div class="form-group">
+                <label for="name">代理商名称:</label>
+                <input type="text" id="name">
+            </div>
+            <div class="form-group">
+                <label for="nickname">昵称:</label>
+                <input type="text" id="nickname">
+            </div>
+            <div class="form-group">
+                <label for="orderID">订单号:</label>
+                <input type="text" id="orderID">
+                <button class=" btn btn-info btn-sm keydownBtn" id="orderCondition" title="订单查询">订单查询</button>
+                <button class=" btn btn-primary btn-sm" id="exportOrder" title="订单导出">订单导出</button>
+            </div>
+        </div>
+        <table id="tb_dept" data-bind="myBootstrapTable:$root">
+        </table>
+        <div id="tool_bar" class="clearfix">
+            <span>总充值：<span class="num "></span></span>
+            <span>本月充值：<span class="num "></span></span>
+            <span>本月佣金：<span class="num "></span></span>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var myDate = new Date(), month = myDate.getMonth(); //获取当前月份(0-11,0代表1月)
+    $('#orderID').val(getUrlParam('orderID'));
+    $('#name').val(getUrlParam('name'));
+    $post(urlPrefix + "?r=ems/data/get-agent-commission", {type: 'month'}, function (res) {
+        $("#tool_bar").find(".num").eq(2).text(res.data[month + 1 + '月'] ? res.data[month + 1 + '月'] + "(元)" : '0.00(元)');
+    });
+    //本月收入
+    $post(urlPrefix + "?r=ems/finance/order/get-data", {type: 'month-money'}, function (res) {
+        $("#tool_bar").find(".num").eq(1).text(res.data[0] ? res.data[0] + "(元)" : '0.00(元)');
+    });
+    $post(urlPrefix + "?r=ems/finance/order/get-data", {type: 'money'}, function (res) {
+        $("#tool_bar").find(".num").eq(0).text(res.data[0] ? res.data[0] + "(元)" : '0.00(元)');
+    });
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.exportCard();
+            this.exportCondition();
+            this.DepartmentModel = {
+                orderID: ko.observable(),
+                type: ko.observable(),
+                money: ko.observable(),
+                addtime: ko.observable(),
+                pname: ko.observable(),
+                iccid: ko.observable(),
+                number: ko.observable()
+            };
+        },
+        //订单筛选
+        exportCondition: function () {
+            $('#orderCondition').on('click', function () {
+                sceData();
+                $post(urlPrefix + "?r=ems/finance/order/get-all",
+                    data,
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg(res.msg,
+                                {time: 2000});
+                            tableInit.myViewModel.load(res.data);
+                        } else {
+                            layer.msg(res.msg,
+                                {time: 2000})
+                        }
+                    }
+                )
+            })
+        },
+        //卡片导出
+        exportCard: function () {
+            $('#exportOrder').on('click', function () {
+                sceData();
+                data.pageSize = '';
+                data.pageNumber = '';
+                $post(urlPrefix + "?r=ems/finance/order/down-all",
+                    data,
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg(res.msg,
+                                {time:2000});
+                            window.open(res.data.url, '_self')
+                        } else {
+                            layer.msg(res.msg,
+                                {time: 2000})
+                        }
+                    }
+                )
+            })
+        }
+    };
+    function sceData() {
+        var date_begin = $("#date_begin").val(),
+            date_end = $("#date_end").val(),
+            orderID = $.trim($("#orderID").val()),
+            iccid = $.trim($("#iccid").val()),
+            oname = $.trim($("#provider_name option:checked").text()),
+            nickname = $.trim($("#nickname").val()),
+            status = $("#status").val(),
+            trade_type = $("#trade_type").val(),
+            name = $.trim($("#name").val());
+        if (oname == '请选择供应商') {
+            oname = ''
+        }
+        data = {
+            pageSize: 10,
+            pageNumber: 1,
+            starttime: date_begin,
+            nickname: nickname,
+            status: status,
+            trade_type: trade_type,
+            endtime: date_end,
+            card: iccid,
+            oname: oname,
+            aname: name,
+            orderID: orderID
+        };
+    }
+
+    //加载table数据
+    function queryParams(params) {
+        sceData();
+        data.pageSize = params.pageSize;
+        data.pageNumber = params.pageNumber;
+        return data;
+    }
+
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+
+        //2、注册增删改事件
+        operate.operateInit();
+
+
+    });
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                search: false,
+               	queryParams: queryParams,//传递参数（*）
+                method: "post",
+                toolbar:'#tool_bar',
+                url: urlPrefix + '?r=ems/finance/order/get-all',
+                onRefresh: function () {
+                    $("#date_end").val("");
+                    $("#date_begin").val("");
+                    $("#iccid").val("");
+                    $("#orderID").val("");
+                },
+                columns: [{
+                    field: 'addtime',
+                    title: '订单时间',
+                    formatter: operateForTime
+                }, {
+                    field: 'nickname',
+                    title: '昵称'
+                }, {
+                    field: 'aname',
+                    title: '代理商'
+                }, {
+                    field: 'iccid',
+                    title: 'iccid'
+                }, {
+                    field: 'orderID',
+                    title: '订单号'
+                }, {
+                    field: 'status',
+                    title: '状态',
+                    formatter: operateStatus
+                }, {
+                    field: 'money',
+                    title: '订单金额(元)'
+                }, {
+                    field: 'commission',
+                    title: '佣金(元)'
+                },{
+                    field: 'sy',
+                    title: '收益(元)'
+                },  {
+                    field: 'pname',
+                    title: '套餐名称'
+                }, {
+                    field: 'trade_type',
+                    title: '支付类型',
+                    formatter: operateType
+                }]
+            });
+
+            function indexFormatter(value, row, index) {
+                return index + 1;
+            }
+
+            function operateForTime(value, row, index) {
+                var newDate = /\d{4}-\d{1,2}-\d{1,2}/g.exec(row.addtime);
+                return [newDate].join('')
+            }
+
+            //处理td数据
+            function operateType(value, row, index) {
+                var type = row.trade_type;
+                if (type == 1) {
+                    return ['<span class="text-success" >微信支付</span>'].join('');
+                }
+            }
+
+            //处理td数据
+            function operateStatus(value, row, index) {
+                if (row.status == 1) {
+                    return ['<span class="text-danger" >' + "未支付" +
+                    '</span>'].join('');
+                } else if (row.status == 2) {
+                    return ['<span class="text-danger" >' + "支付成功" +
+                    '</span>'].join('');
+                } else {
+                    return ['<span class="text-success" >' + "订单成功" +
+                    '</span>'].join('');
+                }
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>

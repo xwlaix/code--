@@ -1,0 +1,410 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>订购套餐</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/js/Select2/select2.min.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/My97DatePicker/WdatePicker.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../common/js/Select2/select2.min.js"></script>
+</head>
+
+
+<body>
+<!--中间部分start!-->
+<div class="main-box">
+    <div class="msgWrap form">
+        <div class="card-group clearfix">
+            <div class="form-group">
+                <label for="accessNumber">卡号:</label>
+                <input id="accessNumber" class="form-control" name="accessNumber" type="text"/>
+            </div>
+            <div class="form-group">
+                <label for="Serial_number">流水号:</label>
+                <input id="Serial_number" class="form-control" name="Serial_number" type="text"/>
+            </div>
+            <div class="form-group">
+                <label for="status">结果:</label>
+                <select name="status" id="status">
+                    <option class="status" selected="selected" value="">未选择</option>
+                    <option class="status" value="1">失败</option>
+                    <option class="status" value="2">成功</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date_begin" class="span_title" title="时间">时间：</label>
+                <input id="date_begin" class="Wdate form-control" name="starttime" type="text"
+                       onFocus="var date_begin=$dp.$('date_end');
+                                   WdatePicker({onpicked:function(){date_end.focus();},
+                                   maxDate:'#F{$dp.$D(\'date_end\')}'})"/>
+                <label for="date_end"
+                       style="display:-moz-inline-box;display:inline-block;width: 8px;text-align:right;">~</label>
+                <input id="date_end" class="Wdate form-control" name="endtime" type="text"
+                       onFocus="WdatePicker({minDate:'#F{$dp.$D(\'date_begin\')}'})"/>
+            </div>
+            <div class="form-group">
+                <label for="source">来源:</label>
+                <input id="source" class="form-control" name="source" type="text"/>
+            </div>
+            <div class="form-group">
+                <label for="provider_name">供应商：</label>
+                <select name="provider_name" id="provider_name" data-bind="value:operatorid">
+                    <option class="provider_name " selected="selected" value="">请选择供应商</option>
+
+                </select>
+                <button class="btn btn-primary btn-sm keydownBtn" id="Sec" title="搜索">搜索</button>
+                <button class="btn btn-info btn-sm" id="export" title="鑫B转2">鑫B转2</button>
+            </div>
+        </div>
+        <div id="toolbar" class="351">
+            <label for="service_type">套餐类型:</label>
+            <select name="service_type" id="service_type" data-bind="value:service_type">
+                <option class="service_type" selected="selected" value="">请选择订购套餐</option>
+
+            </select>
+            <button class="btn btn-info btn-sm " id="orderPackage" title="订购">订购</button>
+            <button class="btn btn-primary btn-sm " id="orderPackageMore" title="批量订购">批量订购</button>
+        </div>
+        <table id="tb_dept" data-bind="myBootstrapTable:$root">
+        </table>
+    </div>
+</div>
+</body>
+<script id="parent" type="text/html">
+    <option value="{{id}}">
+        {{name}}
+        【{{if is_base == 1}}非固定{{/if}}
+        {{if is_base == 2}}固定{{/if}} ·
+        {{if is_infinite == 1}}普通{{/if}}
+        {{if is_infinite == 2}}无限{{/if}} ·
+        {{if type == 1}}月包{{/if}}
+        {{if type == 2}}季包{{/if}}
+        {{if type == 3}}年包{{/if}}
+        {{if type == 5}}半年包{{/if}}
+        】</option>
+</script>
+<script id="provider" type="text/html">
+    <option value="{{id}}">{{name}}</option>
+</script>
+<script type="text/javascript">
+    var noArr = [], thrArr = [], flag_btn = 0;
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if(res.code==0){return}
+        tableInit.Init();
+        operate.operateInit();
+        if(res.data.id == res.data.uid){
+            flag_btn = 1;
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (!nodes[b]["children"][a]["children"][c]["checked"]) {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            } else {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (var e in thrArr) {
+            if (thrArr[e] == 351) {
+                flag_btn = 1
+            }
+        }
+        for (var e in noArr) {
+            if (noArr[e] == 351) {
+                $("." + noArr[e]).remove();
+            }
+        }
+    });
+    //加载供应商类型
+    option('?r=sms/business/operator/get-all',
+        function (res) {
+            if (res.code == 1) {
+                $.each(res.data, function (i, data) {
+                    var parent;
+                    parent = $(template('provider', data));
+                    parent.appendTo(provider_name);
+                })
+            } else {
+                layer.msg(res.msg, {time: 2000})
+            }
+        }, function () {
+            layer.msg("加载供应商类型失败", {time: 2000})
+        });
+    var accessNumber,
+        pid,
+        cardid = getUrlParam("cardid") || null,
+        orderID = getUrlParam("orderID") || null,
+        pname = getUrlParam("pname") || null;
+    $("#accessNumber").val(cardid);
+    $("#source").val(orderID);
+
+    //加载套餐类型
+    function package() {
+        var service_type = $("#service_type");
+        $('.service_type~option').remove();
+        $post(urlPrefix + '?r=sms/business/package/package-main/get-all',
+            {card: cardid},
+            function (res) {
+                if(res.data.total==0||res.code==0){
+                    layer.msg("加载套餐失败", {time: 2000});
+                    return
+                }
+                $.each(res.data.rows, function (i, data) {
+                    var parent;
+                    parent = $(template('parent', data));
+                    parent.appendTo(service_type);
+                    if(data.name==pname){
+                        pid = data.id
+                    }
+                });
+                $("#service_type").select2().val(pid).trigger('change');
+            }, function () {
+                layer.msg("加载套餐失败", {time: 2000})
+            });
+    }
+
+    function loadData(data, flag) {
+        $post(urlPrefix + "?r=sms/business/main/get-all-package",
+            data,
+            function (res) {
+                if (res.code == 1) {
+                    tableInit.myViewModel.load(res.data);
+                }
+                if (!flag) {
+                    layer.msg(res.msg, {time: 2000})
+                }
+            }, function () {
+                layer.msg("搜索失败", {time: 2000})
+            });
+    }
+
+    if (cardid) {
+        package();
+
+    }
+
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.Sec();
+            this.data();
+            this.export();
+            this.orderPackage();
+            this.orderPackageMore();
+            this.DepartmentModel = {
+                uid: ko.observable(),
+                name: ko.observable(),
+                ID: ko.observable(),
+                number: ko.observable()
+            };
+        },
+        //搜索
+        data: function () {
+            cardid = $.trim($("#accessNumber").val());
+            var Serial_number = $.trim($("#Serial_number").val()),
+                status = $("#status").val(),
+                date_begin = $.trim($("#date_begin").val()),
+                date_end = $.trim($("#date_end").val()),
+                provider_name = $.trim($("#provider_name option:checked").text()),
+                source = $.trim($("#source").val());
+            if (provider_name == '请选择供应商') {
+                provider_name = ''
+            }
+            data = {
+                card: cardid, Serial_number: Serial_number, status: status,
+                starttime: date_begin, endtime: date_end, operator_name: provider_name, source: source,
+                pageSize: 10, pageNumber: 1
+            };
+        },
+        Sec: function () {
+            $('#Sec').on('click', function () {
+                operate.data();
+                package();
+                loadData(data)
+            })
+        },
+        export: function () {
+            $('#export').on('click', function () {
+                layer_open("鑫B转2",'xjyOrder.html')
+            })
+        },
+        orderPackageMore: function () {
+            $('#orderPackageMore').on('click', function () {
+               layer_open("批量订购",'orderPackageMore.html')
+            })
+        },
+        //订购
+//        cardid: iccid或tel
+//        packageid：套餐id
+//    type：订购/退购 1订购 0退购
+//    source： 来源
+//    remark： 备注
+        orderPackage: function () {
+            $('#orderPackage').on('click', function () {
+                var index = layer.load(2,  {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                });
+                var packageid = $("#service_type").val();
+                var cardid = $.trim($("#accessNumber").val());
+                if (!cardid) {
+                    layer.msg('请输入卡号', {time: 2000});
+                    layer.close(index);
+                    return false
+                }
+                if (!packageid) {
+                    layer.msg('请选择套餐', {time: 2000});
+                    layer.close(index);
+                    return false
+                }
+                $post(urlPrefix + "?r=sms/business/main/update-package",
+                    {card: cardid, packageid: packageid, type: 1, source: getUrlParam("orderID"), remark: null},
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.close(index);
+                            parent.$("#rechargeStatus").val(1);
+                            layer.msg(res.msg,
+                                {time: 2000});
+                        } else {
+                            layer.close(index);
+                            layer.msg(res.msg,
+                                {time:2000})
+                        }
+                        loadData({card: cardid}, true)
+                    }, function () {
+                        layer.close(index);
+                        layer.msg("请求失败", {time: 2000})
+                    });
+            })
+        }
+    };
+    window.operateEvents = {
+        'mouseenter .show': function (e, value, row, index) {
+            var that = this;
+            layer.tips(row.result, that, {
+                tips: 1 //还可配置颜色
+            });
+        }
+    };
+
+    function queryParams(params) {
+        operate.data();
+
+        data.pageSize = params.pageSize;
+        data.pageNumber = params.pageNumber;
+        queryData = data;
+        return queryData;
+    }
+
+
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                search: false,
+                queryParams: queryParams,//传递参数（*）
+                method: "post",
+                onRefresh: function () {
+                    $("#accessNumber").val("");
+                    $("#Serial_number").val("");
+                    $("#status").val("");
+                    $("#date_begin").val("");
+                    $("#date_end").val("");
+                    $("#provider_name").val("");
+                    $("#source").val("");
+                },
+                url: urlPrefix + '?r=sms/business/main/get-all-package',
+                columns: [{
+                    field: 'id',
+                    title: 'id'
+                }, {
+                    field: 'card',
+                    title: '卡号'
+                }, {
+                    field: 'package',
+                    title: '套餐名称'
+                }, {
+                    field: 'operator_name',
+                    title: '供应商名称'
+                }, {
+                    field: 'Serial_number',
+                    title: '流水号'
+                }, {
+                    field: 'source',
+                    title: '来源'
+                }, {
+                    field: 'status',
+                    title: '结果',
+                    formatter: forStatus
+                }, {
+                    field: 'result',
+                    title: '消息',
+                    formatter: forResult,
+                    events: operateEvents
+                }, {
+                    field: 'uname',
+                    title: '操作者'
+                },{
+                    field: 'addtime',
+                    title: '操作时间'
+                }]
+            });
+
+            function forResult(value, row, index) {
+                return ['<span class="text-success show" >' + cutstr(row.result, 30) +
+                '</span>'].join('');
+            }
+            function forStatus(value, row, index) {
+                if (row.status == 1) {
+                    return ['<span class="text-danger" >' + "失败" +
+                    '</span>'].join('');
+                } else {
+                    return ['<span class="text-success" >' + "成功" +
+                    '</span>'].join('');
+                }
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>

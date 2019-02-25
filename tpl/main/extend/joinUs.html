@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <title>登录</title>
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/mobileCommon.js"></script>
+    <script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+    <link rel="stylesheet" href="../../static/css/wxLogin.css">
+    <link rel="stylesheet" href="../../static/css/fonticon.css">
+    <script>
+        /** 有跳转性质的，写在页面加载之前 **/
+        if (window.location.search.indexOf("code") == -1) {
+            // 转授权链接
+            $post('?r=home/setting/change-url', {url: document.location.href, id: getUrlParam('id')}, function (res) {
+                if (res.code == 0) {
+                    return
+                }
+//                window.location.href = res.data.url
+            });
+        }
+    </script>
+
+</head>
+<body class="content-block">
+<div class="TotalContentBox">
+    <div class="content">
+        <div >
+            <div class="login_logo join_login">
+                <div class="icon-qiehuan llgt"></div><div class="llgt_title">流量沟通100</div>
+            </div>
+            <div class="weui-cells weui-cells_form white-bg">
+                <div class="weui-cell ">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">帐号</label>
+                    </div>
+                    <div class="weui-cell__bd weui-cell_primary ">
+                        <input class="weui-input" type="text" placeholder="请输入帐号" name="username" id="username" value="">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd">
+                        <label class="weui-label">密码</label>
+                    </div>
+                    <div class="weui-cell__bd weui-cell_primary white-bg">
+                        <input class="weui-input" placeholder="请输入密码" type="password" name="password" id="password"
+                               value="">
+                    </div>
+                </div>
+            </div>
+            <div class="weui-flex">
+                <div class="weui-flex__item">
+                    <div class="weui-btn-area">
+                        <a class="weui-btn weui-btn_plain-default" id="login">登录</a>
+                    </div>
+                </div>
+                <div class="weui-flex__item">
+                    <div class="weui-btn-area">
+                        <a class="weui-btn weui-btn_plain-default" id="conf">注册</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+
+<script>
+    $('#login').click(function () {
+        var username = $("#username").val(), password = $("#password").val();
+        if (!username) {
+            $.toptip('请输入账号', 2000,'error');
+            return false
+        }
+        if (!password) {
+            $.toptip('请输入密码',2000, 'error');
+            return false
+        }
+        $("#login").text('登陆中...');
+        $post("?r=wms/agent/login",
+            {username: username, password: password,code:getUrlParam('code'),uid:getUrlParam('id')},
+            function (res) {
+                if (res.code == 1) {
+                    $.toptip(res.msg,2000, 'success');
+                    location.href = "home.html";
+                    $("#login").text('登陆');
+                } else {
+                    $.toptip(res.msg.password,2000, 'error');
+                    $.toptip(res.msg.username,2000, 'error');
+                    $("#login").text('登陆');
+                }
+            });
+    });
+    $("#conf").click(function(){
+        location.href = 'conf.html';
+    })
+</script>
+</html>

@@ -1,0 +1,7 @@
+.logo{
+    background: url("../img/logo_03.png") no-repeat center top;
+    position: relative;
+    top:0;
+    left: 50%;
+    margin-left: -145px;
+}

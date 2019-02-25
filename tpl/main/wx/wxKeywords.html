@@ -1,0 +1,390 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>图文回复</title>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico" />
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/jquery.validate.js"></script>
+</head>
+<body>
+<!--中间部分start!-->
+<div class="main-box">
+    <div id="main-box-index">
+        <div class="msgWrap form">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">新增关键字自定义回复</h4>
+                            <div class="alert 4099139" >
+                                <strong>提示信息!</strong>
+                                <ol>
+                                    <li>关联关键词和外链url可选填,当您填写完外链url后关联关键词将不能生效</li>
+                                    <li>排序为数字，数字越大顺序越靠前，如果不填写将按照添加时间顺序排序</li>
+                                </ol>
+                            </div>
+                        </div>
+                        <form class="modal-body keywords_add" id="signupForm">
+                            <div class="form-group">
+                                <label for="type">类型:</label>
+                                <input type="text" name="type" data-bind="value:type" class="form-control" id="type" placeholder="类型">
+                            </div>
+                            <div class="form-group">
+                                <label for="keyword">关键词:</label>
+                                <input type="text" name="type" data-bind="value:keyword" class="form-control" id="keyword" placeholder="关键词">
+                            </div>
+                            <div class="form-group">
+                                <label for="content">内容:</label>
+                                <textarea name="text" id="content" cols="30" data-bind="value:content" rows="5" style="border: 1px solid #D7D7D7" placeholder="内容"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="url">链接地址:</label>
+                                <input type="text" name="url" data-bind="value:url" class="form-control" id="url" placeholder="链接地址、qq客服链接">
+                            </div>
+                            <div class="form-group accredit">
+                                <label>是否授权:</label>
+                                <input type="radio" name="accredit" value="1">
+                                <label >是</label>
+                                <input type="radio" name="accredit" value="0">
+                                <label >否</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="orderid">排序:</label>
+                                <input type="text" name="orderid" data-bind="value:orderid" class="form-control" id="orderid" placeholder="排序">
+                            </div>
+                            <div class="form-group">
+                                <label for="info">简介:</label>
+                                <input type="text" name="info" data-bind="value:info" class="form-control" id="info" placeholder="简介">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消</button>
+                                <button type="button" id="btn_submit" class="btn btn-primary btn-sm" ><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <table id="tb_dept" class="table-img" data-bind="myBootstrapTable:$root">
+            </table>
+
+            <div id="tool_bar">
+                <div class="hover">
+                    <button class=" btn btn-primary btn-sm 531" id="addimg" title="添加图文">新增图文自定义回复</button>
+                    <button class=" btn btn-primary btn-sm 531" id="addKey" title="添加关键字">新增关键字自定义回复</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>﻿
+</body>
+<script type="text/javascript">
+    var noArr = [], thrArr = [], flag_btn = 0;
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if(res.code==0){return}
+        tableInit.Init();
+        operate.operateInit();
+        if(res.data.id == res.data.uid){
+            flag_btn = 1;
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (!nodes[b]["children"][a]["children"][c]["checked"]) {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            } else {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (var e in thrArr) {
+            if (thrArr[e] == 531) {
+                flag_btn = 1
+            }
+        }
+        for (var e in noArr) {
+            if (noArr[e] == 531) {
+                $("." + noArr[e]).remove();
+            }
+        }
+    });
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateAdd();
+            this.DepartmentModel = {
+                uid: ko.observable(),
+                keyword: ko.observable(),
+                type: ko.observable(),
+                content: ko.observable(),
+                check: ko.observable(),
+                img: ko.observable(),
+                url: ko.observable(),
+                title: ko.observable(),
+                orderid: ko.observable(),
+                info: ko.observable(),
+                id:ko.observable()
+            };
+        },
+        //新增
+        operateAdd: function(){
+            $('#addimg').on("click", function () {
+                layer.open({
+                    type: 2,
+                    title: '图文回复',
+                    anim:1,
+                    shadeClose: true,
+                    shade: [0.5, 'rgb(0,0,0)'],
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['100%' , '100%'],
+                    content: 'wxImgkey.html',
+                    zIndex: layer.zIndex, //重点1
+                    success: function(layero){
+                        layer.setTop(layero); //重点2
+                    }
+                });
+            });
+            $('#addKey').on("click", function () {
+                $("#myModal").modal().on("shown.bs.modal", function () {
+                    var oEmptyModel = {
+                        uid: ko.observable(),
+                        keyword: ko.observable(),
+                        type: ko.observable(),
+                        content: ko.observable(),
+                        check: ko.observable(),
+                        img: ko.observable(),
+                        url: ko.observable(),
+                        title: ko.observable(),
+                        info: ko.observable(),
+                        orderid: ko.observable(),
+                        Id:1
+                    };
+                    ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                    ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                    operate.operateSave();
+                }).on('hidden.bs.modal', function () {
+                    ko.cleanNode(document.getElementById("myModal"));
+                });
+            });
+        },
+        //保存数据
+        operateSave: function (index) {
+            $('#btn_submit').on("click", function (index) {
+                //取到当前的viewmodel
+                var oViewModel = operate.DepartmentModel;
+                //将Viewmodel转换为数据model
+                var oDataModel = ko.toJS(oViewModel),
+                    funcName = oDataModel.Id ? "add" : "update";
+                oDataModel.type = 1;
+                if(!oDataModel.keyword){
+                    layer.msg("请输入关键字");
+                    return false
+                }
+                $post(urlPrefix+"?r=sms/wechat/auto-reply/" + funcName,
+                    oDataModel,
+                    function (res,index) {
+                        if(res.code==1){
+                            layer.msg('保存成功',
+                                {time: 2000});
+                            $("#myModal").modal('hide');
+                            if(funcName === "update"){
+                                tableInit.myViewModel.refresh()
+                            }else{
+                                $get(url = urlPrefix+"?r=sms/wechat/auto-reply/get-all",
+                                    function (res) {
+                                        tableInit.myViewModel.insert(0,res.data[res.data.length-1])
+                                    }
+                                )
+                            }
+                        }else{
+                            layer.msg(res.msg,{time:2000})
+                        }
+                    }
+                )
+            })
+        }
+    };
+    //加载table数据
+    function ajaxRequest(params) {
+        $get(url = urlPrefix+"?r=sms/wechat/auto-reply/get-all",
+            function (res) {
+                params.success({
+                    data: res.data
+                });
+                if(res.code==0){
+                    layer.msg(res.msg,{time:2000});
+                }
+            }
+        )
+    }
+    window.operateEvents = {
+        //删除
+        'click #btn_delete': function (e, value, row, index) {
+            layer.confirm('你确定要删除吗？', {
+                btn: ['确定', '取消']
+            },function(){
+                $post(urlPrefix+"?r=sms/wechat/auto-reply/delete",
+                    {id : row.id} ,
+                    function (res) {
+                        if(res.code==1){
+                            layer.msg('删除成功',{time:2000});
+                            tableInit.myViewModel.refresh();
+                        }else{
+                            layer.msg('删除失败',{time:2000});
+                        }
+                    }
+                )
+            })
+        },
+        //编辑
+        'click #btn_edit': function (e, value, row,index) {
+            if(row.type==1){
+                $("#myModal").modal().on("shown.bs.modal", function () {
+                    var oEmptyModel = {
+                        id:ko.observable(),
+                        uid: ko.observable(),
+                        keyword: ko.observable(),
+                        type: ko.observable(),
+                        content: ko.observable(),
+                        check: ko.observable(),
+                        img: ko.observable(),
+                        url: ko.observable(),
+                        title: ko.observable(),
+                        info: ko.observable(),
+                        orderid: ko.observable(),
+                        Id:0
+                    };
+                    ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                    //将选中该行数据有数据Model通过Mapping组件转换为viewmodel
+                    ko.utils.extend(operate.DepartmentModel, row);
+                    ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                    operate.operateSave(index);
+                }).on('hidden.bs.modal', function () {
+                    //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                    ko.cleanNode(document.getElementById("myModal"));
+                });
+            }else{
+                layer.open({
+                    type: 2,
+                    title: '图文回复',
+                    anim:1,
+                    shadeClose: true,
+                    shade: [0.5, 'rgb(0,0,0)'],
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['100%' , '100%'],
+                    content: 'wxImgkey.html?id='+row.id,
+                    zIndex: layer.zIndex, //重点1
+                    success: function(layero){
+                        layer.setTop(layero); //重点2
+                    }
+                });
+            }
+
+        }
+    };
+
+    //初始化表格
+    var tableInit = {
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                ajax: ajaxRequest,
+                toolbar: '#tool_bar',                //工具按钮用哪个容器
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                columns: [ {
+                    field: 'id',
+                    title: '编号'
+                }, {
+                    field: 'keyword',
+                    title: '关键词'
+                }, {
+                    field: 'type',
+                    title: '类别',
+                    formatter: operateForType
+                }, {
+                    field: 'img',
+                    title: '图片',
+                    align: 'center',
+                    formatter: operateForImg
+                },  {
+                    field: 'orderid',
+                    title: '排序号'
+                }, {
+                    field: 'info',
+                    title: '简介'
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+            function operateFormatter(value, row, index) {
+                if(flag_btn){
+                    return [
+                        '<button id="btn_edit" type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>'+
+                        '<span class=" " aria-hidden="true"></span>修改'+
+                        '</button>',
+                        '<button id="btn_delete" type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>'+
+                        '<span class=" " aria-hidden="true"></span>删除'+
+                        '</button>'
+                    ].join('');
+                }
+            }
+            function operateForImg(value, row, index) {
+                var url = row.img;
+                return [
+                    '<div><img src="' +
+                    url+
+                    '" alt="" height="50" width="50"></div>'
+                ].join('');
+            }
+            function operateForType(value, row, index) {
+               var str = row.type == 1 ? "文字":"图片";
+                return [
+                    '<span class=" " aria-hidden="true">' +str+'</span>'
+                ].join('');
+            }
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+    //操作
+</script>
+
+</html>

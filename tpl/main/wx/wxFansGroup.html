@@ -1,0 +1,289 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>粉丝管理-粉丝分组</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico" />
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+
+</head>
+
+
+
+<body>
+<!--中间部分start!-->
+<div class="main-box" >
+    <div class="msgWrap form">
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">添加分组</h4>
+                        <div class="alert alert_info" >
+                            <strong>提示信息!</strong>
+                            <ol>
+                                <li>智能添加</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <form class="modal-body" id="signupForm">
+                        <div class="form-group">
+                            <label for="name">分组名称:</label>
+                            <input type="text" name="name" data-bind="value:name" class="form-control" id="name" placeholder="请填写分组名称" >
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消</button>
+                            <button type="button" id="btn_submit" class="btn btn-primary" ><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <table id="tb_dept" data-bind="myBootstrapTable:$root">
+        </table>
+
+        <div id="tool_bar">
+            <button class=" btn btn-primary btn-sm 541" id="fansAdd_Group"  title="添加分组">添加分组</button>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var noArr = [], thrArr = [], flag_btn = 0;
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if(res.code==0){return}
+        tableInit.Init();
+        operate.operateInit();
+        if(res.data.id == res.data.uid){
+            flag_btn = 1;
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (!nodes[b]["children"][a]["children"][c]["checked"]) {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            } else {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (var e in thrArr) {
+            if (thrArr[e] == 541) {
+                flag_btn = 1
+            }
+        }
+        for (var e in noArr) {
+            if (noArr[e] == 541) {
+                $("." + noArr[e]).remove();
+            }
+        }
+    });
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateAdd();
+            this.DepartmentModel = {
+                uid: ko.observable(),
+                name: ko.observable(),
+                ID: ko.observable(),
+                number: ko.observable()
+            };
+        },
+        //新增
+        operateAdd: function(){
+            $('#fansAdd_Group').on("click", function () {
+                $("#myModal").modal().on("shown.bs.modal", function () {
+                    var oEmptyModel = {
+                        name: ko.observable(),
+                        ID:0
+                    };
+                    ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                    ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                    operate.operateSave();
+                }).on('hidden.bs.modal', function () {
+                    ko.cleanNode(document.getElementById("myModal"));
+                });
+            });
+        },
+        //保存数据
+        operateSave: function (index) {
+            $('#btn_submit').on("click", function () {
+                //取到当前的viewmodel
+                var oViewModel = operate.DepartmentModel,
+                    //将Viewmodel转换为数据model
+                    oDataModel = ko.toJS(oViewModel),
+                    data = {
+                        cid: oDataModel.id,
+                        name: oDataModel.name
+                    },
+                    funcName = oDataModel.ID ? "update-group" : "create-group";
+                $post(urlPrefix + "?r=sms/wechat/fans/" + funcName,
+                    data,
+                    function (res) {
+                        if (res.code==1) {
+                            parent.$("#rechargeStatus").val('yes');
+                            layer.msg('保存成功',
+                                {time: 1000});
+                            $("#myModal").modal('hide');
+                            if (funcName === "update-group") {
+                                tableInit.myViewModel.refresh()
+                            }else {
+                                $get(urlPrefix + '?r=sms/wechat/fans/get-all-group',
+                                    function (res) {
+                                        tableInit.myViewModel.insert(0,res.data.groups["0"])
+                                    }
+                                )
+                            }
+                        }else {
+                            layer.msg('操作失败',{time: 1000});
+                        }
+                    }
+                )
+            })
+        }
+    };
+    //记载table数据
+    function ajaxRequest(params) {
+        $get(urlPrefix + '?r=sms/wechat/fans/get-all-group',
+            function (res) {
+                params.success({
+                    data: res.data.groups
+                });
+                if(res.code==0){
+                    layer.msg(res.msg,{time:2000})
+                }
+            }
+        )
+    }
+    window.operateEvents = {
+        //删除
+        'click #btn_delete': function (e, value, row, index) {
+            layer.confirm('你确定要删除吗？', {
+                btn: ['确定', '取消']
+            },function(){
+                $post(urlPrefix + "?r=sms/wechat/fans/delete-group",
+                    {cid : row.id} ,
+                    function (res) {
+                        if(res.code==1){
+                            parent.$("#rechargeStatus").val('yes');
+                            layer.msg('删除成功',{time:1000});
+                            tableInit.myViewModel.remove(row.id);
+                        }else{
+                            layer.msg('删除失败',{time:1000})
+                        }
+                    }
+                )
+            })
+        },
+        //查看
+        'click #btn_look': function (e, value, row, index) {
+            parent.$("#rechargeStatus").val(row.id);
+            parent.$("#needRefresh").val("true");
+            parent.layer.closeAll()
+        },
+        //编辑
+        'click #btn_edit': function (e, value, row,index) {
+            $("#myModal").modal().on("shown.bs.modal", function () {
+                var oEmptyModel = {
+                    name: ko.observable(),
+                    ID:1
+                };
+                ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                //将选中该行数据有数据Model通过Mapping组件转换为viewmodel
+                ko.utils.extend(operate.DepartmentModel, row);
+                ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                operate.operateSave(index);
+            }).on('hidden.bs.modal', function () {
+                //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                ko.cleanNode(document.getElementById("myModal"));
+            });
+        }
+    };
+   
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                ajax: ajaxRequest,
+                toolbar: '#tool_bar',                //工具按钮用哪个容器
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                columns: [ {
+                    field: 'id',
+                    title: 'ID'
+                }, {
+                    field: 'name',
+                    title: '分组名称'
+                }, {
+                    field: 'count',
+                    title: '人数'
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+            function operateFormatter(value, row, index) {
+                if(flag_btn){
+                    return [
+                        '<button id="btn_look" type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>'+
+                        '<span class="" aria-hidden="true"></span>查看粉丝'+
+                        '</button>',
+                        '<button id="btn_edit" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>'+
+                        '<span class="" aria-hidden="true"></span>编辑'+
+                        '</button>',
+                        '<button id="btn_delete" type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>'+
+                        '<span class="" aria-hidden="true"></span>删除'+
+                        '</button>'
+                    ].join('');
+                }else{
+                    return [
+                        '<button id="btn_look" type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>'+
+                        '<span class="" aria-hidden="true"></span>查看粉丝'+
+                        '</button>'
+                    ].join('');
+                }
+            }
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>

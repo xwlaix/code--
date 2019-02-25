@@ -1,0 +1,125 @@
+::-webkit-input-placeholder {
+    /* WebKit browsers */
+    color: #ffffff;
+}
+:-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    color: #ffffff;
+}
+::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    color: #ffffff;
+}
+:-ms-input-placeholder {
+    /* Internet Explorer 10+ */
+    color: #ffffff;
+}
+.hidden {
+    display: none;
+}
+input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+    border: 0;
+    border-radius: 3px;
+    color: white!important;
+    -webkit-box-shadow: 0 0 0 1000px #ffFFFF inset;
+}
+.swiper-container {
+    width: 100%;
+}
+.swiper-container img {
+    display: block;
+    width: 100%;
+}
+body, html {
+    height: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+.wx-title {
+    text-align: center;
+    font-size: 34px;
+    color: #3cc51f;
+    font-weight: 400;
+    margin: 0 15%;
+}
+.demos-sub-title {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+}
+.demos-header {
+    padding: 35px 0;
+}
+.demos-content-padded {
+    padding: 15px;
+}
+.demos-second-title {
+    text-align: center;
+    font-size: 24px;
+    color: #3cc51f;
+    font-weight: 400;
+    margin: 0 15%;
+}
+footer {
+    text-align: center;
+    font-size: 14px;
+    padding: 20px;
+}
+footer a {
+    color: #999;
+    text-decoration: none;
+}
+.flex-side {
+    margin: 5px;
+    padding: 0 10px;
+    height: 2.3em;
+    line-height: 2.3em;
+    text-align: center;
+}
+.input-inline {
+    margin-top: 10px;
+}
+.text-center {
+    text-align: center;
+}
+.margin_top {
+    margin-top: 0;
+}
+.content-block {
+    background: url(../img/bg2.png);
+    background-size: 100% 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+.white-bg {
+    background-color: transparent!important;
+    color: #ffFFFF;
+}
+.login_logo {
+    margin-top: 20%;
+    text-align: center;
+}
+.join_login {
+    margin-bottom: 20%;
+}
+.login_logo img {
+    width: 70px;
+    padding: 50px 0;
+}
+img {
+    max-width: 100%;
+    border: 0;
+    vertical-align: bottom;
+}
+.weui-input {
+    text-indent: 5px;
+}
+.weui-btn_plain-default {
+    color: #ffFFFF;
+    border: 1px solid #ffffff;
+}
+.weui-btn {
+    color: #fff!important;
+    border-color: #fff!important;
+}

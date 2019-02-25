@@ -1,0 +1,491 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>卡片信息管理</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/My97DatePicker/WdatePicker.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../static/js/Department.js"></script>
+</head>
+
+
+<body>
+<!--中间部分start!-->
+<div class="main-box" style="width:95%">
+    <div class="msgWrap form">
+        <div class="card-group clearfix">
+            <div class="form-group">
+                <label for="date_begin" class="span_title" title="时间">时间：</label>
+                <input id="date_begin" class="Wdate form-control" name="starttime" type="text"
+                       onFocus="var date_begin=$dp.$('date_end');
+                                   WdatePicker({onpicked:function(){date_end.focus();},
+                                   maxDate:'#F{$dp.$D(\'date_end\')}'})"/>
+                <label for="date_end" style="display:-moz-inline-box;display:inline-block;width: 8px;text-align:right;">~</label>
+                <input id="date_end" class="Wdate form-control" name="endtime" type="text"
+                       onFocus="WdatePicker({minDate:'#F{$dp.$D(\'date_begin\')}'})"/>
+            </div>
+            <div class="form-group">
+                <label for="agent_name">代理商:</label>
+                <input type="text" name="agent_name" class="form-control" id="agent_name">
+            </div>
+            <div class="form-group">
+                <label for="card">卡号:</label>
+                <input type="text" name="card" class="form-control" id="card">
+            </div>
+            <div class="form-group">
+                <label for="operator_type">运营商类型:</label>
+                <select name="operator_type" id="operator_type" data-bind="value:operator_type">
+                    <option class="operator_type" selected="selected" value="">请选择运营商类型</option>
+                    <option class="operator_type" value="1">移动</option>
+                    <option class="operator_type" value="2">电信</option>
+                    <option class="operator_type" value="3">联通</option>
+                </select>
+                <button class=" btn btn-info btn-sm keydownBtn" id="exportCondition" title="搜索">搜索</button>
+                <button class=" btn btn-primary btn-sm" id="exportCard" title="卡片导出">卡片导出</button>
+            </div>
+        </div>
+        <table id="tb_dept" data-bind="myBootstrapTable:$root">
+        </table>
+        <div id="toolbar">
+            <!--<button class=" btn btn-danger btn-sm" id="delCardBtn" title="卡片删除">卡片删除</button>-->
+        </div>
+        <div id="addStatus" class="hidden"></div>
+        <div id="realStatus" class="hidden"></div>
+    </div>
+</div>
+</body>
+<script id="parent" type="text/html">
+    <option value="{{id}}">{{name}}</option>
+</script>
+<script type="text/javascript">
+    var card,name = getUrlParam("name");
+    $("#agent_name").val(name);
+    //加载卡片分类
+    option('?r=ems/business/card-class/get-all',
+        function (res) {
+            if (res.code == 1) {
+                $.each(res.data, function (i, data) {
+                    var parent;
+                    parent = $(template('parent', data));
+                    parent.appendTo('card_type');
+                })
+            } else {
+                layer.msg(res.msg, {time: 2000})
+            }
+        });
+
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.classifyCard();
+            this.exportCard();
+            this.exportCondition();
+            this.delCard();
+            this.operator();
+            this.batch();
+            this.DepartmentModel = {
+                uid: ko.observable(),
+                name: ko.observable(),
+                ID: ko.observable(),
+                number: ko.observable()
+            };
+        },
+        //分卡
+        classifyCard: function () {
+            $('#classifyCard').on('click', function () {
+                layer_open('分卡', 'classifyCard.html');
+            })
+        },
+        //分卡
+        batch: function () {
+            $('#batch').on('click', function () {
+                layer_open('批次列表', 'batchList.html');
+            })
+        },
+        //搜索
+        exportCondition: function () {
+            $('#exportCondition').on('click', function () {
+                secData();
+                $post(urlPrefix + "?r=ems/business/package/package-batch/get-all-card", data,
+                    function (res) {
+                        layer.msg(res.msg,
+                            {time: 2000});
+                        if (res.code == 1) {
+                            tableInit.myViewModel.load(res.data);
+                        }
+                    });
+            })
+        },
+        //卡片导出
+        exportCard: function () {
+            $('#exportCard').on('click', function () {
+                secData();
+                data.pageSize='';
+                data.pageNumber='';
+                $post(urlPrefix + "?r=ems/card/down-all",
+                    data,
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg(res.msg,
+                                {time: 2000});
+                            window.open(res.data.url, '_self')
+                        } else {
+                            layer.msg(res.msg,
+                                {time: 2000})
+                        }
+                    });
+            })
+        },
+        //卡片批量删除
+        delCard: function () {
+            $('#delCardBtn').on('click', function () {
+                layer_open('卡片批量删除', 'delCard.html');
+            })
+        },
+        //操作记录
+        operator: function () {
+            $('#operator').on('click', function () {
+                layer_open('操作记录', 'operator.html');
+            })
+        }
+    };
+
+
+    function secData(){
+        card = $.trim($("#card").val());
+        data = {
+            bid: getUrlParam('bid'),
+            starttime: $.trim($("#date_begin").val()),
+            endtime: $.trim($("#date_end").val()),
+            aname: $.trim($("#agent_name").val()),
+            operator_type: $.trim($("#operator_type").val()),
+            card: card,
+            card_type: $.trim($("#card_type").val()),
+            pageSize: 10,
+            pageNumber: 1
+        };
+    }
+    function queryParams(params) {
+        secData();
+        data.pageSize=params.pageSize;
+        data.pageNumber=params.pageNumber;
+        return data;
+    }
+
+    window.operateEvents = {
+        //删除
+        'click #delCard': function (e, value, row, index) {
+            var id = row.id;
+            layer.confirm('你确定要删除吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=ems/card/delete",
+                    {id: id,type:getUrlParam('Atype')},
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg(res.msg, {time: 2000});
+                            tableInit.myViewModel.remove(row.id)
+                        } else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    });
+            })
+        },
+        //刷新
+        'click #refreshCard': function (e, value, row, index) {
+            var load = layer.load(2, {
+                shade: [0.1, '#fff'] //0.1透明度的白色背景
+            });
+            $post(urlPrefix + "?r=ems/business/main/get-status",
+                {card: row.iccid || row.tel},
+                function (res) {
+                    layer.close(load);
+                    if (res.code == 1) {
+                        $post(urlPrefix + "?r=ems/card/get-all", {card: row.iccid},
+                            function (data) {
+                                if (date.code == 1) {
+                                    tableInit.myViewModel.update(index, data.data.row);
+                                }
+                            });
+                        layer.msg("操作成功", {time: 2000})
+                    } else {
+                        layer.msg(res.msg)
+                    }
+                }, function () {
+                    layer.close(load);
+                })
+        },
+        //跳转
+        'click #jumpiccid': function (e, value, row, index) {
+            var iccid = row.iccid;
+            layer_open('查询流量', '../business/cxGprs.html?card=' + iccid)
+        },
+
+        'click #jumpTel': function (e, value, row, index) {
+            var tel = row.tel;
+            layer_open('查询流量', '../business/cxGprs.html?card=' + tel);
+        },
+
+
+        'click #jumpNumber': function (e, value, row, index) {
+            var number = row.tel;
+            layer_open('查询流量', '../business/cxGprs.html?card=' + number);
+        }
+    };
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+
+        //2、注册增删改事件
+        operate.operateInit();
+
+
+    });
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                search: false,
+                queryParams: queryParams,//传递参数（*）
+                method: "post",
+                url: urlPrefix + '?r=ems/business/package/package-batch/get-all-card',
+                onRefresh: function () {
+                    $("#date_end").val("");
+                    $("#date_begin").val("");
+                    $("#agent_name").val("");
+                    $("#card_type").val("");
+                    $("#card").val("");
+                    $("#operator_type").val("");
+                },
+                columns: [{
+                    field: 'iccid',
+                    title: 'ICCID',
+                    events: operateEvents,
+                    formatter: operateForJumpiccid
+                }, {
+                    field: 'tel',
+                    title: '接入号',
+                    events: operateEvents,
+                    formatter: operateForJumptel
+                }, {
+                    field: 'number',
+                    title: '虚拟号',
+                    events: operateEvents,
+                    formatter: operateForNumber
+                }, {
+                    field: 'amount',
+                    title: '卡片余额（元）'
+                }, {
+                    field: 'card_status',
+                    title: '卡状态',
+                    formatter: operateForStatus
+                }, {
+                    field: 'real_status',
+                    title: '实名状态',
+                    formatter: operateForReal_status
+                }, {
+                    field: 'operator_type',
+                    title: '所属运营商',
+                    formatter: operator_type
+                }, {
+                    field: 'aname',
+                    title: '代理商名称'
+                }, {
+                    field: 'oname',
+                    title: '供应商名称',
+                    formatter: oname
+                },  {
+                    field: 'addtime',
+                    title: '添加时间',
+                    formatter: operateForaddtime
+                }, {
+                    field: 'endtime',
+                    title: '结束时间',
+                    formatter: operateForEndtime
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+
+            function operateFormatter(value, row, index) {
+                if(getUrlParam('type')==1){
+                    return [
+                        '<button id="refreshCard" type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class="" aria-hidden="true"></span>刷新' +
+                        '</button>',
+                        '<button id="delCard" type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class="" aria-hidden="true"></span>删除' +
+                        '</button>'
+                    ].join('');
+                }else {
+                    return [
+                        '<button id="refreshCard" type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class="" aria-hidden="true"></span>刷新' +
+                        '</button>'
+                    ].join('');
+                }
+            }
+            function operateForaddtime(value, row, index) {
+                if (row.addtime == "0000-00-00 00:00:00") {
+                    return [
+                        ''
+                    ].join('');
+                }else{
+                    var newDate = /\d{4}-\d{1,2}-\d{1,2}/g.exec(row.addtime);
+                    return [newDate].join('')
+                }
+            }
+            function operateForEndtime(value, row, index) {
+                if (row.endtime == "0000-00-00 00:00:00") {
+                    return [
+                        ''
+                    ].join('');
+                }else{
+                    var newDate = /\d{4}-\d{1,2}-\d{1,2}/g.exec(row.endtime);
+                    return [newDate].join('')
+                }
+            }
+            function operateForJumptel(value, row, index) {
+                var tel = row.tel;
+                return [
+                    '<a href="javascript:void(0);" id="jumpTel" >' + tel +
+                    '</a>'
+                ].join('');
+            }
+
+
+            function operateForNumber(value, row, index) {
+                var number = row.number;
+                return [
+                    '<a href="javascript:void(0);" id="jumpNumber" >' + number +
+                    '</a>'
+                ].join('');
+            }
+            function oname(value, row, index){
+                return [
+                    '酷鱼-'+row.oid
+                ].join('');
+            }
+            function operateForJumpiccid(value, row, index) {
+                var iccid = row.iccid;
+                return [
+                    '<a href="javascript:void(0);" id="jumpiccid" >' + iccid +
+                    '</a>'
+                ].join('');
+            }
+
+            function operateForReal_status(value, row, index) {
+                var real_status;
+                if (row.real_status == 1) {
+                    real_status = '未认证';
+                    return [
+                        '<span class="text-danger">' +
+                        real_status +
+                        '</span>'
+                    ].join('');
+                } else {
+                    real_status = '认证';
+                    return [
+                        '<span class="text-success">' +
+                        real_status +
+                        '</span>'
+                    ].join('');
+                }
+
+            }
+
+            function operator_type(value, row, index) {
+                var operator_type;
+                if (row.operator_type == 1) {
+                    operator_type = '移动'
+                } else if (row.operator_type == 2) {
+                    operator_type = '电信'
+                } else if (row.operator_type == 3) {
+                    operator_type = '联通'
+                } else {
+                    operator_type = '其他'
+                }
+                return [
+                    operator_type
+                ].join('');
+            }
+
+            function operateForStatus(value, row, index) {
+                var card_status;
+                switch (row.card_status) {
+                    case '1':
+                        card_status = '待激活';
+                        break;
+                    case '2':
+                        card_status = '正常';
+                        break;
+                    case '3':
+                        card_status = '单向停机';
+                        break;
+                    case '4':
+                        card_status = '停机';
+                        break;
+                    case '5':
+                        card_status = '预销号';
+                        break;
+                    case '6':
+                        card_status = '销号';
+                        break;
+                    case '7':
+                        card_status = '过户';
+                        break;
+                    case '8':
+                        card_status = '休眠';
+                        break;
+                    case '9':
+                        card_status = '未知状态';
+                        break;
+                    default:
+                        break;
+                }
+                return ['<span class="text-success">' +
+                card_status +
+                '</span>'
+                ].join('');
+
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>

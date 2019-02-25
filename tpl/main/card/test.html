@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>查询流量</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/My97DatePicker/WdatePicker.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <style>
+        tr {
+            display: flex;
+        }
+
+        th {
+            flex: 1;
+        }
+
+        .text {
+            width: 100% !important;
+        }
+    </style>
+</head>
+
+
+<body>
+<!--中间部分start!-->
+<div class="msgWrap form">
+    <div class="card-group clearfix">
+        <div class="form-group">
+            <label for="accessNumber">卡号:</label>
+            <textarea name="" id="accessNumber" cols="50" rows="10" placeholder="请填写要查询的卡号，一行一个！"></textarea>
+            <button class="btn btn-primary btn-sm keydownBtn" id="gprsSec" title="搜索">搜索</button>
+        </div>
+
+    </div>
+    <table class="text">
+        <tr>
+            <th>卡号</th>
+            <th>总流量</th>
+            <th>已用流量</th>
+            <th>套餐列表1</th>
+            <th>套餐列表2</th>
+            <th>套餐列表3</th>
+            <th>套餐列表4</th>
+            <th>断网</th>
+            <th>阈值</th>
+        </tr>
+
+    </table>
+</div>
+</body>
+
+
+<script type="text/javascript">
+    $('#gprsSec').on('click', function () {
+        card = $("#accessNumber").val().split("\n");
+        $.each(card, function (i, card) {
+            cx(card)
+        })
+
+    });
+
+    function cx(card) {
+        $post(urlPrefix + '?r=sms/business/main/get-info', {card: card.replace("'", '')}, function (res) {
+            var cardstatus,isOffnet=res.data.isOffnet?res.data.isOffnet:'无',threshold=res.data.threshold?res.data.threshold:'无';
+
+            if (res.data.flowlist[3]) {
+                $(".text").append(
+                    '<tr><th>' + card.replace("'", '') +
+                    '</th><th>' + res.data.sumflow +
+                    '</th><th>' + res.data.useflow +
+                    '</th><th>' + res.data.flowlist[0].packagename +
+                    '</th><th>' + res.data.flowlist[1].packagename +
+                    '</th><th>' + res.data.flowlist[2].packagename +
+                    '</th><th>' + res.data.flowlist[3].packagename +
+                    '</th><th>' + res.data.isOffnet||'无' +
+                    '</th><th>' + res.data.threshold||'无' +
+                    '</th></tr>'
+                )
+            } else if (res.data.flowlist[2]) {
+                $(".text").append(
+                    '<tr><th>' + card.replace("'", '') +
+                    '</th><th>' + res.data.sumflow +
+                    '</th><th>' + res.data.useflow +
+                    '</th><th>' + res.data.flowlist[0].packagename +
+                    '</th><th>' + res.data.flowlist[1].packagename +
+                    '</th><th>' + res.data.flowlist[2].packagename +
+                    '</th><th>' + '无' +
+                    '</th><th>' + res.data.isOffnet||'无' +
+                    '</th><th>' + res.data.threshold||'无'+
+                    '</th></tr>'
+                )
+            } else if (res.data.flowlist[1]) {
+                $(".text").append(
+                    '<tr><th>' + card.replace("'", '') +
+                    '</th><th>' + res.data.sumflow +
+                    '</th><th>' + res.data.useflow +
+                    '</th><th>' + res.data.flowlist[0].packagename +
+                    '</th><th>' + res.data.flowlist[1].packagename +
+                    '</th><th>' + '无' +
+                    '</th><th>' + '无' +
+                    '</th><th>' + res.data.isOffnet||'无' +
+                    '</th><th>' + res.data.threshold||'无' +
+                    '</th></tr>'
+                )
+            } else if (res.data.flowlist[0]) {
+                $(".text").append(
+                    '<tr><th>' + card.replace("'", '') +
+                    '</th><th>' + res.data.sumflow +
+                    '</th><th>' + res.data.useflow +
+                    '</th><th>' + res.data.flowlist[0].packagename +
+                    '</th><th>' + '无' +
+                    '</th><th>' + '无' +
+                    '</th><th>' + '无' +
+                    '</th><th>' + res.data.isOffnet||'无' +
+                    '</th><th>' + res.data.threshold||'无' +
+                    '</th></tr>'
+                )
+            } else {
+                $(".text").append(
+                    '<tr><th>' + card.replace("'", '') +
+                    '</th><th>' + res.data.sumflow +
+                    '</th><th>' + res.data.useflow +
+                    '</th><th>' + '无' +
+                    '</th><th>' + '无' +
+                    '</th><th>' + '无' +
+                    '</th><th>' + '无' +
+                    '</th><th>' + res.data.isOffnet +
+                    '</th><th>' + res.data.threshold+
+                    '</th></tr>'
+                )
+            }
+        });
+
+    }
+</script>
+</html>

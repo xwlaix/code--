@@ -1,0 +1,402 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>粉丝管理-微信粉丝</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+
+
+</head>
+
+<body>
+<!--中间部分start!-->
+<div class="main-box">
+    <div id="main-box-index">
+        <div class="msgWrap">
+            <div class="msgWrap form">
+                <div class="form-group">
+                    <label for="nickname">昵称:</label>
+                    <input type="text" name="nickname" class="form-control" id="nickname" placeholder="请输入昵称">
+                    <button class=" btn btn-success btn-sm keydownBtn" id="secnickname" title="搜索">搜索</button>
+                </div>
+                <table id="tb_dept" class="table-img" data-bind="myBootstrapTable:$root">
+                </table>
+
+                <div id="tool_bar">
+                    <button class=" btn btn-info btn-sm" id="fansSync" title="粉丝同步">粉丝同步</button>
+                    <button class=" btn btn-primary btn-sm" id="fansSync_group" title="粉丝分组">粉丝分组</button>
+                    <button class=" btn btn-success btn-sm" id="fansSync_download" title="粉丝数据下载">粉丝数据下载</button>
+                </div>
+                <div class="form-group hidden">
+                    <label for="pid"></label>
+                    <select name="group" id="pid" data-bind="value:cid">
+                        <option class="group" selected="selected" value="0">分组管理</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" id="rechargeStatus" value>
+        <input type="hidden" id="needRefresh" value>
+    </div>
+</div>
+</body>
+<script id="parent" type="text/html">
+    <option value="{{id}}">{{name}}</option>
+</script>
+
+<script type="text/javascript">
+    var noArr = [], thrArr = [], flag_btn = 0;
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if(res.code==0){return}
+        tableInit.Init();
+        operate.operateInit();
+        if(res.data.id == res.data.uid){
+            flag_btn = 1;
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (!nodes[b]["children"][a]["children"][c]["checked"]) {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            } else {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (var e in thrArr) {
+            if (thrArr[e] == 541) {
+                flag_btn = 1
+            }
+        }
+        for (var e in noArr) {
+            if (noArr[e] == 541) {
+                $("." + noArr[e]).remove();
+            }
+        }
+    });
+    //处理数据
+    var c_name, flag = 1;
+    function operateOne() {
+        $get(urlPrefix + "?r=sms/wechat/fans/get-all-group",
+            function (res) {
+                if (res.code == 1) {
+                    c_data = res.data.groups;
+                    c_name = [];
+                    for (var i = c_data.length - 1; i >= 0; i--) {
+                        c_name[c_data[i].id] = c_data[i].name
+                    }
+                    var pid = $("#pid");
+                    $('.group~option').remove();
+                    $.each(res.data.groups, function (i, data) {
+                        var parent;
+                        parent = $(template('parent', data));
+                        parent.appendTo(pid);
+                    })
+                }
+
+            }
+        )
+    }
+    operateOne();
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateGroup();
+            this.operateSync();
+            this.fansSync_download();
+            this.sec();
+            this.DepartmentModel = {
+                openid: ko.observable(),
+                cid: ko.observable(),
+                nickname: ko.observable(),
+                last_say_time: ko.observable(),
+                remark: ko.observable()
+            };
+        },
+        //粉丝分组
+        operateGroup: function () {
+            $('#fansSync_group').on('click', function () {
+                layer.open({
+                    type: 2,
+                    title: '粉丝分组',
+                    shadeClose: true,
+                    shade: [0.5, 'rgb(0,0,0)'],
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['100%', '100%'],
+                    end: function () {
+                        if ($("#needRefresh").val()) {
+                            $post(urlPrefix + '?r=sms/wechat/fans/get-all',
+                                {
+                                    pageSize: 10,
+                                    pageNumber: 1,
+                                    cid: $("#rechargeStatus").val(),
+                                    nickname: $.trim($("#nickname").val())
+                                },
+                                function (res) {
+                                    if (res.code === 1) {
+                                        tableInit.myViewModel.load(res.data)
+                                    } else {
+                                        layer.msg('操作失败', {time: 2000})
+                                    }
+                                }
+                            )
+                        }
+                    },
+                    content: "wxFansGroup.html",
+                    zIndex: layer.zIndex, //重点1
+                    success: function (layero) {
+                        layer.setTop(layero); //重点2
+                    }
+                });
+            })
+        },
+        //粉丝下载
+        fansSync_download: function () {
+            $('#fansSync_download').on('click', function () {
+                $get(urlPrefix + '?r=sms/wechat/fans/down-all', function (res) {
+                    window.open(res.data.url, '_self')
+                })
+            })
+        },
+        //粉丝同步
+        operateSync: function () {
+            var fansSync = $('#fansSync'), cid = null,
+                flag = true;
+            fansSync.on('click', function () {
+                var index = layer.load(2,  {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                });
+                $get(urlPrefix + '?r=sms/wechat/fans/update',
+                    function (res) {
+                        layer.close(index);
+                        if (res.code == 1) {
+                            layer.msg(res.msg,{time:2000});
+                            tableInit.myViewModel.refresh()
+                        } else {
+                            layer.msg('同步失败')
+                        }
+                    }, function () {
+                        layer.close(index)
+                    }
+                )
+            })
+        },
+        //粉丝搜索
+        sec: function () {
+            $("#secnickname").on('click', function () {
+                $post(urlPrefix + '?r=sms/wechat/fans/get-all',
+                    {
+                        pageSize: 10,
+                        pageNumber: 1,
+                        cid: $("#rechargeStatus").val(),
+                        nickname: $.trim($("#nickname").val())
+                    },
+                    function (res) {
+                        if (res.code === 1) {
+                            tableInit.myViewModel.load(res.data)
+                        } else {
+                            layer.msg('操作失败', {time: 2000})
+                        }
+                    }
+                )
+            })
+        }
+    };
+
+    //table事件操作
+    window.operateEvents = {
+        //备注
+        'click #btn_remark': function (e, value, row, index) {
+            layer.prompt(
+                {
+                    title: '添加备注信息',
+                    formType: 0,
+                    area: ['150px', '30px']
+                },
+                function (remark, indexs) {
+                    var data = {
+                        openid: row.openid,
+                        remark: remark
+                    };
+                    layer.close(indexs);
+                    $post(urlPrefix + '?r=sms/wechat/fans/create-remark',
+                        data,
+                        function (res) {
+                            if (res.code === 1) {
+                                layer.msg('备注成功', {time: 2000});
+                                tableInit.myViewModel.updateCell(index, 'remark', remark)
+                            } else {
+                                layer.msg('备注失败', {time: 2000})
+                            }
+                        }
+                    )
+                });
+
+        },
+        //编辑
+        'change #pid': function (e, value, row, index) {
+            var This = $(this),
+                openid = row.openid,
+                cid = This.val(),
+                data = {
+                    openid_list: [openid],
+                    cid: cid
+                };
+            row.cid = cid;
+            $post(urlPrefix + "/?r=sms/wechat/fans/move-to-group",
+                data,
+                function (res) {
+                    if (res.code == 1) {
+                        layer.msg('保存成功',
+                            {time: 2000});
+                        $("#myModal").modal('hide');
+                        tableInit.myViewModel.updateCell(index, 'opera', row.cid)
+                    } else {
+                        layer.msg('保存失败',
+                            {time: 2000});
+                    }
+                }
+            )
+        }
+    };
+    function queryParams(params) {
+        queryData = {
+            pageSize: params.pageSize,
+            pageNumber: params.pageNumber,
+            cid: $("#rechargeStatus").val(),
+            nickname: $.trim($("#nickname").val())
+        };
+        return queryData;
+    }
+
+
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                toolbar: '#tool_bar',
+                search: false,
+                queryParams: queryParams,//传递参数（*）
+                method: "post",
+                url: urlPrefix + '?r=sms/wechat/fans/get-all',
+                onRefresh:function(){
+                    $("#nickname").val("");
+                    $("#rechargeStatus").val("");
+                    $("#needRefresh").val("");
+                },
+                columns: [{
+                    field: 'operat',
+                    title: '粉丝头像',
+                    align: 'center',
+                    formatter: operateForImg
+                }, {
+                    field: 'openid',
+                    title: '微信ID'
+                }, {
+                    field: 'nickname',
+                    title: '昵称'
+                }, {
+                    field: 'operated',
+                    title: '地区',
+                    align: 'center',
+                    formatter: operateForArea
+                }, {
+                    field: 'last_say_time',
+                    title: '最后联系时间'
+                }, {
+                    field: 'opera',
+                    title: '分组',
+                    align: 'center',
+                    formatter: operateForGroup
+                }, {
+                    field: 'remark',
+                    title: '备注'
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+            function operateFormatter(value, row, index) {
+                if(flag_btn){
+                    var group = $('.form-group:last').html();
+                    return [
+                        group,
+                        '<button id="btn_remark" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalTable" style="margin-bottom: 5px;" >' +
+                        '<span aria-hidden="true"></span>添加备注' +
+                        '</button>'
+                    ].join('');
+                }
+            }
+
+            function operateForArea(value, row, index) {
+                var province = row.province;
+                var city = row.city;
+                return [
+                    '<span>', province + city, '</span>'
+                ].join('');
+            }
+
+            function operateForGroup(value, row, index) {
+                var cid = row.cid;
+                return [
+                    '<span>', c_name[cid], '</span>'
+
+                ].join('');
+            }
+
+            function operateForImg(value, row, index) {
+                var url = row.headimgurl;
+                return [
+                    '<div><img src="' +
+                    url +
+                    '" alt="" height="50" width="50"></div>'
+                ].join('');
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+</script>
+
+</html>

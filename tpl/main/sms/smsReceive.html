@@ -1,0 +1,272 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>短信接收管理</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/My97DatePicker/WdatePicker.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+</head>
+
+
+<body>
+<!--中间部分start!-->
+<div class="main-box">
+    <div class="msgWrap form">
+        <div class="card-group clearfix">
+            <div class="form-group">
+                <div class="form-group">
+                    <label for="sendTel">发送号码:</label>
+                    <input type="text" id="sendTel">
+                </div>
+                <div class="form-group">
+                    <label for="iccid">iccid号:</label>
+                    <input type="text" id="iccid">
+                </div>
+                <div class="form-group">
+                    <label for="departname">所属客户:</label>
+                    <input type="text" id="departname">
+                </div>
+                <div class="form-group">
+                    <label for="content">短信内容:</label>
+                    <input type="text" id="content">
+                </div>
+                <div class="form-group">
+                    <label for="date_begin_create" class="span_title" title="时间">创建时间：</label>
+                    <input id="date_begin_create" class="Wdate form-control" name="starttime" type="text"
+                           onFocus="var date_begin_create=$dp.$('date_end_create');
+                                   WdatePicker({onpicked:function(){date_end.focus();},
+                                   maxDate:'#F{$dp.$D(\'date_end_create\')}'})"/>
+                    <label for="date_end_create"
+                           style="display:-moz-inline-box;display:inline-block;width: 8px;text-align:right;">~</label>
+                    <input id="date_end_create" class="Wdate form-control" name="endtime" type="text"
+                           onFocus="WdatePicker({minDate:'#F{$dp.$D(\'date_begin_create\')}'})"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="date_begin" class="span_title" title="时间">到达时间：</label>
+                    <input id="date_begin" class="Wdate form-control" name="starttime" type="text"
+                           onFocus="var date_begin=$dp.$('date_end');
+                                   WdatePicker({onpicked:function(){date_end.focus();},
+                                   maxDate:'#F{$dp.$D(\'date_end\')}'})"/>
+                    <label for="date_end"
+                           style="display:-moz-inline-box;display:inline-block;width: 8px;text-align:right;">~</label>
+                    <input id="date_end" class="Wdate form-control" name="endtime" type="text"
+                           onFocus="WdatePicker({minDate:'#F{$dp.$D(\'date_begin\')}'})"/>
+                </div>
+                <div class="form-group">
+                    <label for="status">短信状态:</label>
+                    <select name="status" id="status">
+                        <option value="">请选择</option>
+                        <option value="1">未读</option>
+                        <option value="2">已读</option>
+                    </select>
+                    <button class=" btn btn-info btn-sm keydownBtn" id="sec" title="查询">查询</button>
+                </div>
+            </div>
+        </div>
+        <table id="tb_dept" data-bind="myBootstrapTable:$root">
+        </table>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.sec();
+        },
+        //订单筛选
+        sec: function () {
+            $('#sec').on('click', function () {
+                var date_begin = $("#date_begin").val(),
+                    date_end = $("#date_end").val(),
+                    date_end_create = $("#date_end_create").val(),
+                    date_begin_create = $("#date_begin_create").val(),
+                    sendTel = $.trim($("#sendTel").val()),
+                    iccid = $.trim($("#iccid").val()),
+                    departname = $.trim($("#departname").val()),
+                    content = $.trim($("#content").val()),
+                    status = $.trim($("#status").val());
+                $post(urlPrefix + "?r=sms/finance/order/get-all",
+                    {
+                        starttime: date_begin,
+                        endtime: date_end,
+                        date_end_create: date_end_create,
+                        date_begin_create: date_begin_create,
+                        sendTel: sendTel,
+                        iccid: iccid,
+                        departname: departname,
+                        content: content,
+                        status: status,
+                        pageSize: 10,
+                        pageNumber: 1
+
+                    },
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg(res.msg,
+                                {time: 2000});
+                            tableInit.myViewModel.load(res.data);
+                        } else {
+                            layer.msg(res.msg,
+                                {time: 2000})
+                        }
+                    }
+                )
+            })
+        }
+    };
+    //加载table数据
+    function queryParams(params) {
+        var date_begin = $("#date_begin").val(),
+            date_end = $("#date_end").val(),
+            date_end_create = $("#date_end_create").val(),
+            date_begin_create = $("#date_begin_create").val(),
+            sendTel = $.trim($("#sendTel").val()),
+            iccid = $.trim($("#iccid").val()),
+            departname = $.trim($("#departname").val()),
+            status = $.trim($("#status").val()),
+            content = $.trim($("#content").val());
+        queryData = {
+            pageSize: params.pageSize,
+            pageNumber: params.pageNumber,
+            starttime: date_begin,
+            endtime: date_end,
+            date_end_create: date_end_create,
+            date_begin_create: date_begin_create,
+            sendTel: sendTel,
+            iccid: iccid,
+            status: status,
+            departname: departname,
+            content: content
+        };
+        return queryData;
+    }
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+
+        //2、注册增删改事件
+        operate.operateInit();
+
+
+    });
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+//                toolbar: '#tool_bar',                //工具按钮用哪个容器
+                search: false,
+                pagination: true,                   //是否显示分页（*）
+                sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1,                      //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],       //可供选择的每页的行数（*）
+                contentType: "application/x-www-form-urlencoded",
+                ajaxOptions: {
+                    xhrFields: {        //跨域
+                        withCredentials: true
+                    },
+                    crossDomain: true
+                },
+                queryParamsType: "undefined",
+                queryParams: queryParams,//传递参数（*）
+                method: "post",
+                url: urlPrefix + '?r=sms/finance/order/get-all',
+                responseHandler: function (res) {
+                    return res.data;
+                },
+                onRefresh: function () {
+                    $("#date_begin").val("");
+                    $("#date_end").val("");
+                    $("#date_end_create").val("");
+                    $("#date_begin_create").val("");
+                    $("#sendTel").val("");
+                    $("#iccid").val("");
+                    $("#departname").val("");
+                    $("#content").val("");
+                    $("#status").val("");
+                },
+                columns: [{
+                    field: 'id',
+                    title: 'ID'
+                }, {
+                    field: 'sendTel',
+                    title: '接收号码'
+                }, {
+                    field: 'iccid',
+                    title: 'iccid'
+                }, {
+                    field: 'departname',
+                    title: '所属客户'
+                }, {
+                    field: 'content',
+                    title: '短信内容'
+                }, {
+                    field: 'sendtime',
+                    title: '发送时间'
+                }, {
+                    field: 'rectime',
+                    title: '到达时间'
+                }, {
+                    field: 'trade_type',
+                    title: '短信状态',
+                    formatter: operateType
+                }]
+            });
+            //处理td数据
+            function operateType(value, row, index) {
+                var type = row.trade_type;
+                if (type == 1) {
+                    return ['<span class="text-success" >微信支付</span>'].join('');
+                }
+            }
+
+            //处理td数据
+            function operateStatus(value, row, index) {
+                var type;
+                if (row.status == 1) {
+                    type = "未支付";
+                } else {
+                    type = "支付成功";
+                }
+                return ['<span class="text-success" >' + type +
+                '</span>'].join('');
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>

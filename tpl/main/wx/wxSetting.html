@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>微信配置</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../static/js/Department.js"></script>
+</head>
+<body>
+<div class="main-box">
+    <div id="main-box-index">
+        <div class="msgWrap wxpay_add">
+            <div class="box-content">
+                <div class="form-group">
+                    <label>微信token值:</label>
+                    <span id="token"></span>
+                    <!--<input type="text" name="token" class="form-control " id="token"-->
+                    <!--placeholder="请填写微信token值">-->
+                </div>
+                <div class="form-group ">
+                    <label>微信配置url:</label>
+                    <span id="url"></span>
+                    <!--<input type="text" name="url" class="form-control setting" id="url"-->
+                    <!--placeholder="请填写微信配置url">-->
+                </div>
+                <div class="form-group ">
+                    <label>微信支付授权目录:</label>
+                    <span>
+                       <span class="domain"></span>/coolfish/pay/
+                    </span>
+                    <!--<input type="text" name="url" class="form-control setting" id="url"-->
+                    <!--placeholder="请填写微信配置url">-->
+                </div>
+                <div class="form-group ">
+                    <label>微信支付回调目录:</label>
+                    <span>
+                        <span class="domain"></span>/pay-back/
+                    </span>
+                    <!--<input type="text" name="url" class="form-control setting" id="url"-->
+                    <!--placeholder="请填写微信配置url">-->
+                </div>
+                <div class="form-group">
+                    <label for="appid" class="appsecret">微信公众号AppId:</label>
+                    <input type="text" tabindex="1" name="appid" data-bind="value:appid" class="form-control setting"
+                           id="appid" style="margin-right: 15px" placeholder="微信公众号AppId">
+                </div>
+                <div class="form-group">
+                    <label for="appsecret" class="appsecret">微信公众号AppSecret:</label>
+                    <input type="text" tabindex="1" name="appsecret" data-bind="value:appsecret"
+                           class="form-control setting" id="appsecret" placeholder="微信公众号AppSecret">
+                </div>
+                <div class="form-group ">
+                    <label for="apikey">微信支付商户MCHID:</label>
+                    <input type="text" name="apikey" class="form-control setting" id="apikey"
+                           placeholder="请填写MCHID">
+                </div>
+                <div class="form-group ">
+                    <label for="api">商户秘钥PartnerKey:</label>
+                    <input type="text" name="api" data-bind="value:api" class="form-control setting" id="api"
+                           placeholder="请填写PartnerKey">
+                </div>
+                <div class="form-group 511">
+                    <label for="status" class="control-label">是否开启：</label>
+                    <select name="status" id="status">
+                        <option value="1" selected>开启</option>
+                        <option value="0">关闭</option>
+                    </select>
+                    <button id="bsubmit" type="button" class="btn btn-primary btn-sm">保存</button>
+                </div>
+
+            </div>
+        </div>
+        ﻿
+    </div>
+</div>
+<script>
+    var noArr = [];
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if(res.code==0){return}
+        if(res.data.id == res.data.uid){
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (!nodes[b]["children"][a]["children"][c]["checked"]) {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            } 
+                        }
+                    }
+                }
+            }
+        }
+        for (var e in noArr) {
+            if (noArr[e] == 511) {
+                $("." + noArr[e]).remove();
+            }
+        }
+    });
+    //设置微信配置
+    $(function () {
+        $(".domain").text(window.location.host);
+        $get(urlPrefix + "?r=sms/wechat/get-mchid-and-key", function (res) {
+            if (res.code == 1) {
+                $("#apikey").val(res.data.mchid);
+                $("#api").val(res.data.key);
+            } else {
+                layer.msg(res.msg, {time: 2000})
+            }
+
+        });
+        //        加载保存的appid，secret
+        $get(urlPrefix + "?r=sms/wechat/get-wx-info", function (res) {
+            if (res.code == 1) {
+                $("#appid").val(res.data.appid);
+                $("#appsecret").val(res.data.secret)
+            } else {
+                layer.msg(res.msg, {time: 2000})
+            }
+        });
+        //        加载保存的token，url
+        $get(urlPrefix + "?r=sms/wechat/create-token-and-url", function (res) {
+            if (res.code == 1) {
+                $("#token").text(res.data.token);
+                $("#url").text(res.data.url)
+            } else {
+                layer.msg(res.msg, {time: 2000})
+            }
+        });
+        $("#bsubmit").click(function () {
+            var mchid = $.trim($("#apikey").val()), key = $.trim($("#api").val()), status = $.trim($("#status").val());
+            var appid = $.trim($("#appid").val()),
+                appsecret = $.trim($("#appsecret").val()),
+                data = {
+                    appid: appid,
+                    secret: appsecret
+                };
+            $post(urlPrefix + "?r=sms/wechat/save-mchid-and-key", {
+                mchid: mchid,
+                key: key,
+                status: status
+            }, function (res) {
+                layer.msg(res.msg, {time: 2000})
+            });
+
+            $post(urlPrefix + "?r=sms/wechat/save-appid-and-secret",
+                data,
+                function (res) {
+                    layer.msg(res.msg, {time: 2000});
+                });
+        });
+    });
+
+</script>
+
+</body>
+</html>

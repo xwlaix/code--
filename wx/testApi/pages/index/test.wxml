@@ -1,0 +1,41 @@
+<view>
+    {{ message }}
+</view>
+<view wx:for="{{ array }}">
+    {{ item }}
+</view>
+<view wx:if="{{ view == 'WEBVIEW' }}">
+    WEBVIEW
+</view>
+<view wx:elif="{{ view == 'app' }}">
+    app
+</view>
+<view wx:else="{{ view == 'mina' }}">
+    mina
+</view>
+<template name="staffName" is="">
+    <view>
+        FirstName:{{ firstName }},LastName:{{ lastName }}
+    </view>
+</template>
+<template  is="staffName" data="{{...staffA}}">
+</template>
+<template  is="staffName" data='{{ ...staffB }}'>
+</template>
+<template is="staffName" data='{{ ...staffC }}'>
+</template>
+<view bindtap="add"> {{count}} </view>
+<view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="i">
+  <view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="j">
+    <view wx:if="{{i <= j}}">
+      {{i}} * {{j}} = {{i * j}}
+    </view>
+  </view>
+</view>
+<switch wx:for="{{objectArray}}" wx:key="unique" style="display: block;"> {{item.id}} </switch>
+<button bindtap="switch"> Switch </button>
+<button bindtap="addToFront"> Add to the front </button>
+
+<switch wx:for="{{numberArray}}" wx:key="*this" style="display: block;"> {{item}} </switch>
+<button bindtap="addNumberToFront"> Add to the front </button>
+

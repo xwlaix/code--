@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>短信设置</title>
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico" />
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+</head>
+<body>
+<!--中间部分start!-->
+<div class="main-box" style="width:95%" >
+    <div id="main-box-index">
+        <!--中间部分_右侧end!-->
+        <div class="alert alert_info">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <strong>提示信息!</strong>
+            <ol>
+                <li>配置短信内容,查看短信验证记录,目前仅支持云片网http://www.yunpian.com</li>
+                <li>设置IP地址白名单 112.124.62.6</li>
+
+            </ol>
+        </div>
+        <div class="cLineB">
+            <div class="title_tab" id="topTab">
+                <div>
+                    <button class="btn btn-sm btn-primary " >
+                        短信配置
+                    </button>
+                    <button  class="btn btn-sm btn-success ">
+                        验证码发送记录
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="msgWrap sms_add">
+            <div class="box-content">
+                <div class="apikey">
+                    <label for="apikey" class="control-label">apikey：</label>
+                    <input type="text" name="apikey" id="apikey" value="bf89bf0b917ffffe5ac7c6b1d7fcc34b" class="input">
+                </div>
+                <div class="status">
+                    <label for="status" class="control-label">是否开启：</label>
+                    <select name="status" id="status">
+                        <option value="1" selected>开启</option>
+                        <option value="0" >关闭</option>
+                    </select>
+                    <button id="bsubmit" type="button" class="btn btn-sm btn-primary">保存</button>
+                </div>
+
+            </div>
+        </div>
+        ﻿</div>
+</div>
+</body>
+<script type="text/javascript">
+    $(function(){
+        $('.close').on('click',function(){
+            $('.alert_info').hide()
+        });
+        $("#bsubmit").click(function(){
+            var apikey = $("#apikey").val(),
+                status = $("#status").val();
+
+            if(!apikey){
+                layer.msg("请输入用户唯一标示码",{time:2000});
+                return false;
+            }
+
+            $post("/index.php?g=User&m=Sms&a=index&token=5d8a87bab30de695954b17fc835b9d12",
+                {apikey:apikey,status:status},
+                function(data){
+                    if(data.status){
+                        layer.msg(data.info,{time:2000});
+                        setTimeout(function(){
+                            window.location.href = data.url;
+                        },'1000');
+                    }else{
+                        layer.msg(data.info,{time:2000});
+                    }
+                },'json');
+        });
+    });
+</script>
+</html>
+

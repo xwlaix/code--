@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>导出鑫继源类型</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/ajaxfileupload.js"></script>
+</head>
+<body>
+<!--中间部分start!-->
+<div class="main-box">
+    <div id="main-box-index">
+        <!--中间部分_右侧end!-->
+        <div class="alert alert_info">
+            <strong>提示信息!</strong>
+            <ol>
+                <li>操作步骤:第一步：选择鑫继源类型</li>
+                <li>操作步骤:第二步：导出</li>
+            </ol>
+        </div>
+        <div class="cLineB">
+            <div id="topTab">
+                <div class="form-group">
+                    <label for="type">鑫继源类型:</label>
+                    <select name="type" id="type" data-bind="value:type">
+                        <option class="type" selected="selected" value="">请选择鑫继源类型</option>
+                        <option class="type" value="121">鑫继源</option>
+                        <option class="type" value="123">鑫继源1</option>
+                        <option class="type" value="125">鑫继源2</option>
+                        <option class="type" value="127">鑫继源B</option>
+                    </select>
+                    <button type="button" class="btn btn-sm btn-primary import">导出</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $(".import").on('click', function () {
+        var file = $("#type").val();
+        if (file) {
+            var index = layer.load(2,  {
+                shade: [0.1, '#fff'] //0.1透明度的白色背景
+            });
+            $post(urlPrefix+'/index.php?r=sms/card/excelshopx',{operatorid:file},function(res){
+                layer.closeAll();
+                openDownloadDialog(res.data.url);
+            });
+        }else {
+            layer.msg("请选择鑫继源类型", {time: 2000});
+            return false
+        }
+    });
+</script>
+</html>
+

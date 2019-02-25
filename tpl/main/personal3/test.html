@@ -1,0 +1,486 @@
+
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" /><title>
+    流量卡信息
+</title><link href="../styles/bootstrap.min.css?v=20160712" rel="stylesheet" /><link href="../styles/main.css" rel="stylesheet" /><link href="../styles/iconfont.css" rel="stylesheet" />
+    <style>
+        body {
+            background: #ffffff;
+        }
+        .m-btn-block {
+            font-size: 19px;
+        }
+        .so-input {
+            height: 50px;
+            line-height: 50px;
+        }
+        .side-line {
+            margin: 5px 0 5px 0;
+            width: 100%;
+            height: 1px;
+            background: #000000;
+        }
+        .content-container {
+            padding-top: 0px;
+            padding-bottom: 10px;
+            background: #ffffff;
+        }
+        /*记住号码css样式*/
+        ul.rem-sim-num {
+            margin-top: 0;
+            list-style: none;
+            padding-left: 0;
+            background: #fff;
+            line-height: 14px;
+            border: 1px solid #ccc;
+            color: #555;
+            position: absolute;
+            width: 100%;
+            display: none;
+            max-height: 300px;
+            overflow: auto;
+        }
+        ul.rem-sim-num li {
+            text-indent: 0.5em;
+            padding: 7px 0 7px 0;
+            cursor: pointer;
+            font-size: 19px;
+        }
+        ul.rem-sim-num li:hover {
+            background: #F1F1F1;
+        }
+
+        ul.rem-sim-num li a {
+            color: #555;
+            text-decoration: none;
+        }
+        .m-control-scanning {
+            display: block;
+            position: absolute;
+            top: 2px;
+            right: 0;
+        }
+        .m-control-scanning img {
+            height: 32px;
+        }
+        .scan-btn button {
+            background-color: #fff;
+            border: 1px solid rgb(34, 169, 237);
+            color: rgb(34, 169, 237);
+        }
+        .simsearch-dec {
+            text-align: center;
+        }
+        .simsearch-txt {
+            padding-left: 35px;
+            background: url(../images/terminal/txt-img.png) 5px 5px no-repeat;
+            box-sizing: border-box;
+            font-size: 19px;
+            text-indent:5px;
+        }
+        .search-icon {
+            float: right;
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 0 10px;
+            line-height: 44px;
+            color: #ccc;
+            font-size: 24px;
+            cursor: pointer;
+            display: none;
+        }
+
+        @media (max-width:320px){
+            .simsearch-txt{font-size:17px;}
+        }
+        /* 移动端媒体查询像素比 */
+        @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (min-device-pixel-ratio: 2) {
+            .simsearch-txt {
+                background-image: url(../images/terminal/txt-img@2x.png);
+                background-size: 30px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="divshowTip"></div>
+<div class="m-vertical-space-sm"></div>
+<div class="m-container">
+    <div class="so-input" style="position: relative;">
+        <i class="search-icon iconfont">&#xe601;</i>
+        <input name="txtSearchKey" type="text" id="txtSearchKey" class="m-control-input simsearch-txt" placeholder="请输入卡上ICCID号或流量卡号" />
+        <ul class="rem-sim-num"></ul>
+    </div>
+    <!--查询不到结果提示-->
+    <div style="display: none; margin-bottom: 10px; color: red;" id="divCheckSIM">
+        <p>查不到呢，亲~</p>
+        <p>1.如果您是扫描输入，请确保为我司的卡;</p>
+        <p>2.如果您是手动输入，请检查输入的内容和卡身号码是否一致，建议采用扫码输入;</p>
+        <p>3.如仍无法查询，请在公众号留言并附上您的ICCID号或流量卡号;</p>
+    </div>
+    <div class="so-input">
+        <button id="btnSearch" class="m-btn m-btn-info m-btn-block">查询续费</button>
+    </div>
+    <div class="so-input scan-btn">
+        <button id="AscanQRCode" class="m-btn m-btn-block">扫码输入</button>
+    </div>
+</div>
+<div class="m-vertical-space-sm"></div>
+<div class="m-container content-container">
+    <span>温馨提示:系统自动记住您最近查询成功的号码</span>
+</div>
+<div class="m-container simsearch-dec">
+    <img src="../images/terminal/simsearch-img@2x.png" width="268" />
+    <p style="width:268px;text-align:left;margin:0px auto">点击“扫码输入”，对着卡的条形码扫一扫</p>
+</div>
+<div class="m-container simsearch-dec">
+    <img src="../images/terminal/carcard-img@2x.png" width="268" />
+    <p style="width:268px;text-align:left;margin:0px auto">或在车载设备打开"流量管理"应用,点击"购买流量"查看ICCID号</p>
+</div>
+<input type="hidden" id="hid_WeChatId" value="" />
+<input type="hidden" id="hid_mchId" value="10061540" />
+<input type="hidden" id="hid_userId" value="0" />
+<input type="hidden" id="hid_userName" value="" />
+<input type="hidden" id="hid_idCard" value="" />
+<input type="hidden" id="hid_trueName" value="" />
+<input type="hidden" id="hid_IMEI" value="" />
+<input type="hidden" id="hid_FromApp" value="" />
+<input type="hidden" id="hid_OnlyRealName" value="" />
+<input type="hidden" id="hid_mobile" value="" />
+<input type="hidden" id="hid_hidHold" value="" />
+<script src="../scripts/jquery.min.js"></script>
+<script src="../scripts/bootstrap.min.js"></script>
+<script src="../scripts/jshelper.js?v=2017041524"></script>
+<script src="../scripts/jquery.cookie.js"></script>
+<script src="../scripts/toptip.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="../scripts/wx.config.init.js"></script>
+<script>
+    // 初始化微信配置
+    wxapi.readyWXCgi("../../", ["scanQRCode"]);
+    var mobile = $("#hid_mobile").val(),
+        imei = $("#hid_IMEI").val(),
+        hid_OnlyRealName = $("#hid_OnlyRealName").val() === 'true' ? true : false;
+    (function () {
+        'use strict';
+        //记住号码js代码
+        //end 记住号码js代码
+        var reset = shared.getUrlQuery("reset");
+        var apptype = shared.getUrlQuery('apptype');
+        var key = shared.Trim($("#txtSearchKey").val(), "g");
+
+        if (apptype === '51')
+            $("#txtSearchKey").val("");
+
+        //APP调用扫码按钮隐藏
+        if ($("#hid_FromApp").val().indexOf("h5") >= 0) {
+            $(".scan-btn").hide();
+        }
+        //文本框获得焦点
+        $("#txtSearchKey").focus(function () {
+            $("#divCheckSIM").hide();
+        });
+        //提供传参方式调用，自动查询跳转
+        if (reset !== "true") {
+            if (key.length > 0)
+                searchSim();
+        }
+        $("#btnSearch").on("click", function () {
+            searchSim();
+        });
+        //判断输入框的内容是否为空,清空icon显示/隐藏
+        if ($("#txtSearchKey").val().length != 0) {
+            $(".search-icon").show();
+            $(".simsearch-txt").css("padding-right", "40px");
+        } else {
+            $(".search-icon").hide();
+            $(".simsearch-txt").css("padding-right", "5px");
+        }
+        $("#txtSearchKey").on("keyup", function () {
+            $(".rem-sim-num").hide();
+            var $grid = $(".rem-sim-num");
+            // 清除所有行
+            $grid.children("li").remove();
+            var $li;
+            var key = shared.Trim($("#txtSearchKey").val(), "g");
+            var history = JSON.parse(localStorage.getItem('history'));
+            $.map(history, function (e) {
+                if (e.indexOf(key) > -1 && key.length > 0) {
+                    $li = $("<li>").click(function () {
+                        $("#txtSearchKey").val(e);
+                        $(".rem-sim-num").hide();
+                    });
+                    $li.append($("<a>").text(e));
+                    $grid.append($li);
+                    $(".rem-sim-num").show();
+                }
+            });
+
+        });
+        //清空输入框
+        $(".search-icon").click(function () {
+            $("#txtSearchKey").val("");
+            $(".search-icon").hide();
+            $("#txtSearchKey").focus();
+            $(".simsearch-txt").css("padding-right", "5px");
+        });
+        $("#AscanQRCode").click(function () {
+            wx.scanQRCode({
+                needResult: 1,
+                desc: 'scanQRCode desc',
+                success: function (res) {
+                    //{"resultStr":"CODE_128,862607500000616","errMsg":"scanQRCode:ok"}
+                    var str = JSON.stringify(res);
+                    //alert(str);
+                    var ejson = eval("(" + str + ")");
+                    if (ejson.errMsg.indexOf('ok') >= 0) {
+                        var beginIndex = ejson.resultStr.indexOf(',');
+                        var nextLeg = ejson.resultStr.length;
+                        var id = ejson.resultStr.substring(beginIndex + 1, nextLeg);
+                        var _hidHold = $("#hid_hidHold").val();
+                        if (id.length === 20) {
+                            $.getJSON("../../api/GetSimFromType/" + id + "?hidHold=" + hidHold, function (res) {
+                                if (res === null || res === undefined || res === "") {
+                                    $("#txtSearchKey").val(id.substring(0, id.length - 1));
+                                } else {
+                                    $("#txtSearchKey").val(id);
+                                }
+                                searchSim();
+                            });
+                        } else {
+                            $("#txtSearchKey").val(id);
+                            searchSim();
+                        }
+                    }
+                }
+            });
+        });
+        //联想iccid号点击页面其他地方隐藏
+        $(document).click(function () {
+            $(".rem-sim-num").hide();
+        });
+        $("[role='dialog']").on('show.bs.modal', function () {
+            var $this = $(this);
+            var $modal_dialog = $this.find('.modal-dialog');
+            // 关键代码，如没将modal设置为 block，则$modala_dialog.height() 为零
+            $this.css('display', 'block');
+            $modal_dialog.css({ 'margin-top': Math.max(0, ($(window).height() - $modal_dialog.height()) / 2) });
+        });
+        var apptype = shared.getUrlQuery("apptype"),
+            wxchatId = shared.getUrlQuery("wechatId"),// $("#hid_WeChatId").val();
+            accessname = shared.getUrlQuery("accessname"),
+            mchId = $("#hid_mchId").val(),
+            fromapp = $("#hid_FromApp").val(),
+            hidHold = $("#hid_hidHold").val();
+        function searchSim() {
+            $("#divCheckSIM").hide();
+            var key = shared.Trim($("#txtSearchKey").val(), "g");
+            if (key === "") {
+                $.showTip("请输入要查询的流量卡号");
+                return;
+            }
+            if (key.length > 20 || /\W/.test(key)) {
+                $.showTip("格式错误,请输入正确的卡号")
+                return
+            }
+            if (key.length === 9) {
+                var key_supplement = '1064';
+                if (key.charAt(0) === '6') {
+                    key_supplement = '861064'
+                }
+                key = key_supplement + key;
+                $("#txtSearchKey").val(key);
+            }
+            if (key.length === 13) {
+                var key_supplement = '';
+                if (key.slice(0, 5) === '10646') {
+                    key_supplement = '86'
+                }
+                key = key_supplement + key;
+                $("#txtSearchKey").val(key);
+            }
+            var fullICCID = key;
+            var lastChr = key.charAt(key.length - 1);
+            if (!/^[0-9]+.?[0-9]*$/.test(lastChr) || key.length == 20)
+                key = key.substring(0, key.length - 1);
+            shared.loadCfm.open("");
+            $.getJSON("../../api/GetSimStartInfo/" + key + "?full=" + fullICCID + "&hidHold=" + hidHold + "&mchId=" + mchId)
+                .done(function (data) {
+                    if (!data)
+                        $("#divCheckSIM").show();
+                    var theICCID = data ? data.iccid : fullICCID;
+                    $.getJSON("../../api/GetSimRealStatus?iccid=" + theICCID)
+                        .done(function (res) {
+                            shared.loadCfm.close();
+                            if (data === null) {
+                                if (fullICCID == "") {
+                                    fullICCID = "";
+                                }
+                                //判断是不是云智的流量卡
+
+                                return;
+                            }
+                            //移动:0   //联通:1
+                            var simType = parseInt(data.simFromType),
+                                //卡状态 1库存
+                                simState = parseInt(res.result.simState) || parseInt(data.simState),
+                                apiCode = parseInt(data.apiCode),
+                                activeState = data.activeState, //activeState  电信卡的激活状态  1可激活  0正常
+                                isInitPackage = data.isInitPackage, //isInitPackage  初始套餐  1是 0否
+                                iccid = data.iccid,
+                                simNo = data.simNo,
+                                sourceType = parseInt(data.sourceType),
+                                activeByRealName = data.activeByRealName,
+                                realMobile = data.realMobile,
+                                aliBindingIMEI = data.aliBindingIMEI,
+                                userId = $("#hid_userId").val();
+                            if (key != iccid && key != simNo) {
+                                key = iccid; //特殊卡的号码修正
+                            } else {
+                                key = key; //data[1];
+                            }
+                            //写入缓存号码
+                            var old = JSON.parse(localStorage.getItem('history'));
+                            old = old || [];
+                            if ($.inArray($.trim($("#txtSearchKey").val()), old) < 0) {
+                                old.push($.trim($("#txtSearchKey").val()));
+                            }
+                            localStorage.setItem('history', JSON.stringify(old));
+                            //当传入手机号和imei为空时同步数据库上次存储的记录
+                            if (mobile.length == 0) {
+                                mobile = realMobile;
+                            }
+                            if (imei.length == 0) {
+                                imei = aliBindingIMEI;
+                            }
+
+                            //根据不同卡的类型，跳转到不同的界面
+                            var url = "",
+                                userId = $("#hid_userId").val(),
+                                cardMachine = mobile ? imei ? "&mobile=" + mobile + "&imei=" + imei : "&mobile=" + mobile : imei ? "&imei=" + imei : "",
+                                hidHoldQuery = hidHold != "" ? "&hidHold=" + hidHold : "",
+                                urlData = "?userId="+userId+ "&simNo=" + simNo + "&num=" + iccid + "&num_type=iccid&simId=" + data.simId + "&apptype=" + apptype + "&wechatId=" + wxchatId + "&mchId=" + mchId + "&accessname=" + accessname + "&fromapp=" + fromapp + cardMachine + hidHoldQuery,
+                                // urlData = "?simNo=" + simNo + "&num=" + iccid + "&num_type=iccid&simId=" + data.simId + "&apptype=" + apptype + "&wechatId=" + wxchatId + "&mchId=" + mchId + "&accessname=" + accessname + "&fromapp=" + fromapp + cardMachine + hidHoldQuery,
+
+                                //付费激活
+                                openUrl = "simcard_open.aspx" + urlData,
+                                //阿里实名
+                                aliOpenUrl = "simcard_realbind.aspx" + urlData + cardMachine,
+                                //联通详情页(4G)
+                                ltDetailsUrl = "simcard_lt_new.aspx" + urlData + cardMachine,
+                                //电信首次订购页
+                                dxDetailsUrl = "simcard_dx_new.aspx" + urlData + cardMachine,
+                                //移动详情页(2G)
+                                ydDetailsUrl = "simcard_yd.aspx" + urlData,
+
+                                onlyRealNameUrl = "../member/realNameInfo.aspx" + urlData,
+                                verifiedActive = "&verifiedActive=true";
+                            if (hid_OnlyRealName) {
+                                //优先返回3代表已实名，其次返回2审核中，再次返回其他
+                                if (data.realNameStatus === 0 && data.realStateByAli !== 3 && data.realStateByAli !== 2 && data.realStateByAli !== -1) {
+                                    if (simType === 1 && sourceType == 82) {
+                                        url = aliOpenUrl + "&onlyRealName=true";
+                                    } else {
+                                        //麦谷实名
+                                        url = "AuthRealName.aspx" + urlData + cardMachine;
+                                    }
+                                } else {
+                                    url = onlyRealNameUrl + urlData;
+                                }
+                            } else {
+                                if (simType === 1) {
+                                    if (simState === 0 || simState === 1) {
+                                        url = activeByRealName == 1 ? sourceType == 82 ? aliOpenUrl : openUrl + verifiedActive : openUrl;
+                                    } else {
+                                        url = sourceType == 82 ? ltDetailsUrl + "&cardType=aliCard" : ltDetailsUrl;
+                                    }
+                                } else if (simType === 0) {
+                                    //移动逻辑部分
+                                    switch (apiCode) {
+                                        case 9:
+                                        // 移动逻辑8
+                                        case 8:
+                                        // 移动逻辑8
+                                        case 5:
+                                        // 移动逻辑5
+                                        case 2:
+                                        case 6:
+                                            //移动逻辑2  移动逻辑6
+                                            if (simState === 1) {
+                                                url = activeByRealName == 1 ?  openUrl + verifiedActive : openUrl;
+                                            } else {
+                                                url = ltDetailsUrl;
+                                            }
+                                            break;
+                                        case 3:
+                                        case 7:
+                                            //移动逻辑3 移动逻辑7
+                                            url = ydDetailsUrl;
+                                            break;
+                                        case 4:
+                                            //移动逻辑4
+                                            if (simState === 1) {
+                                                url = activeByRealName == 1 ?  openUrl + verifiedActive : openUrl;
+                                            } else {
+                                                url = ydDetailsUrl;
+                                            }
+                                            break;
+                                        case 1:
+                                        default:
+                                            //移动逻辑1
+                                            url = ydDetailsUrl;
+                                            break
+                                    }
+                                } else {
+                                    //电信逻辑
+
+                                    if (isInitPackage == 1) { //是否初始套餐 (是)
+                                        url = dxDetailsUrl;
+                                    } else { //是否初始套餐 (否)
+                                        if (activeState == 1) { // 可激活
+                                            if (data.realNameStatus === 0 && data.realStateByAli !== 3 && data.realStateByAli !== 2 && data.realStateByAli !== -1) {
+                                                if (simType === 1 && sourceType == 82) {
+                                                    url = aliOpenUrl + "&onlyRealName=true";
+                                                } else {
+                                                    //麦谷实名
+                                                    url = "AuthRealName.aspx" + urlData + cardMachine;
+                                                }
+                                            } else {
+                                                url = onlyRealNameUrl + urlData;
+                                            }
+                                        } else { // 正常
+                                            //无需激活,跳转卡详情页面
+                                            url = ltDetailsUrl;
+                                        }
+                                    }
+                                }
+                            }
+                            $.cookie('txtSimUrl', url, { expires: 7 });
+                            localStorage.setItem('fromapp', fromapp);
+                            window.location.href = url;
+                        }).fail(function () {
+                        shared.loadCfm.close();
+                        $.showTip("输入参数有误或网络异常！");
+                        return;
+                    });
+                })
+                .fail(function () {
+                    shared.loadCfm.close();
+                    $.showTip("输入参数有误或网络异常！");
+                    return;
+                });
+        }
+        function clearLayer() {
+            $("#layResult div").remove();
+        }
+    }());
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,50 @@
+.kindCard{
+    margin-top: 0;
+}
+.kindCard:after{
+    border-bottom: 0;
+}
+.kindCard:before,.kind:before{
+    border-top: 0;
+}
+.kindCard label{
+    float: left;
+}
+.weui-panel{
+    margin-top: 0!important;
+}
+.kindCard label p{
+    text-align: right;
+}
+.weui-check__label{
+    width: 57px;
+}
+.kindCardLabel{
+    width: 68px;
+    padding-right: 0;
+    white-space: nowrap;
+}
+.price{
+    font-size: 16px!important;
+    margin-right: 25%;
+}
+.number{
+    color: #ed635d;
+}
+.textCenter{
+    text-align: center!important;
+}
+.pay{
+    background: #2398ff;
+}
+/*.weui-dialog{*/
+    /*max-width: 371px;*/
+    /*border-radius: 22px;*/
+/*}*/
+/*.weui-dialog__bd,.weui-dialog__hd{*/
+    /*padding: 0;*/
+    /*line-height: 0;*/
+/*}*/
+/*#joinUs{*/
+    /*width: 100%;*/
+/*}*/

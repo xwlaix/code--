@@ -1,0 +1,226 @@
+<template>
+  <view class="user-borrow">
+    <view class="weui-panel weui-panel_access">
+      <view class="weui-navbar">
+        <view wx:for="{{tabs}}" wx:key="*this" id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" @tap="tabClick">
+          <view class="weui-navbar__title">{{item}}</view>
+        </view>
+        <view class="weui-navbar__slider" style="width:{{sliderWidth}}px; left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
+        <!--<view  class="library_num {{activeIndex == 1 ? 'library_member' : ''}} {{activeIndex == 2 ? 'library_admin' : ''}}">{{library_num}}</view>-->
+      </view>
+      <view style="width: 100%;height: 100rpx"></view>
+      <!--<view class="weui-panel__hd">-->
+        <!--{{library.name}}借阅管理-->
+      <!--</view>-->
+      <block wx:if="{{loading}}">
+        <view class="weui-loadmore">
+          <view class="weui-loading"></view>
+          <view class="weui-loadmore__tips">正在加载</view>
+        </view>
+      </block>
+      <block wx:elif="{{borrows && borrows.length>0}}">
+        <block wx:for="{{borrows}}" wx:key="index">
+          <view class="weui-panel">
+            <view class="weui-panel__hd">
+              <text>借书时间：</text>
+              <text>{{item.created_at || '借阅日期'}}</text>
+              <text class="pull-right">
+                <!--block wx:if="{{item.status == 2}}">
+                  <block wx:if="{{true}}">
+                    <text>逾期 </text>
+                    <text class="color-red">{{item.remain}}</text>
+                    <text> 天未归还</text>
+                  </block>
+                  <block wx:else>
+                  </block>
+                </block-->
+                <text wx:if="{{item.status=='RESERVE'}}">已预约</text>
+                <block wx:if="{{item.status=='BORROW'}}">
+                  <text>借阅中</text>
+                </block>
+                <text wx:if="{{item.status=='RETURN'}}">已归还</text>
+              </text>
+            </view>
+            <view class="weui-panel__bd">
+              <view class="weui-media-box weui-media-box_appmsg">
+                <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+                  <image class="weui-media-box__thumb" src="{{item.book.image}}" mode="aspectFit"/>
+                </view>
+                <view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+                  <view class="weui-media-box__desc">{{item.book.title}}</view>
+                  <view class="weui-media-box__desc" style="width: 80%;">【{{item.library.name}}】藏书</view>
+                  <view style="position: absolute; right: 36rpx; top: 64rpx;border-radius: 32rpx;box-shadow: 1rpx 1rpx 12rpx #dedede;padding: 4rpx 12rpx" @tap="makePhoneCall('{{item.book_user.mobile}}')">
+                    <image src="../../images/tabbars/icon-phone.png" style="width: 60rpx;height: 60rpx;margin-top: 16rpx"></image>
+                  </view>
+                </view>
+              </view>
+            </view>
+            <view wx:if="{{item.status=='BORROW'}}" class="weui-panel__ft weui-cells">
+              <view class="weui-panel__hd">
+                <text>还书时间：</text>
+                <text class="color-red">{{item.return_time}}</text>
+                <!--<button  wx:if="{{item.renew=='0'}}" @tap="goRenew({{item.library_id}}, {{item.id}})" class="weui-btn mini-btn pull-right" type="default" size="mini">续借</button>-->
+                <!--<view class="clearfloat"></view>-->
+              </view>
+            </view>
+          </view>
+        </block>
+        <view class="weui-loadmore weui-loadmore_line weui-loadmore_dot">
+          <view class="weui-loadmore__tips weui-loadmore__tips_in-line weui-loadmore__tips_in-dot"></view>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="weui-loadmore weui-loadmore_line">
+          <view class="weui-loadmore__tips weui-loadmore__tips_in-line">暂无数据</view>
+        </view>
+      </block>
+    </view>
+    <!--<modal hidden="{{hiddenmodalput}}" title="联系管理员取书" confirm-text="拨打电话" cancel-text="取消" bindcancel="cancel" bindconfirm="confirm({{mylib.link_mobile}})">-->
+      <!--<input type='text'placeholder="请输入内容" value="管理员：{{mylib.link_name}}"/>-->
+      <!--<input type='text'placeholder="请输入内容" value="电话号码：{{mylib.link_mobile}}"/>-->
+    <!--</modal>-->
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { service } from '../../config.js'
+  import http from '../../mixins/http'
+  import base from '../../mixins/base'
+  import ShareMessage from '../../mixins/ShareMessage'
+
+  export default class userBorrow extends wepy.page {
+    mixins = [base, http, ShareMessage]
+    config = {
+      navigationBarTitleText: '我的借阅'
+    }
+    data = {
+      loading: false,
+      borrows: [],
+      tabs: ['预约', '借阅中', '已还'],
+      activeIndex: 0,
+      sliderOffset: 0,
+      sliderLeft: 0,
+      sliderWidth: 180,
+      screenWidth: 360,
+      library_num: 0,
+      status: 'RESERVE'
+    }
+
+    onShareAppMessage(res) {
+      return this.$parent.onShareAppMessage(this.config.navigationBarTitleText)
+    }
+    onShow() {
+      this.initPageData('RESERVE')
+      this.$parent.getTracker(this.$root.$name, this.config.navigationBarTitleText)
+    }
+
+    onPullDownRefresh() {
+      this.initPageData(this.status)
+    }
+    onLoad(query) {
+//      this.id = query && +query.id
+//      this.libraryId = query && +query.library_id
+      let _this = this
+      wx.getSystemInfo({success: function (rst) {
+        _this.screenWidth = rst.screenWidth
+      }})
+      this.sliderWidth = _this.screenWidth / this.tabs.length
+      this.sliderLeft = 0
+      this.sliderOffset = _this.screenWidth / this.tabs.length * this.activeIndex
+    }
+
+    // 初始化页面数据
+    initPageData(status) {
+      if (this.loading) return
+      this.loading = true
+      this.$get({url: service.user + '/borrows',
+        data: {status: status}
+      }, {
+        success: ({code, data}) => {
+          this.borrows = data.data
+        },
+        fail: ({code, data}) => {},
+        complete: () => { this.loading = false }
+      })
+    }
+
+    methods = {
+      makePhoneCall(mobile) {
+        wx.makePhoneCall({
+          phoneNumber: mobile
+        })
+      },
+      tabClick (e) {
+        this.sliderOffset = e.currentTarget.offsetLeft
+        this.activeIndex = e.currentTarget.id
+        if (this.activeIndex === '0') {
+          this.status = 'RESERVE'
+        } else if (this.activeIndex === '1') {
+          this.status = 'BORROW'
+        } else {
+          this.status = 'RETURN'
+        }
+        this.initPageData(this.status)
+      },
+      goRenew(libraryId, id) {
+        var url = service.libraries + '/' + libraryId + '/borrows/' + id + '/renew'
+        this.$put({url: url}, {
+          success: ({code, data}) => {
+            wx.reLaunch({url: `/pages/user/borrows`})
+          }
+        })
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+@import "../../styles/custom/fn.less";
+
+.loopCovers(@count) when (@count > 0) {
+  &:nth-child( @{count} ) {
+    top: (@count * 0rpx);
+    left: (@count * 10rpx);
+  }
+  .loopCovers((@count - 1))
+}
+
+@bookCoverWidth: 80rpx;
+@bookCoverHeight: @bookCoverWidth / (3 / 4);
+
+.user-borrow{
+  .weui-loadmore__tips_in-line{
+    background: transparent;
+  }
+  .weui-media-box_appmsg{
+    align-items: flex-start;
+    margin-bottom: 40rpx;
+  }
+  .weui-media-box__desc{
+    .h4();
+    .text-ellipsis();
+    line-height: 1.6;
+  }
+  .weui-media-box__hd_in-appmsg{
+    position: relative;
+    width: @bookCoverWidth;
+    height: @bookCoverHeight;
+    margin-right: @bookCoverWidth;
+  }
+  .weui-media-box__thumb{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #fff;
+    border: 5rpx solid #fff;
+    box-shadow: -3rpx 3rpx 5rpx 0 rgba(0,0,0,0.3);
+
+    &:last-child{
+      box-shadow: -1rpx 3rpx 5rpx 2rpx rgba(0,0,0,0.4);
+    }
+
+    .loopCovers(5)
+  }
+}
+</style>

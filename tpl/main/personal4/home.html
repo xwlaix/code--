@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../static/css/wxMobileV2.css">
+    <link rel="stylesheet" href="../../static/css/fonticon.css">
+    <title>个人中心</title>
+
+</head>
+<body ontouchstart>
+<div class="TotalContentBox">
+    <div class="weui-panel weui-panel_access top-info">
+        <div class="weui-panel__bd top-info-content">
+            <div class="weui-media-box weui-media-box_appmsg top-info-content">
+                <div class="weui-media-box__hd logo_img">
+                    <img class="weui-media-box__thumb headimgurl" src="">
+                </div>
+                <div class="weui-media-box__bd logo_content">
+                    <p class="weui-media-box__desc">昵称：<span class="nickname"></span></p>
+                    <p class="weui-media-box__desc">卡号：<span class="tel" id="tel"></span></p>
+                </div>
+                <div class="icon-qiehuan qiehaun">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="weui-flex info-middle">
+        <div class="clearfix weui-flex__item packageBox">
+            <span class=""></span>
+            账户余额：<span class="amount" data-bind="amount"></span>元
+        </div>
+        <div class="clearfix weui-flex__item packageBox">
+            <span class=""></span>认证状态：
+            <span class="real_status " data-bind=""></span>
+        </div>
+    </div>
+    <div class="hengxian"></div>
+    <!--九宫格列表开始-->
+    <div class="weui-grids">
+        <div class="weui-grid js_grid detail">
+            <div class="weui-grid__icon icon icon-4">
+            </div>
+            <p class="weui-grid__label">
+                流量查询
+            </p>
+        </div>
+        <div href="" class="weui-grid js_grid order">
+            <div class="weui-grid__icon icon icon-23">
+            </div>
+            <p class="weui-grid__label">
+                流量订购
+            </p>
+        </div>
+
+        <div href="" class="weui-grid js_grid record">
+            <div class="weui-grid__icon icon icon-5">
+            </div>
+            <p class="weui-grid__label">
+                消费记录
+            </p>
+        </div>
+        <div href="" class="weui-grid js_grid register">
+            <div class="weui-grid__icon">
+                <img src="../../static/css/img/1185229.png"/>
+            </div>
+            <p class="weui-grid__label">
+                实名认证
+            </p>
+        </div>
+        <!--</a>-->
+        <div href="" class="weui-grid js_grid recharge">
+            <div class="weui-grid__icon icon icon-1">
+            </div>
+            <p class="weui-grid__label">
+                余额充值
+            </p>
+        </div>
+        <div href="" class="weui-grid js_grid question">
+            <div class="weui-grid__icon">
+                <img src="../../static/img/question.png"/>
+            </div>
+            <p class="weui-grid__label">
+                常见问题
+            </p>
+        </div>
+        <div href="" class="weui-grid js_grid apn">
+            <div class="weui-grid__icon">
+                <img src="../../static/img/setting.png"/>
+            </div>
+            <p class="weui-grid__label">
+                手机设置APN
+            </p>
+        </div>
+        <a href="password.html" class="weui-grid js_grid">
+            <div class="weui-grid__icon">
+                <img src="../../static/css/img/1185130.png"/>
+            </div>
+            <p class="weui-grid__label">
+                修改密码
+            </p>
+        </a>
+
+        <a href="cx.html" class="weui-grid js_grid cardActive hidden">
+            <div class="weui-grid__icon">
+                <img src="../../static/img/active.png"/>
+            </div>
+            <p class="weui-grid__label">
+                卡片激活
+            </p>
+        </a>
+    </div>
+    <!--九宫格结束-->
+    <!--页脚开始-->
+</div>
+<script src="../../common/js/jquery-3.1.1.min.js"></script>
+<script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+<script src="../../static/js/mobileCommon.js"></script>
+<script>
+    var seeId,cardNo,card_type,operatorid,real_status,amount;
+    if(sessionStorage.getItem("id")==51){
+          $(".apn").remove();
+          $(".question").remove()
+    }
+    //获取微信头像昵称
+    if(sessionStorage.getItem("needFresh")=='true'){
+        $('.nickname').text(sessionStorage.getItem("nickname"));
+        $('.headimgurl').attr('src',sessionStorage.getItem("headimgurl"));
+    }else{
+        $get('?r=wms/personal/get-wx-info',function(res){
+            if(res.code==0){return}
+            sessionStorage.setItem("needFresh", 'true');
+            sessionStorage.setItem("nickname", res.data.nickname);
+            sessionStorage.setItem("headimgurl", res.data.headimgurl);
+            $('.nickname').text(res.data.nickname);
+            $('.headimgurl').attr('src',res.data.headimgurl)
+        });
+    }
+    if(sessionStorage.getItem("pay")=='true'||sessionStorage.getItem("active")=='true'){
+        $get('?r=wms/personal/get-card', function (res) {
+            sessionStorage.setItem("pay", false);
+            sessionStorage.setItem("active", false);
+            if (res.data.card_status == 1) {card_status = '待激活'}
+            if (res.data.card_status == 2) {card_status = '正常'}
+            if (res.data.card_status == 3) {card_status = '单向停机'}
+            if (res.data.card_status == 4) {card_status = '停机'}
+            if (res.data.card_status == 5) {card_status = '预销号'}
+            if (res.data.card_status == 6) {card_status = '销号'}
+            if (res.data.card_status == 7) {card_status = '过户'}
+            if (res.data.card_status == 8) {card_status = '休眠'}
+            if (res.data.card_status == 9) {card_status = '未知状态'}
+            if (res.data.card_status == 0) {card_status = '未知状态'}
+            sessionStorage.setItem("fid", res.data.fid);
+            sessionStorage.setItem("sid", res.data.sid);
+            sessionStorage.setItem("tid", res.data.tid);
+            sessionStorage.setItem("cardid", res.data.id);
+            sessionStorage.setItem("type", res.data.type);
+            sessionStorage.setItem("iccid", res.data.iccid);
+            sessionStorage.setItem("amount", res.data.amount);
+            sessionStorage.setItem("card_status", card_status);
+            sessionStorage.setItem("card_type", res.data.card_type);
+            sessionStorage.setItem("operatorid", res.data.operatorid);
+            sessionStorage.setItem("operator_type", res.data.operator_type);
+            if(res.data.real_status == 2){sessionStorage.setItem("real_status", '已认证')}
+            if(res.data.real_status == 1){sessionStorage.setItem("real_status", '未认证')}
+            load()
+        });
+    }else{
+        load()
+    }
+
+    //加载数据
+    function load() {
+        seeId=sessionStorage.getItem("id");
+        type=sessionStorage.getItem("type");
+        cardNo=sessionStorage.getItem("cardNo");
+        card_type=sessionStorage.getItem("card_type");
+        operatorid=sessionStorage.getItem("operatorid");
+        real_status=sessionStorage.getItem("real_status");
+        amount=parseFloat(sessionStorage.getItem("amount")).toFixed(2);
+
+        $(".tel").text(cardNo);
+        $(".amount").text(amount);
+        $(".real_status").text(real_status).click(function(){
+            clickStatus()
+        });
+        if(operatorid==123||operatorid==125){
+            $(".cardActive").removeClass('hidden')
+        }
+        //判断是否为空卡
+        if(type==4){
+            $.alert("空卡套餐，请订购套餐后使用。", "注意", function() {
+                location.href = 'package.html'
+            });
+        }
+    }
+
+    //套餐订购
+    $(".order").click(function(){
+        if(operatorid==105||operatorid==123||operatorid==125){
+            location.href = "package.html";
+            return false
+        }
+        if(!sessionStorage.getItem("type")){return}
+        if (sessionStorage.getItem("type") == 1){
+            location.href = "packageMonth.html";
+            return false
+        }else{
+            location.href = "package.html";
+            return false
+        }
+    });
+    //流量详情
+    $(".detail").click(function(){
+        location.href = 'index.html'
+    });
+    //余额充值
+    $(".recharge").click(function(){
+        if(!amount&&amount!=0){return}
+        location.href = 'rechargeMoney.html'
+    });
+    //充值记录查询
+    $(".record").click(function(){
+        if(!amount&&amount!=0){return}
+        location.href = 'record.html?'
+    });
+    //跳转查询
+    $(".qiehaun").click(function () {
+        if(!seeId){return}
+        location.href = 'bindCard.html?id=' + seeId;
+    });
+    //实名认证跳转
+    function clickStatus(){
+        if(!real_status){return}
+        location.href = 'register.html'
+    }
+
+    $(".register").click(function(){
+        clickStatus()
+    });
+    //关键词跳转
+    function keyJump(num1,num2){
+        if(!seeId){return}
+        if(seeId==50){
+            location.href = '../wechat/view.html?id='+num1;
+        }else if(seeId==52){
+            location.href = '../wechat/view.html?id='+num2;
+        }
+    }
+    $(".question").click(function(){
+        keyJump(50,52)
+//        if(!seeId){return}
+//        if(seeId==50){
+//            location.href = '../wechat/view.html?id=50';
+//        }else if(seeId==52){
+//            location.href = '../wechat/view.html?id=52';
+//        }
+    });
+
+    $(".apn").click(function(){
+        keyJump(47,54)
+//        if(!seeId){return}
+//        if(seeId==50){
+//            location.href = '../wechat/view.html?id=47';
+//        }else if(seeId==52){
+//            location.href = '../wechat/view.html?id=54';
+//        }
+    });
+</script>
+</body>
+</html>

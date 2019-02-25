@@ -1,0 +1,372 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=11">
+    <title>物联网平台</title>
+    <script src="../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../static/js/Department.js"></script>
+    <script>
+        var oneArr = [], twoArr = [], flag_home = 0, uname;
+        $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+            if (res.code == 0) {
+                return
+            }
+            uname = res.data.uname;
+            $(".font-bold").text(uname);
+            if (res.data.id == res.data.uid) {
+                $("#9").removeClass('hidden');
+                flag_home = 1;
+                return
+            }
+            var nodes = JSON.parse(res.data.text);
+            for (var b in nodes) {
+                if (!nodes[b]["checked"]) {
+                    oneArr.push(nodes[b]["id"]);
+                    for (var a in nodes[b]["children"]) {
+                        if (!nodes[b]["children"][a]["checked"]) {
+                            twoArr.push(nodes[b]["children"][a]["id"]);
+                        }
+                    }
+                } else {
+                    for (var a in nodes[b]["children"]) {
+                        if (!nodes[b]["children"][a]["checked"]) {
+                            twoArr.push(nodes[b]["children"][a]["id"]);
+                        }
+                    }
+                }
+            }
+            for (var e in oneArr) {
+                $("#" + oneArr[e]).remove();
+            }
+            for (var e in twoArr) {
+                $("#" + twoArr[e]).remove()
+            }
+        });
+        //        var tag;
+        //        //检测是否登陆
+        //        !function () {
+        //            tag = getCookie("name");
+        //            if (tag == "") {
+        //                alert("登陆超时");
+        //                window.location.href = "login.html";
+        //                return false;
+        //            }
+        //        }();
+    </script>
+    <link rel="stylesheet" href="../common/css/bootstrap.min.css">
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="../common/css/font-awesome-ie7.min.css">
+    <![endif]-->
+    <!-- Sweet Alert -->
+    <link rel="shortcut icon" href="../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../common/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/css/common.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+
+
+</head>
+<body class="fixed-sidebar full-height-layout info-bg" style="overflow:hidden">
+<div id="wrapper">
+    <!--左侧导航开始-->
+    <nav class="navbar-default navbar-static-side" role="navigation" style="z-index: 1991;">
+        <div class="nav-close">
+            <i class="fa fa-times-circle"></i>
+        </div>
+        <div class="sidebar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="nav-header">
+                    <div class="dropdown profile-element WrapH">
+                        <div id="logo"><span></span></div>
+                    </div>
+                    <div class="logo-element">
+                    </div>
+                </li>
+                <li id="1">
+                    <a href="#" class="">
+                        <i class="fa fa-sitemap"></i>
+                        <span class="menu-text">代理商管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li id="11"><a class="J_menuItem" href="agent/agentAccount.html">代理商账号管理</a></li>
+                        <li id="12"><a class="J_menuItem" href="agent/agentRecharge.html">代理商充值</a></li>
+                        <li id="13"><a class="J_menuItem" href="agent/apackage.html">代理商套餐管理</a></li>
+                    </ul>
+                </li>
+                <li id="2">
+                    <a href="#" class="">
+                        <i class="fa fa-credit-card"></i>
+                        <span class="menu-text">卡片管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li id="21"><a class="J_menuItem" href="card/cCard.html">卡片信息管理</a></li>
+                        <li id="22"><a class="J_menuItem" href="card/autonymCard.html?v1.0">实名认证</a></li>
+                        <li id="23"><a class="J_menuItem" href="card/flowPoolList.html">流量池管理</a></li>
+                        <!--<li id="24"><a class="J_menuItem" href="agent/agentPool.html">代理池管理</a></li>-->
+                        <!--<li><a class="J_menuItem" id="member" href="kuyuCard/flowPoolMember.html">流量池卡片信息</a></li>-->
+                    </ul>
+                </li>
+                <li id="3">
+                    <a href="#" class="">
+                        <i class="fa fa-bank"></i>
+                        <span class="menu-text">业务管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li id="31"><a class="J_menuItem" href="business/serviceProvider.html">供应商账号管理</a></li>
+                        <li id="32"><a class="J_menuItem" href="business/package.html">套餐管理</a></li>
+                        <li id="33"><a class="J_menuItem" href="business/cardkind.html">卡片分类</a></li>
+                        <li id="34"><a class="J_menuItem" href="business/cxGprs.html">流量查询</a></li>
+                        <li id="35"><a class="J_menuItem" href="business/orderPackage.html">套餐订购</a></li>
+                        <li id="36"><a class="J_menuItem" href="business/stopReset.html">停复机</a></li>
+                        <li><a class="J_menuItem" href="business/changeCardList.html">换卡管理</a></li>
+                    </ul>
+                </li>
+                <li id="4">
+                    <a href="#" class="">
+                        <i class="fa fa-balance-scale"></i>
+                        <span class="menu-text">财务管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li id="41"><a class="J_menuItem" href="finance/orderManagement.html">订单查询</a></li>
+                        <li id="44"><a class="J_menuItem" href="finance/rechargeList.html">余额查询</a></li>
+                        <li id="42"><a class="J_menuItem" href="finance/financeCommission.html">佣金查询</a></li>
+                        <li id="43"><a class="J_menuItem" href="finance/financeAudit.html">提现审核管理</a></li>
+                    </ul>
+                </li>
+                <li id="5">
+                    <a href="#" class="">
+                        <i class="fa fa-wechat"></i>
+                        <span class="menu-text">微信设置</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li id="51"><a class="J_menuItem" href="wx/wxSetting.html">微信配置</a></li>
+                        <li id="52"><a class="J_menuItem" href="wx/wxMenu.html">自定义菜单</a></li>
+                        <li id="53"><a class="J_menuItem" href="wx/wxKeywords.html">关键字回复</a></li>
+                        <li id="54"><a class="J_menuItem" href="wx/wxFans.html">粉丝管理</a></li>
+                        <li id="55"><a class="J_menuItem" href="wx/wxPay.html">微信支付</a></li>
+                        <li id="56"><a class="J_menuItem" href="wx/wxSms.html">短信设置</a></li>
+                        <!--<li><a class="J_menuItem" href="wx/wxSms.html">小程序</a></li>-->
+                    </ul>
+                </li>
+                <!--<li id="6">-->
+                <!--<a href="#" class="">-->
+                <!--<i class="fa fa-bar-chart"></i>-->
+                <!--<span class="menu-text">数据分析</span>-->
+                <!--<span class="fa arrow"></span>-->
+                <!--</a>-->
+                <!--<ul class="nav nav-second-level">-->
+                <!--<li id="61"><a class="J_menuItem" href="data/cardData.html">卡片数据</a></li>-->
+                <!--<li id="62"><a class="J_menuItem" href="data/wxData.html">微信粉丝数据</a></li>-->
+                <!--<li id="63"><a class="J_menuItem" href="data/agentData.html">代理商数据</a></li>-->
+                <!--<li id="64"><a class="J_menuItem" href="data/financeData.html">财务数据</a></li>-->
+                <!--</ul>-->
+                <!--</li>-->
+                <li id="7">
+                    <a href="#" class="">
+                        <i class="fa fa-envelope"></i>
+                        <span class="menu-text">短信管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li id="71"><a class="J_menuItem" href="sms/codeModule.html">指令模块</a></li>
+                        <li id="72"><a class="J_menuItem" href="sms/smsSending.html">短信发送管理</a></li>
+                        <li id="73"><a class="J_menuItem" href="sms/smsReceive.html">短信接收管理</a></li>
+                    </ul>
+                </li>
+                <li id="8" class="">
+                    <a href="#" class="">
+                        <i class="fa  fa-cogs"></i>
+                        <span class="menu-text">其他</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li id="81">
+                            <a class="J_menuItem" href="api/apiDownload.html">API下载</a>
+                        </li>
+                        <li id="82">
+                            <a class="J_menuItem" href="sendCard/sendList.html">推广</a>
+                        </li>
+                        <li id="83">
+                            <a class="J_menuItem" href="agent/announce.html">发布公告</a>
+                        </li>
+                        <li id="84">
+                            <a class="J_menuItem" href="pc/export.html">鑫继源停机</a>
+                        </li>
+                        <li id="9" class="hidden">
+                            <a class="J_menuItem" href="pc/setting.html">权限管理</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!--左侧导航结束-->
+    <!--右侧部分开始-->
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+        <div class="row border-bottom">
+            <nav class="navbar navbar-static-top" role="navigation" id="ss" style="margin-bottom: 0">
+                <div class="navbar-header" style="height: 60px;">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i></a>
+                    <form role="search" class="navbar-form-custom" method="post" action="">
+                        <div class="form-group">
+                            <p style="color:#999;font-size: 14px; white-space: nowrap;height: 57px;line-height: 57px;margin-bottom: 0;margin-left: 10px;">
+                                欢迎使用酷鱼物联网平台 </p>
+                        </div>
+                        <div id="admin">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#" style="margin-right: 50px">
+                                    <span class="clear">
+                                        <span class="block m-t-xs"><strong class="font-bold"></strong></span>
+                                    </span>
+                            </a>
+                            <!--<ul class="dropdown-menu animated fadeInLeft m-t-xs hidden-xs">-->
+                            <!--<li>-->
+                            <!--<a href="javascript:add('修改密码','userController.do?changepassword','',550,200)">修改密码</a>-->
+                            <!--</li>-->
+                            <!--<li><a href="javascript:createwindow('个人信息','userController.do?userinfo','655','300')">个人信息</a>-->
+                            <!--</li>-->
+                            <!--<li><a href="javascript: goAllMessage();">系统消息</a></li>-->
+                            <!--<li><a href="javascript:clearLocalstorage()">清除缓存</a></li>-->
+                            <!--<li>-->
+                            <!--<a href="javascript:add('我的实名','tCCustomerRealNameController.do?addorupdate','',700,500)">我的实名</a>-->
+                            <!--</li>-->
+                            <!--<li class="divider"></li>-->
+                            <!--<li><a href="javascript:logout()">退出</a></li>-->
+                            <!--</ul>-->
+                        </div>
+                    </form>
+                </div>
+            </nav>
+        </div>
+        <div class="row content-tabs">
+            <button class="roll-nav roll-left J_tabLeft"><i class="fa fa-backward"></i></button>
+            <nav class="page-tabs J_menuTabs">
+                <div class="page-tabs-content">
+                    <a href="javascript:" class="J_menuTab" id="iframe_title" data-id="data/cardData.html">
+                        <span>数据分析</span>
+                    </a>
+                    <a href="javascript:" class="active J_menuTab" id="iframe_more" data-id="">
+                        <span></span> <i class="fa fa-times-circle"></i>
+                    </a>
+                </div>
+                <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i></button>
+                <div class="btn-group roll-nav roll-right">
+                    <button class="dropdown J_tabClose" data-toggle="dropdown">关闭操作<span class="caret"></span></button>
+                    <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                        <li class="J_tabShowActive"><a>定位当前选项卡</a></li>
+                        <li class="divider"></li>
+                        <li class="J_tabCloseAll"><a>关闭全部选项卡</a></li>
+                        <li class="J_tabCloseOther"><a>关闭其他选项卡</a></li>
+                    </ul>
+                </div>
+                <a href="javascript:logout()" class="roll-nav roll-right J_tabExit">
+                    <span class="out">退出<i class="fa fa-sign-out piclogo"></i></span>
+                </a>
+            </nav>
+        </div>
+        <div class="row J_mainContent" id="content-main">
+            <iframe class="J_iframe" name="iframe0" width="100%" height="100%" style="display: none" id="iframe_card"
+                    src="data/homeTab.html?v2.0" frameborder="0" data-id="data/cardData.html"></iframe>
+            <iframe class="J_iframe" name="iframe1" width="100%" height="100%" id="iframe_home" src="" frameborder="0"
+                    data-id=""></iframe>
+        </div>
+    </div>
+    <!--右侧部分结束-->
+    <!--右侧边栏开始-->
+</div>
+
+<script src="../common/js/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="../common/js/bootstrap.min.js"></script>
+<script src="../common/js/metisMenu/jquery.metisMenu.js"></script>
+<script src="../common/js/layer/layer.js"></script>
+<!-- 自定义js -->
+<script src="../common/js/hplus.js"></script>
+<script src="../common/js/contabs.js"></script>
+<script>
+
+    //    //定义参数
+    //    if(flag_home==1){
+    //        var module = getUrlParam('module'),
+    //            iframe_title = $("#iframe_more"),
+    //            content_iframe = $('#iframe_home'),
+    //            sideMenu = $("#side-menu"),
+    //            nav = sideMenu.children('li');
+    //            switch (module) {
+    //                case "wechat":
+    //                    content_iframe.attr('src', 'wx/wxMenu.html').attr('data-id', 'wx/wxMenu.html');
+    //                    iframe_title.attr('data-id', 'wx/wxMenu.html').children('span').text('自定义菜单');
+    //                    nav.eq(5).addClass('active');
+    //                    break;
+    //                case "Agent":
+    //                    content_iframe.attr('src', 'agent/agentAccount.html').attr('data-id', 'agent/agentAccount.html');
+    //                    iframe_title.attr('data-id', 'agent/agentAccount.html').children('span').text('代理商账号管理');
+    //                    nav.eq(1).addClass('active');
+    //                    break;
+    //                case "Card":
+    //                    content_iframe.attr('src', 'card/cCard.html').attr('data-id', 'card/cCard.html');
+    //                    iframe_title.attr('data-id', 'card/cCard.html').children('span').text('卡片信息管理');
+    //                    nav.eq(2).addClass('active');
+    //                    break;
+    //                case "Business":
+    //                    content_iframe.attr('src', 'business/serviceProvider.html').attr('data-id', 'business/serviceProvider.html');
+    //                    iframe_title.attr('data-id', 'business/serviceProvider.html').children('span').text('供应商账号管理');
+    //                    nav.eq(3).addClass('active');
+    //                    break;
+    //                case "Finance":
+    //                    content_iframe.attr('src', 'finance/orderManagement.html').attr('data-id', 'finance/orderManagement.html');
+    //                    iframe_title.attr('data-id', 'finance/orderManagement.html').children('span').text('订单查询');
+    //                    nav.eq(4).addClass('active');
+    //                    break;
+    //                case "Analyze":
+    //                    content_iframe.attr('src', 'data/cardData.html').attr('data-id', 'data/cardData.html');
+    //                    iframe_title.attr('data-id', 'data/cardData.html').children('span').text('卡片数据');
+    //                    nav.eq(6).addClass('active');
+    //                    break;
+    //                case "Service":
+    //                    content_iframe.attr('src', ' ').attr('data-id', ' ');
+    //                    iframe_title.attr('data-id', ' ').children('span').text('暂未开通');
+    //                    nav.eq(8).addClass('active');
+    //                    break;
+    //
+    //                case "API":
+    //                    content_iframe.attr('src', 'api/apiDownload.html').attr('data-id', 'api/apiDownload.html');
+    //                    iframe_title.attr('data-id', 'api/apiDownload.html').children('span').text('API下载');
+    //                    nav.eq(9).addClass('active');
+    //                    break;
+    //                default:
+    //                    content_iframe.attr('src', 'agent/agentAccount.html').attr('data-id', 'agent/agentAccount.html');
+    //                    iframe_title.attr('data-id', 'agent/agentAccount.html').children('span').text('代理商账号管理');
+    //                    nav.eq(1).addClass('active');
+    //                    break;
+    //            }
+    //    }else{
+    //
+    //
+    //    }
+    $('#iframe_home').remove();
+    $('#iframe_more').remove();
+    $('#iframe_card').show();
+    //根据不同模块显示不同的首页
+
+    //退出登录函数
+    function logout() {
+        layer.confirm('您确定要退出吗？', {
+            btn: ['确定', '取消'], //按钮
+            shade: false //不显示遮罩
+        }, function () {
+            $get(urlPrefix + "?r=sms/logout", function (res) {
+                clearCookies();
+                location.href = 'login.html';
+                return false
+            })
+        });
+    }
+
+</script>
+</body>
+</html>

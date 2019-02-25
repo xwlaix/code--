@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>流量池</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/jquery.validate.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../static/js/provinceCity.js"></script>
+
+</head>
+<body>
+
+<div class="main-box" style="width:95%">
+    <div id="main-box-index">
+        <div class="msgWrap form">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">操作</h4>
+                            <div class="alert">
+                                <strong>提示信息!</strong>
+                                <ol>
+                                    <!--<li>关联关键词和外链url可选填,当您填写完外链url后关联关键词将不能生效</li>-->
+                                    <!--<li>排序为数字，数字越大顺序越靠前，如果不填写将按照添加时间顺序排序</li>-->
+                                </ol>
+                            </div>
+                        </div>
+                        <form class="modal-body addFlowList" id="signupForm">
+                            <div class="form-group">
+                                <label for="name">流量池名称:</label>
+                                <input type="text" name="name" data-bind="value:name" class="form-control"
+                                       id="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">流量池总量:</label>
+                                <input type="text" name="phone" data-bind="value:phone" class="form-control"
+                                       id="phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="username">运营商:</label>
+                                <input type="text" name="username" data-bind="value:username"
+                                       class="form-control" id="username">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal"><span
+                                        class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                                </button>
+                                <button type="button" id="btn_submit" class="btn btn-primary"><span
+                                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="form-group">-->
+            <!--<label for="names">流量池名称:</label>-->
+            <!--<input type="text" name="names" class="form-control" id="names">-->
+            <!--<button type="button" id="btn_sec" class="btn btn-primary btn-sm" >搜索-->
+            <!--</button>-->
+            <!--</div>-->
+            <table id="tb_dept" data-bind="myBootstrapTable:$root">
+            </table>
+
+            <div id="toolbar">
+                <button class=" btn btn-primary btn-sm" id="refreshPool" title="刷新流量池列表">刷新流量池列表</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var  thrArr = [], flag=0;
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if(res.code==0){return}
+        tableInit.Init();
+        operate.operateInit();
+        if(res.data.id == res.data.uid){
+            flag = 1;
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (nodes[b]["children"][a]["children"][c]["checked"]) {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (var e in thrArr) {
+            if (thrArr[e] == 231) {
+                flag=1;
+            }
+        }
+
+    });
+    //记载table数据
+    function ajaxRequest(params) {
+        $get(url = urlPrefix + "?r=sms/business/pool/get-all-pool",
+            function (res) {
+                params.success({
+                    data: res.data
+                });
+                if(res.code==0){
+                    layer.msg(res.msg,{time:2000})
+                }
+            })
+    }
+
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+//            this.operateSec();
+            this.refreshPool();
+            this.DepartmentModel = {
+                amount: ko.observable(),
+                phone: ko.observable(),
+                username: ko.observable(),
+                name: ko.observable(),
+                province: ko.observable(),
+                city: ko.observable(),
+                accountType: ko.observable(),
+                password: ko.observable()
+            };
+        },
+        //刷新流量池列表
+        refreshPool: function () {
+            $('#refreshPool').on("click", function () {
+                var index = layer.load(2,  {
+                    shade: [0.1, '#fff'] //0.1透明度的白色背景
+                });
+                $get(urlPrefix+"?r=sms/business/pool/update-all-pool",function(res){
+                    layer.close(index);
+                    layer.msg(res.msg,{time:2000});
+                    if(res.code==1){
+                        tableInit.myViewModel.refresh()
+                    }
+                },function(){
+                    layer.close(index);
+                    layer.msg("同步失败",{time:2000})
+                })
+            });
+        }
+    };
+
+
+    window.operateEvents = {
+        //充值
+        'click #btn_recharge': function (e, value, row) {
+            layer.prompt({
+                    title: '充值流量',
+                    formType: 0,
+                    value: '整数（GB）',
+                    area: ['150px', '30px']
+                }, function (flow, index) {
+                    var data = {
+                        flow: flow,
+                        operator_id: row.operator_id,
+                        poolNo: row.poolNo
+                    };
+                    layer.close(index);
+                    $post(urlPrefix + '?r=sms/business/pool/recharge-pool',
+                        data,
+                        function (res) {
+                            layer.msg(res.msg, {time: 1000});
+                            if (res.code==1) {
+                                tableInit.myViewModel.refresh()
+                            }
+                        }
+                    )
+                }
+            )
+        },
+        //查看成员
+        'click #btn_look': function (e, value, row, index) {
+            var poolNo = row.poolNo;
+            layer.open({
+                type: 2,
+                title: '查看成员',
+                shadeClose: true,
+                anim:2,
+                shade: [0.5, 'rgb(0,0,0)'],
+                maxmin: true, //开启最大化最小化按钮
+                area: ['100%' , '100%'],
+                content: "flowPoolMember.html?poolNo=" + poolNo+'&operator_id='+row.operator_id,
+                zIndex: layer.zIndex, //重点1
+                success: function(layero){
+                    layer.setTop(layero); //重点2
+                }
+            });
+        }
+    };
+
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                ajax: ajaxRequest,
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                columns: [{
+                    field: 'id',
+                    title: 'id'
+                },{
+                    field: 'poolNo',
+                    title: '编号'
+                },  {
+                    field: 'size',
+                    title: '大小'
+                },  {
+                    field: 'operator_id',
+                    title: '供应商id'
+                },  {
+                    field: 'addtime',
+                    title: '添加时间'
+                }, {
+                    field: 'endtime',
+                    title: '到期时间'
+                }, {
+                    field: 'status',
+                    title: '状态'
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+            function operateFormatter(value, row, index) {
+                if(flag){
+                    return [
+                        '<button id="btn_recharge" type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>充值' +
+                        '</button>',
+                        '<button id="btn_look" type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>查看成员' +
+                        '</button>'
+                    ].join('');
+                }else{
+                    return [
+                        '<button id="btn_look" type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class=" " aria-hidden="true"></span>查看成员' +
+                        '</button>'
+                    ].join('');
+
+                }
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+        }
+
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+    //操作
+</script>
+
+</html>

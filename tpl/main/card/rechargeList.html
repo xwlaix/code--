@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>卡片充值</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js?v2.1"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/jquery.validate.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+
+</head>
+
+<body>
+<div class="main-box" style="width:95%">
+    <div class="from-groups clearfix">
+        <div class="form-group">
+            <label for="iccid">卡号:</label>
+            <input type="text" name="iccid" class="form-control" id="iccid">
+            <button type="button" id="search" class="btn  btn-sm btn-primary search ">搜索</button>
+        </div>
+        <div class="form-group 214" id="from-radio">
+            <label>类型:</label>
+            <input type="radio" name="kind" data-bind="1" value="1" id="add">
+            <label for="add">增加</label>
+            <input type="radio" name="kind" data-bind="2" value="2" id="reduce">
+            <label for="reduce">减少</label>
+        </div>
+        <div class="form-group 214">
+            <label for="remarks">备注:</label>
+            <input type="text" name="remarks" class="form-control" id="remarks" placeholder="备注">
+        </div>
+        <div class="form-group 214">
+            <label for="money">金额(元):</label>
+            <input type="text" name="money" class="form-control" id="money">
+            <button type="button" id="btn_affirm" class="btn  btn-sm btn-primary keydownBtn affirm">确认</button>
+            <button type="button" id="Oreder" class="btn  btn-sm btn-success keydownBtn">订购查询</button>
+
+        </div>
+    </div>
+    <table id="tb_dept" data-bind="myBootstrapTable:$root">
+    </table>
+    <div id="tool_bar" class="clearfix hidden">
+        <span>卡片余额：<span class="text-sum"></span></span>
+    </div>
+</div>
+</body>
+
+
+<script>
+    var noArr = [];
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if(res.code==0){
+            return
+        }
+        tableInit.Init();
+        operate.operateInit();
+        if(res.data.id == res.data.uid){
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (!nodes[b]["children"][a]["children"][c]["checked"]) {
+                                noArr.push(nodes[b]["children"][a]["children"][c]["id"])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (var e in noArr) {
+            if (noArr[e] == 214) {
+                $("." + noArr[e]).remove();
+            }
+        }
+    });
+    //根据url获取参数，把相应的参数填到输入框
+    var iccid = getUrlParam('card'),
+        flag = 1,
+        func;
+    if (iccid === 'null') {
+        iccid = ''
+    }
+    $("input[name='iccid']").val(iccid);
+    if(iccid){
+       getAmount();
+    }
+    function getAmount() {
+        $post(urlPrefix + '?r=sms/card/get-all', {card: iccid}, function (data) {
+            if (data.code == 1) {
+                layer.msg(data.msg, {time: 2000});
+                $("#tool_bar").removeClass("hidden");
+                $(".text-sum").text(data.data.rows[0].amount + "元" || "0元");
+            }
+            else {
+                layer.msg("请输入正确的卡号", {time: 2000});
+                $("input[name='iccid']").val('');
+                iccid = '';
+            }
+        })
+    }
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateSec();
+            this.operateAdd();
+            this.operateOrder();
+            this.DepartmentModel = {
+                iccid: ko.observable(),
+                type: ko.observable(),
+                amount: ko.observable()
+            };
+        },
+        //搜索
+
+        operateSec: function () {
+            $("#search").on('click', function () {
+                var This = $(this);
+                iccid = $.trim($("input[name='iccid']").val());
+                var datas = {card: iccid, pageSize: 10, pageNumber: 1};
+                var index = layer.load(1, {shade: [0.1, '#fff']});//0.1透明度的白色背景
+                This.addClass('disabled');
+                $post(urlPrefix + "?r=sms/card/get-card-money",
+                    datas,
+                    function (res) {
+                        This.removeClass('disabled');
+                        layer.close(index);
+                        if (res.code == 1) {
+                            tableInit.myViewModel.load(res.data);
+                            getAmount()
+                        }
+                        else {
+                            layer.msg(res.msg, {time: 2000});
+                        }
+                    });
+            })
+        },
+        //订购套餐
+        operateOrder: function () {
+            $("#Oreder").on('click', function () {
+               layer_open('订购查询', '../business/orderPackage.html?cardid=' + $.trim($("input[name='iccid']").val()))
+            })
+        },
+        //充值
+        operateAdd: function () {
+            $("#btn_affirm").on('click', function () {
+                $("#search").click();
+                setTimeout(function () {
+                    var This = $(this),
+                        kind = $('input[name="kind"]:checked').data('bind'),
+                        money = $.trim($("input[name='money']").val()),
+                        remarks = $.trim($("input[name='remarks']").val()),
+                        iccid = $.trim($("#iccid").val());
+                    This.addClass('disabled');
+                    if (!iccid) {
+                        return false
+                    }
+                    if (!iccid) {
+                        layer.msg('请搜索正确的卡号后充值');
+                        This.removeClass('disabled');
+                        flag = 1;
+                        return false
+                    }
+                    if (!money) {
+                        layer.msg('请输入金额');
+                        This.removeClass('disabled');
+                        flag = 1;
+                        return false
+                    }
+                    if (isNaN(money)) {
+                        layer.msg('请输入正确的金额');
+                        This.removeClass('disabled');
+                        flag = 1;
+                        return false
+                    }
+                    if (!kind) {
+                        layer.msg('请充值类型');
+                        This.removeClass('disabled');
+                        flag = 1;
+                        return false
+                    }
+                    Data = {card: iccid, type: kind, amount: money, remarks: remarks};
+                    var index = layer.load(1, {shade: [0.1, '#fff']}); //0.1透明度的白色背景
+                    $post(urlPrefix + "?r=sms/card/save-recharge", Data,
+                        function (res) {
+                            if (res.code == 1) {
+                                This.removeClass('disabled');
+                                layer.close(index);
+                                layer.msg(res.msg, {time: 2000});
+                                $("input[name='money']").val('');
+                                parent.$('#status').val('true');
+                                $post(urlPrefix + '?r=sms/card/get-card-money', {card: iccid}, function (data) {
+                                    tableInit.myViewModel.insert(0, data.data.rows[0]);
+                                });
+                                $post(urlPrefix + '?r=sms/card/get-all', {card: iccid}, function (data) {
+                                    if (data.code == 1) {
+                                        $("#tool_bar").removeClass("hidden");
+                                        $(".text-sum").text(data.data.rows[0].amount + "元" || "0元");
+                                    }
+                                })
+                            } else {
+                                This.removeClass('disabled');
+                                layer.close(index);
+                                layer.msg(res.msg, {time: 2000});
+                            }
+                        });
+                }, 800);
+            })
+        }
+    };
+
+    function queryParams(params) {
+        queryData = {
+            pageSize: params.pageSize,
+            pageNumber: params.pageNumber,
+            card: $.trim($("#iccid").val())
+        };
+        return queryData;
+    }
+
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                toolbar: '#tool_bar',                //工具按钮用哪个容器
+                search: false,
+                url: urlPrefix + '?r=sms/card/get-card-money',
+                queryParams: queryParams,//传递参数（*）
+                method: "post",
+                onRefresh: function () {
+                    $("#iccid").val("");
+                    $("#remarks").val("");
+                    iccid = '';
+                    $("#tool_bar").addClass("hidden")
+                },
+                columns: [{
+                    field: 'id',
+                    title: 'id'
+                }, {
+                    field: 'iccid',
+                    title: 'iccid'
+                }, {
+                    field: 'addtime',
+                    title: '充值时间'
+                }, {
+                    field: 'remarks',
+                    title: '操作类型'
+                }, {
+                    field: 'uname',
+                    title: '操作者'
+                }, {
+                    field: 'oldmoney',
+                    title: '变动前的余额'
+                },{
+                    field: 'money',
+                    title: '变动金额',
+                    formatter: amount
+                },{
+                    field: 'newmoney',
+                    title: '变动后的余额',
+                    formatter: newmoney
+                }]
+
+            });
+
+        
+            //处理td数据
+            function amount(value, row, index) {
+                var type = row.type;
+                if (type == '1') {
+                    return ['<span class="text-success" >' +Math.abs(row.money)+
+                    '</span>'].join('');
+                } else {
+                    return ['<span class="text-danger" >' +(-Math.abs(row.money))+
+                    '</span>'].join('');
+                }
+            }
+            //处理td数据
+            function newmoney(value, row, index) {
+                var type = row.type;
+                if (type == '1') {
+                    return [accAdd(+row.oldmoney,Math.abs(row.money))].join('');
+                } else {
+                    return [accAdd(+row.oldmoney,-Math.abs(row.money))].join('');
+                }
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+    //操作
+
+</script>
+</html>

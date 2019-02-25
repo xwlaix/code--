@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>公告详情</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/transparency.min.js"></script>
+
+</head>
+<body>
+<div class="jumbotron" style="background: #ffffff;">
+    <div class="container">
+        <div class="detail-title text-center">
+            <div class="page-header">
+                <h2 class="tetle"></h2>
+                <small class="addtime"></small>
+            </div>
+        </div>
+        <p class="content"></p>
+    </div>
+</div>
+</body>
+<script>
+    var id = getUrlParam('id')||1;
+    $post(urlPrefix+"?r=ems/notice/get-info",{id:id},
+        function (res) {
+            if(res.code==1){
+                $('.container').render(res.data)
+            }else{
+                layer.msg(res.msg,{time: 2000})
+            }
+        }
+    )
+</script>
+</html>

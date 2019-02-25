@@ -1,0 +1,286 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>批量订购</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../common/js/Select2/select2.min.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/ajaxfileupload.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../common/js/Select2/select2.min.js"></script>
+    <script src="../../common/js/qrcode.js"></script>
+
+</head>
+<body>
+<!--中间部分start!-->
+<div class="main-box" style="width:95%">
+    <div id="main-box-index">
+        <!--中间部分_右侧end!-->
+        <div class="alert alert_info">
+            <strong>提示信息!</strong>
+            <ol>
+                <li class="text-sum">每次批量不要过10张卡</li>
+                <li>操作步骤:第一步：输入卡号，格式一行一个</li>
+                <li>操作步骤:第二步：选择不同酷鱼供应商</li>
+                <li>操作步骤:第三步：选择不同套餐</li>
+                <li>操作步骤:第四步：确定订购</li>
+                <li>批量订购为队列任务需要等待一定时间</li>
+            </ol>
+        </div>
+        <div class="cLineB">
+            <div id="addPackage">
+                <label class="label_title">批量订购同一个套餐:</label>
+                <div class="form-textarea" style="margin-left: 0!important;">
+                    <label for="card">卡号:</label>
+                    <textarea name="" id="card" cols="50" rows="10" placeholder="请填写要订购的卡号，一行一个！"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="onames" style="width: 77px!important;">套餐价格列表:</label>
+                    <select name="oname" id="onames" data-bind="value:oname">
+                        <option class="" selected="selected" value="">请选择套餐价格列表</option>
+
+                    </select>
+
+                </div>
+                <div class="form-group">
+                    <label for="service_type" style="width: 77px!important;">套餐类型:</label>
+                    <select name="service_type" id="service_type" data-bind="value:service_type">
+                        <option class="service_type" selected="selected" value="">请选择订购套餐</option>
+
+                    </select>
+                    <label class="pay_label" id="first_pay_label">支付类型:</label>
+                    <input type="radio" name="kind" data-bind="1" value="1" id="amount" checked="checked">
+                    <label class="pay_label" for="amount">余额支付</label>
+                    <input type="radio" name="kind" data-bind="2" value="2" id="wx">
+                    <label class="pay_label" for="wx">微信支付</label>
+                    <button class="btn btn-info btn-sm " id="orderPackage" style="vertical-align: middle"
+                            title="订购">订购</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="box hidden">
+    <div class="box-title">
+        <img src="../../static/img/WePayLogo.png" alt="">
+        <div class="order">
+            总金额：
+            <span>￥</span>
+            <span class="price"></span>
+        </div>
+    </div>
+    <div class="erweima" id="erweima">
+    </div>
+    <div class="info"><img src="../../static/img/info.png" alt=""></div>
+</div>
+</body>
+
+<script id="parent" type="text/html">
+    <option value="{{pid}},{{price}}">{{name}}
+        【{{if type == 1}}月包{{/if}}
+        {{if type == 2}}季包{{/if}}
+        {{if type == 3}}年包{{/if}}
+        {{if type == 4}}基本套餐{{/if}}
+        {{if type == 5}}半年包{{/if}}
+        】
+    </option>
+</script>
+<script type="text/html" id="test">
+    <option value="{{id}}">{{name}}</option>
+</script>
+<script>
+    var service_type = $("#service_type");
+    var onames = $("#onames");
+    var qrcode = new QRCode('erweima');
+    $get(urlPrefix + '?r=ems/business/package/package-list/get-all',
+        function (res) {
+            if (res.code == 1) {
+                for (var o in res.data.rows) {
+                    $(template('test', res.data.rows[o])).appendTo(onames);
+                }
+                onames.select2().change(function () {
+                    var index = layer.load(2,  {
+                        shade: [0.1, '#fff'] //0.1透明度的白色背景
+                    });
+                    $('.service_type~option').remove();
+                    $post(urlPrefix + '?r=ems/business/package/package-main/get-all',
+                        {lid: onames.val()},
+                        function (res) {
+                            $.each(res.data, function (i, data) {
+                                var parent;
+                                parent = $(template('parent', data));
+                                parent.appendTo(service_type);
+                            });
+                            $("#service_type").select2();
+                            layer.close(index);
+                        }, function () {     layer.close(index);
+                            layer.msg("加载套餐失败", {time: 2000})
+                        });
+                })
+
+            } else {
+                layer.msg(res.msg, {time: 2000})
+            }
+        });
+    //批量订购同一个套餐
+    $('#orderPackage').on('click', function () {
+        var index = layer.load(2,  {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        var value = $("#service_type").val().split(","),
+            data = {}, packageid = value[0], price = value[1];
+        var cardid = $.trim($("#card").val());
+        var kind = $('input[name="kind"]:checked').data('bind');
+        if (!card) {
+            layer.tips('请输入卡号', '#card', {
+                tips: [2, 'red'],
+                time: 2000
+            });
+            layer.close(index);
+            return false
+        }
+        if (!packageid) {
+            layer.tips('请选择套餐', '#service_type', {
+                tips: [1, 'red'],
+                time: 2000
+            });
+            layer.close(index);
+            return false
+        }
+        if (!kind) {
+            layer.tips('支付类型', '#service_type', {
+                tips: [1, 'red'],
+                time: 2000
+            });
+            layer.close(index);
+            return false
+        }
+        data = {
+            card: cardid, packageid: packageid
+        };
+        if (kind == 1) {
+            $('#orderPackage').text('订购中');
+            $post(urlPrefix + '?r=ems/business/main/order', data, function (res) {
+                if (res.code == 1) {
+                    layer.closeAll();
+                    parent.$("#rechargeStatus").val(1);
+                    layer.msg(res.msg,
+                        {time: 2000});
+                    $('#orderPackage').text('订购');
+                    setTimeout(function () {
+                        parent.layer.closeAll();
+                    }, 2000);
+                } else if (res.msg != '账户余额不足') {
+                    layer.close(index);
+                    layer.msg(res.msg, {time: 2000});
+                    $('#orderPackage').text('订购');
+                } else {
+                    layer.close(index);
+                    $('#orderPackage').text('订购');
+                    layer.confirm('余额不足，请用微信支付！', {
+                        btn: ['确定', '取消'],
+                        shadeClose: 'true'
+                    }, function () {
+                        layer.closeAll();
+                        wxPay(data, price, cardid)
+                    })
+                }
+            });
+        } else if (kind == 2) {
+            wxPay(data)
+        }
+    });
+
+    function wxPay(data) {
+        var index = layer.load(2, {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        $post(urlPrefix + '?r=ems/business/main/order-by-wechat',
+            data,
+            function (res) {
+                layer.closeAll();
+                if(res.code==0){
+                    layer.msg(res.msg,{time:2000});
+                    return
+                }
+                $('.box').removeClass('hidden');
+                qrcode.makeCode(res[0].code_url);
+                $(".price").text(res[1]);
+                layer.open({
+                    title: ['', 'font-size:14px;text-align:center;padding:0px;background:#eee;height:0;'],
+                    type: 1,
+                    anim: 2,
+                    area: ['260px'],
+                    closeBtn: 0,
+                    shadeClose: true,
+                    end: function (layero, index) {
+                        $('.box').addClass('hidden');
+                    },
+                    content: $('.box')
+                });
+                var orderID = res[2];
+                function timer(){
+                    setTimeout(function (res) {
+                        $post(urlPrefix + "?r=ems/finance/order/get-all",
+                            {orderID: orderID},
+                            function (data) {
+                                if (data.code == 1&&data.data.total!=0) {
+                                    if (data.data.rows[0].status == 3) {
+                                        layer.msg(data.msg,
+                                            {time: 2000});
+                                        setTimeout(function () {
+                                            parent.layer.closeAll();
+                                        }, 2000);
+                                    } else if (data.data.rows[0].status != 3) {
+                                        layer.closeAll();
+                                        var index = layer.load(2, {
+                                            shade: [0.1, '#fff'] //0.1透明度的白色背景
+                                        });
+                                        timer()
+                                    }
+                                } else {
+                                    timer()
+                                }
+                            }
+                        )
+                    }, 10000);
+                }
+                timer();
+            }
+        )
+    }
+
+    //   订购不同套餐
+    function down() {
+        window.open(urlPrefix + '?r=sms/business/main/down-batch-order', '_self')
+    }
+
+    $(".import").on('click', function () {
+        var file = $("input[type='file']").val();
+        if (file) {
+            var index = layer.load(2, {
+                shade: [0.1, '#fff'] //0.1透明度的白色背景
+            });
+            ajaxFileUpload('?r=sms/business/main/upload-order-package', "file1",
+                function (res)  //服务器成功响应处理函数
+                {
+                    parent.layer.closeAll()
+                })
+
+        }
+        else {
+            layer.msg("请上传excel", {time: 2000});
+            return false
+        }
+    });
+</script>
+</html>
+

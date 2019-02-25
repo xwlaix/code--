@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+    <title>充值续费</title>
+    <link rel="stylesheet" href="../../static/css/kuyuMobile/orders.css">
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+</head>
+<body>
+<div class="warp">
+    <div class="header">
+        <div class="header_title">套餐续费</div>
+    </div>
+    <div class="content">
+        <div class="content_title">本卡基本套餐</div>
+        <div class="flex flex_left ">
+            <div class="content_left">
+                <div class="content_name" data-bind="flow">24M一年套餐</div>
+                <div class="content_info ">本套餐流量适用于国内2G/3G/4G网络流量（不含港澳台地区），当月开通当月一次到账，月底清零，次月从账户中扣取套餐费。流量用完，可叠加。请提前充值。
+                </div>
+            </div>
+            <div class="content_right">
+                <div class="price ">￥1.00</div>
+                <div class="before ">￥10</div>
+            </div>
+        </div>
+    </div>
+    <div class="foot">
+        <div id="btnsuch">微信支付</div>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript">
+    var order_type = $('.content_name').attr('data-bind');
+    $(function () {
+        var needRefresh = sessionStorage.getItem("need-refresh");
+        if (needRefresh) {
+            sessionStorage.removeItem("need-refresh");
+            url = "http://" + document.domain + window.location.pathname;
+            $post("http://tw.kuyichong.com/?r=home/setting/change-url",
+                {url: url, id: 36},
+                function (data) {
+                    window.location.href = data.data.url
+                }
+            )
+        }
+        if (window.location.search.indexOf("code") == -1) {
+            $post("http://tw.kuyichong.com/?r=home/setting/change-url",
+                {url: document.location.href, id: 36},
+                function (data) {
+                    window.location.href = data.data.url
+                }
+            )
+        }
+
+
+        $('#btnsuch').click(function () {
+            $post("http://tw.kuyichong.com/?r=home/order/add&code=" + getUrlParam("code"),
+                {
+                    uid: 36,
+                    type: 0,
+                    money: 0.01,
+                    cardid: 20
+                }, function (data) {
+                    var id = data.data.id;
+                    window.location.href = 'http://tw.kuyichong.com/coolfish/pay/?id=' + id + "&order_type=" + order_type
+                }
+            )
+        })
+
+
+    })
+
+</script>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=11">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title></title>
+    <link rel="shortcut icon" href="../static/img/favicon.ico" />
+    <link rel="stylesheet" href="../common/css/accordion.css">
+    <link rel="stylesheet" href="../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/login_pc.css?v2.0">
+
+    <script src="../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../common/js/layer/layer.js"></script>
+    <script src="../static/js/Department.js"></script>
+</head>
+<body class="bj">
+    <div class="warp">
+        <div class="login_title hidden-xs hidden-sm col-md-3 col-md-offset-2 jdy">
+            <img src="" class="center-block logo" id="" alt="">
+           <div class="info hidden">
+               <div>金斗云物联科技</div>
+               <div>jindouyun wu lian ke ji</div>
+           </div>
+            <div class="info hidden kuyu">
+               <span class="first">浩瀚物联</span>
+               <span>一起畅游</span>
+           </div>
+        </div>
+        <div class="login_title_sm  jdy visible-xs ">
+            <img src="" class="center-block logo" alt="">
+            <div class="info hidden" >
+                <div>金斗云物联科技</div>
+                <div>jindouyun wu lian ke ji</div>
+            </div>
+        </div>
+        <div class="login_main  col-md-3 col-md-offset-7 col-xs-8 col-xs-offset-2">
+            <div class="login_from">
+                <div class="from-title text-center">
+                    帐号密码登录
+                </div>
+                <div class="login_input login_input_name">
+                    <input type="text" name="account" id="account" value="" placeholder="请输入账号">
+                    <span class="glyphicon glyphicon-user"></span>
+                </div>
+                <div class="login_input login_input_passwd">
+                    <input type="password" name="pwd" value="" id="pwd" placeholder="请输入密码">
+                    <span class="glyphicon glyphicon-lock"></span>
+                </div>
+                <div class="login_input login_yzm">
+                    <input type="text" name="yzm" id="yzm" placeholder="请输入验证码">
+                 </div>
+                <div class="login_btn">登录</div>
+            </div>
+        </div>
+    </div>
+    <footer id="footer" class="foot-account hidden">
+        <div class="container ">
+            <div class="row hidden-xs">
+                <div class=" center-block text-center">
+                    Copyright © 2017.深圳市酷鱼互动科技有限公司 版权所有 
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+<script>
+    $("#account").val(getCookie("kuyuname"));
+    $("#password").val(getCookie("kuyupsw"));
+
+    if(window.location.host=='wx.m2m-10086.cn'){
+        $(".logo").attr('src','../static/img/jdy.png');
+        $('.login_title_sm').addClass('jdy');
+        $(".info").removeClass('hidden');
+        $(".kuyu").addClass('hidden');
+        $("#footer").addClass('hidden');
+        document.title = '金斗云管理系统'
+    }else{
+        $(".logo").attr('src','../static/img/logo.png');
+        $(".info").addClass('hidden');
+        $(".kuyu").removeClass('hidden');
+        $("#footer").removeClass('hidden');
+        document.title = '酷鱼互动管理系统'
+    }
+    //加载验证码
+    $get(urlPrefix+'?r=sms/get-captcha',function(res){
+        if(res.code==1){
+            $('.login_yzm').append(res.data.img);
+            var url = urlPrefix+$("#w0-image").attr('src');
+            $("#w0-image").attr('src',url)
+        }else {
+            layer.msg(res.msg,{time:2000})
+        }
+    });
+    //点击刷新验证码
+
+    $('.login_yzm').on('click','img', function(){
+        url = $("#w0-image").attr('src')+'&refresh';
+        $get(url, function(res){
+            $("#w0-image").attr('src', urlPrefix+res.url);
+        })
+    });
+
+    $(document).ready(function() {
+
+        //点击登陆判断
+        $(".login_btn").on('click',function () {
+            var name = $.trim($("#account").val()),
+                password = $.trim($("#pwd").val()),
+                captcha = $.trim($("#yzm").val()),
+                urls = urlPrefix+"?r=sms/login",
+                res = {
+                    username: name,
+                    password: password,
+                    captcha: captcha
+                };
+            if (!name) {
+                layer.tips('请输入账号', '#account', {
+                    tips: [3, 'red'],
+                    time: 2000
+                });
+                return false
+            }
+            if (!password) {
+                layer.tips('请输入密码', '#pwd', {
+                    tips: [3, 'red'],
+                    time: 2000
+                });
+                return false
+            }
+            if (!captcha) {
+                layer.tips('请输入验证码', '#yzm', {
+                    tips: [3, 'red'],
+                    time: 2000
+                });
+                return false
+            }
+            $post(urls, res,
+                function (res) {
+                    if (res.code==1) {
+                        //登录成功
+                        layer.tips('登陆成功', '.login_btn', {
+                            tips: [3, 'green'],
+                            time: 2000
+                        });
+                        setCookie('kuyuname',name);
+                        setCookie('kuyupsw',password);
+                        window.location.href = 'index.html';
+                    } else{
+                        $("#yzm").val("");
+                        url = $("#w0-image").attr('src')+'&refresh';
+                        $get(url, function(res){
+                            $("#w0-image").attr('src', urlPrefix+res.url);
+                        });
+                        if(!res.msg.password) {
+
+                            //密码错误
+                            layer.tips(res.msg.captcha, '#yzm', {
+                                tips: [3, 'red'],
+                                time: 2000
+                            });
+                            return false
+                        }else if(res.msg.password){
+                            layer.tips(res.msg.password, '.login_btn', {
+                                tips: [3, 'red'],
+                                time: 2000
+                            });
+                        }else {
+                            layer.tips("登录失败", '.login_btn', {
+                                tips: [3, 'red'],
+                                time: 2000
+                            });
+                        }
+                    }
+                },function(){
+                    layer.msg("登录失败",{time:2000});
+                    url = $("#w0-image").attr('src') + '&refresh';
+                    $get(url, function (res) {
+                        $("#w0-image").attr('src', urlPrefix+res.url);
+                    });
+                    $("#yzm").val('');
+                });
+        });
+        //	    回车键登录
+        $(document).keydown(function (e) {
+            if (e.keyCode === 13) {
+                $(".login_btn").click()
+            }
+        })
+    })
+
+</script>
+</html>

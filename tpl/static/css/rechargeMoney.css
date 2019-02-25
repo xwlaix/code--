@@ -1,0 +1,94 @@
+.ReCharGe .money-header {
+    padding-left: 5%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    /* margin-bottom: 10px; */
+    background: #3abef9;
+    font-size: 15px;
+    color: #fff;
+}
+.pr {
+    position: relative;
+}
+.money-header div{
+    margin-left: 45px;
+    font-size: 15px;
+}
+.money-header.pr img{
+    float: left;
+}
+.ReCharGe .content {
+    height: -webkit-calc(100% - 105px);
+    background: #fff;
+    border-bottom: solid 1px #e6e6e6;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+.money-header .icon-qiandaizi {
+    position: absolute;
+    left: 10px;
+    font-size: 40px;
+    top: -webkit-calc(50% - 20px);
+}
+.wrap ul{
+    height: 120px;
+    padding: 0 15px;
+}
+.wrap .title {
+    color: #4d4d4d;
+    font-size: 15px;
+    height: 30px;
+    line-height: 40px;
+    text-indent: 15px;
+}
+.wrap .item {
+    border: solid 1px #3abef9;
+    color: #3abef9;
+    width: -webkit-calc(33.333333% - 6.6666666666px);
+    float: left;
+    text-align: center;
+    box-sizing: border-box;
+    background: #fff;
+    border-radius: 3px;
+    height: 55px;
+    font-size: 15px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    padding-top: 5px;
+}
+.wrap .item:nth-child(3n) {
+    margin-right: 0;
+}
+.wrap .item.active {
+    background: #3abef9;
+    color: #fff;
+    border: none;
+}
+.goPage {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+#viewRechargeRecord {
+    float: right;
+    color: #32a4ed;
+    margin-bottom: 10px;
+}
+input[type="button"], input[type="submit"], input[type="reset"] {
+    -webkit-appearance: none;
+}
+#goRecharge {
+    height: 52px;
+    font-size: 15px;
+    width: 100%;
+    color: #fff;
+    line-height: 52px;
+    text-align: center;
+    background-color: rgb(51,166,240);
+}
+input[type=text], input[type=button] {
+    outline: none;
+    border: none;
+    background: transparent;
+}

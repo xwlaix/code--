@@ -1,0 +1,853 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>卡片信息管理</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/My97DatePicker/WdatePicker.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../static/js/Department.js"></script>
+</head>
+
+
+<body>
+<!--中间部分start!-->
+<div class="main-box" style="width:95%">
+    <div class="msgWrap form">
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">操作</h4>
+                        <div class="alert alert_info">
+                            <strong>提示信息!</strong>
+
+                        </div>
+                    </div>
+                    <form class="modal-body bPackage_label" id="signupForm ">
+                        <div class="form-group " id="from-radio">
+                            <label>类型:</label>
+                            <input type="radio" name="kind" data-bind="1" value="1" id="add">
+                            <label for="add">增加</label>
+                            <input type="radio" name="kind" data-bind="2" value="2" id="reduce">
+                            <label for="reduce">减少</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">自定义价格:（元）</label>
+                            <input type="text" name="price" data-bind="value:price" class="form-control"
+                                   id="price">
+                        </div>
+                        <div class="form-group password">
+                            <label for="password">密码</label>
+                            <input type="text" name="password" data-bind="value:password" class="form-control"
+                                   id="password">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal"><span
+                                    class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消
+                            </button>
+                            <button type="button" id="btn_submit" class="btn btn-primary btn-sm"><span
+                                    class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card-group clearfix">
+            <div class="form-group">
+                <label for="date_begin" class="span_title" title="时间">时间：</label>
+                <input id="date_begin" class="Wdate form-control" name="starttime" type="text"
+                       onFocus="var date_begin=$dp.$('date_end');
+                                   WdatePicker({onpicked:function(){date_end.focus();},
+                                   maxDate:'#F{$dp.$D(\'date_end\')}'})"/>
+                <label for="date_end" style="display:-moz-inline-box;display:inline-block;width: 8px;text-align:right;">~</label>
+                <input id="date_end" class="Wdate form-control" name="endtime" type="text"
+                       onFocus="WdatePicker({minDate:'#F{$dp.$D(\'date_begin\')}'})"/>
+            </div>
+            <div class="form-group">
+                <label for="agent_name">代理商:</label>
+                <input type="text" name="agent_name" class="form-control" id="agent_name">
+            </div>
+            <div class="form-group">
+                <label for="card">卡号:</label>
+                <input type="text" name="card" class="form-control" id="card">
+            </div>
+            <div class="form-group">
+                <label for="card_type">卡片分类:</label>
+                <select name="card_type" id="card_type" data-bind="value:card_type">
+                    <option class="card_type" selected="selected" value="">请选择卡片分类</option>
+
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="type">套餐分类:</label>
+                <select name="type" id="type" data-bind="value:type">
+                    <option class="type" selected="selected" value="">请选择套餐分类</option>
+                    <option class="type" value="1">月套餐</option>
+                    <option class="type" value="2">累积套餐</option>
+                    <option class="type" value="3">0月租套餐</option>
+                    <option class="type" value="4">空卡套餐</option>
+                    <option class="type" value="5">当月套餐</option>
+                </select>
+            </div>
+            <div class="form-group ">
+                <label for="statusAutonym">认证状态:</label>
+                <select name="statusAutonym" id="statusAutonym">
+                    <option class="statusAutonym" selected="selected" value="">请选择认证状态</option>
+                    <option class="statusAutonym" value="1">未认证</option>
+                    <option class="statusAutonym" value="2">已认证</option>
+                </select>
+            </div>
+            <div class="form-group ">
+                <label for="statusCard">卡片状态:</label>
+                <select name="statusCard" id="statusCard">
+                    <option class="statusCard" selected="selected" value="">请选择卡片状态</option>
+                    <option class="statusCard" value="1">待激活</option>
+                    <option class="statusCard" value="2">正常</option>
+                    <option class="statusCard" value="3">单向停机</option>
+                    <option class="statusCard" value="4">停机</option>
+                    <option class="statusCard" value="5">预销号</option>
+                    <option class="statusCard" value="6">销号</option>
+                    <option class="statusCard" value="7">过户</option>
+                    <option class="statusCard" value="8">休眠</option>
+                    <option class="statusCard" value="9">未知状态</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="operator_type">运营商类型:</label>
+                <select name="operator_type" id="operator_type" data-bind="value:operator_type">
+                    <option class="operator_type" selected="selected" value="">请选择运营商类型</option>
+                    <option class="operator_type" value="1">移动</option>
+                    <option class="operator_type" value="2">电信</option>
+                    <option class="operator_type" value="3">联通</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="service_type">供应商:</label>
+                <select name="service_type" id="service_type" data-bind="value:service_type">
+                    <option class="service_type" selected="selected" value="">请选择供应商</option>
+
+                </select>
+                <button class=" btn btn-info btn-sm keydownBtn" id="exportCondition" title="搜索">搜索</button>
+            </div>
+        </div>
+        <table id="tb_dept" data-bind="myBootstrapTable:$root">
+        </table>
+        <div id="addStatus" class="hidden"></div>
+        <div id="realStatus" class="hidden"></div>
+    </div>
+</div>
+</body>
+<script id="parent" type="text/html">
+    <option value="{{id}}">{{name}}</option>
+</script>
+<script type="text/javascript">
+    var thrArr = [], twoArr = [], btn_del = 1, iccid_flag = 0, stop_flag = 0, real_status_flag = 0, btn_recharge = 1,
+        type=getUrlParam('type');
+    var btnDel = ['<button id="delCard" type="button" class="btn btn-danger btn-sm 210" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+    '<span class="" aria-hidden="true"></span>删除' +
+    '</button>'];
+    var  btnRecharge = ['<button id="rechargeCard" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+    '<span class="" aria-hidden="true"></span>充值' +
+    '</button>','<button id="changePsw" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+    '<span class="" aria-hidden="true"></span>修改密码' +
+    '</button>'];
+    var  btnStr = [ '<button id="refreshCard" type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+    '<span class="" aria-hidden="true"></span>刷新' +
+    '</button>'];
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        if (res.code == 0) {
+            return
+        }
+        tableInit.Init();
+        operate.operateInit();
+        if (res.data.id == res.data.uid) {
+            flag='true';
+            real_status_flag = 1;
+            iccid_flag = 1;
+            stop_flag = 1;
+            return
+        }
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (nodes[b]["checked"]) {
+                for (var a in nodes[b]["children"]) {
+                    if (nodes[b]["children"][a]["checked"]) {
+                        twoArr.push(nodes[b]["children"][a]["id"]);
+                        for (var c in nodes[b]["children"][a]["children"]) {
+                            if (!nodes[b]["children"][a]["children"][c]["checked"]) {
+                                thrArr.push(nodes[b]["children"][a]["children"][c]["id"]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (var e in thrArr) {
+            $("." + thrArr[e]).remove();
+            if (thrArr[e] == 210) {
+                btn_del = 0
+            }
+            if (thrArr[e] == 214) {
+                btn_recharge = 0
+            }
+        }
+
+        for (var e in twoArr) {
+            if (twoArr[e] == 22) {
+                real_status_flag = 1
+            }
+            if (twoArr[e] == 34) {
+                iccid_flag = 1
+            }
+            if (twoArr[e] == 36) {
+                stop_flag = 1
+            }
+        }
+    });
+    var card, name = getUrlParam("name"), flag;
+    if (name == 'null') {
+
+    } else {
+        $("#agent_name").val(name)
+    }
+
+
+    //加载卡片分类
+    option('?r=sms/business/card-class/get-all',
+        function (res) {
+            if (res.code == 1) {
+                $.each(res.data, function (i, data) {
+                    var parent;
+                    parent = $(template('parent', data));
+                    parent.appendTo(card_type);
+                })
+            } else {
+                layer.msg(res.msg, {time: 2000})
+            }
+
+        }, function () {
+            layer.msg("加载卡片分类失败", {time: 2000})
+        });
+    //加载供应商类型
+    option('?r=sms/business/operator/get-all',
+        function (res) {
+            if (res.code == 1) {
+                $.each(res.data, function (i, data) {
+                    var parent;
+                    parent = $(template('parent', data));
+                    parent.appendTo(service_type);
+                })
+            } else {
+                layer.msg(res.msg, {time: 2000})
+            }
+        }, function () {
+            layer.msg("加载供应商类型失败", {time: 2000})
+        });
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.importCard();
+            this.classifyCard();
+            this.rechargeCard();
+            this.exportCard();
+            this.exportCondition();
+            this.editCard();
+            this.delCard();
+            this.operator();
+            this.batch();
+            this.activeCard();
+            this.DepartmentModel = {
+                uid: ko.observable(),
+                name: ko.observable(),
+                ID: ko.observable(),
+                id: ko.observable(),
+                money: ko.observable(),
+                type: ko.observable(),
+                number: ko.observable()
+            };
+        },
+        //导卡
+        importCard: function () {
+            $('#importCard').on('click', function () {
+                layer_open('导卡', 'importCard.html');
+            })
+        },
+        //导卡
+        batch: function () {
+            $('#batch').on('click', function () {
+                layer_open('批次', 'batchList.html');
+            })
+        },
+        //批量激活
+        activeCard: function () {
+            $('#activeCard').on('click', function () {
+                layer_open('批量激活', 'activeCard.html');
+            })
+        },
+        //分卡
+        classifyCard: function () {
+            $('#classifyCard').on('click', function () {
+                layer_open('分卡', 'classifyCard.html');
+            })
+        },
+        //卡片批量充值
+        rechargeCard: function () {
+            $('#rechargeCard').on('click', function () {
+                layer_open('卡片批量充值', 'rechargeCard.html');
+            })
+        },
+        //搜索
+        exportCondition: function () {
+            $('#exportCondition').on('click', function () {
+                secData();
+                $post(urlPrefix + "?r=sms/business/package/package-batch/get-all-card", data,
+                    function (res) {
+                        layer.msg(res.msg,
+                            {time: 2000});
+                        if (res.code == 1) {
+                            tableInit.myViewModel.load(res.data);
+                        }
+                    }, function () {
+                        layer.msg("操作失败", {time: 2000})
+                    });
+            })
+        },
+        //卡片导出
+        exportCard: function () {
+            $('#exportCard').on('click', function () {
+                secData();
+                data.pageSize = '';
+                data.pageNumber = '';
+                $post(urlPrefix + "?r=sms/card/down-all",
+                    data,
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg(res.msg,
+                                {time: 2000});
+                            window.open(res.data.url, '_self')
+                        } else {
+                            layer.msg(res.msg,
+                                {time: 2000})
+                        }
+                    }, function () {
+                        layer.msg("导出失败", {time: 2000})
+                    });
+            })
+        },
+        //卡片批量修改
+        editCard: function () {
+            $('#editCard').on('click', function () {
+                layer_open('卡片批量修改', 'editCard.html');
+            })
+        },
+        //卡片批量删除
+        delCard: function () {
+            $('#delCard').on('click', function () {
+                layer_open('卡片批量删除', 'delCard.html');
+            })
+        },
+        //操作记录
+        operator: function () {
+            $('#operator').on('click', function () {
+                layer_open('操作记录', 'operator.html');
+            })
+        }
+    };
+
+    function secData() {
+        card = $.trim($("#card").val());
+        data = {
+            bid:getUrlParam('bid'),
+            starttime: $.trim($("#date_begin").val()),
+            endtime: $.trim($("#date_end").val()),
+            aname: $.trim($("#agent_name").val()),
+            real_status: $.trim($("#statusAutonym").val()),
+            card_status: $.trim($("#statusCard").val()),
+            operator_type: $.trim($("#operator_type").val()),
+            card: card,
+            card_type: $.trim($("#card_type").val()),
+            type: $("#type").val(),
+            operatorid: $.trim($("#service_type").val()),
+            pageSize: 10,
+            pageNumber: 1
+        };
+    }
+
+    function queryParams(params) {
+        secData();
+        data.pageSize = params.pageSize;
+        data.pageNumber = params.pageNumber;
+        return data;
+    }
+
+    window.operateEvents = {
+        //充值
+        'click #rechargeCard': function (e, value, row, index) {
+            $(".password").hide().siblings(".form-group").show();
+            $("#myModal").modal().on("shown.bs.modal", function () {
+                $('#btn_submit').on("click", function () {
+                    var kind = $('input[name="kind"]:checked').data('bind'),
+                        money = $("#price").val();
+                    if (!money) {
+                        layer.msg('请输入金额');
+                        flag = 1;
+                        return false
+                    }
+                    if (isNaN(money)) {
+                        layer.msg('请输入正确的金额');
+                        flag = 1;
+                        return false
+                    }
+                    if (!kind) {
+                        layer.msg('请充值类型');
+                        flag = 1;
+                        return false
+                    }
+                    $("#myModal").modal("hide");
+                    $post(urlPrefix + '?r=sms/card/save-recharge', {
+                        card: row.iccid,
+                        amount: money,
+                        type: kind
+                    }, function (res) {
+                        if (res.code == 1) {
+                            $post(urlPrefix + "?r=sms/card/get-all", {card: row.iccid},
+                                function (data) {
+                                    if (data.code == 1) {
+                                        tableInit.myViewModel.update(index, data.data.rows[0]);
+                                    }
+                                });
+
+                            layer.msg("操作成功", {time: 2000})
+                        } else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    });
+                })
+
+            }).on('hidden.bs.modal', function () {
+                $("#price").val("");
+                //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                ko.cleanNode(document.getElementById("myModal"));
+            });
+
+        },
+        //修改
+        'click #changePsw': function (e, value, row, index) {
+            $(".password").show().siblings(".form-group").hide();
+            $("#myModal").modal().on("shown.bs.modal", function () {
+                $('#btn_submit').on("click", function () {
+                    var password = $("#password").val();
+                    if (!password) {
+                        layer.msg('请输入密码');
+                        flag = 1;
+                        return false
+                    }
+                    $("#myModal").modal("hide");
+                    $post(urlPrefix + '?r=sms/card/change-password', {id: row.id, password: password}, function (res) {
+                        layer.msg(res.msg, {time: 2000})
+                    });
+                })
+
+            }).on('hidden.bs.modal', function () {
+                $("#password").val("");
+                //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                ko.cleanNode(document.getElementById("myModal"));
+            });
+
+        },
+        //删除
+        'click #delCard': function (e, value, row, index) {
+            layer.confirm('你确定要删除吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=sms/card/delete",
+                    {id: row.id,type:1},
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg(res.msg, {time: 2000});
+                            tableInit.myViewModel.remove(row.id)
+                        } else {
+                            layer.msg(res.msg, {time: 2000})
+                        }
+                    }, function () {
+                        layer.msg("删除失败", {time: 2000})
+                    });
+            })
+        },
+        //刷新
+        'click #refreshCard': function (e, value, row, index) {
+            var load = layer.load(2, {
+                shade: [0.1, '#fff'] //0.1透明度的白色背景
+            });
+            $post(urlPrefix + "?r=sms/business/main/get-info",
+                {card: row.iccid || row.tel},
+                function (res) {
+                    layer.close(load);
+                    if (res.code == 1) {
+                        data =  {
+                            cardstatus:res.data.cardstatus.toString(),
+                            sumflow:(+res.data.sumflow.replace('M', ""))*1024,
+                            useflow:(+res.data.useflow.replace('M', ""))*1024
+                        };
+                        $("#tb_dept").bootstrapTable("updateRow",{index:index,row:data});
+                    }
+                    layer.msg(res.msg,{time:2000})
+                })
+        },
+        //跳转
+        'click #jumpiccid': function (e, value, row, index) {
+            var iccid = row.iccid;
+            layer_open('查询流量', '../business/cxGprs.html?card=' + iccid + "&tel=" + row.tel + "&oname=" + row.oname)
+        },
+
+        'click #jumpTel': function (e, value, row, index) {
+            var tel = row.tel;
+            layer_open('查询流量', '../business/cxGprs.html?card=' + tel + "&tel=" + tel + "&oname=" + row.oname);
+        },
+
+        'click #jumpNumber': function (e, value, row, index) {
+            var number = row.number;
+            layer_open('查询流量', '../business/cxGprs.html?card=' + number + "&tel=" + row.tel + "&oname=" + row.oname);
+        },
+        'click #jumpAmount': function (e, value, row, index) {
+            var tel = row.tel || row.number || row.iccid;
+            layer_open('充值记录', 'rechargeList.html?card=' + tel);
+        },
+        'click #jumpCard_status': function (e, value, row, index) {
+            var tel = row.tel || row.number || row.iccid;
+            layer_open('停复机记录', '../business/stopReset.html?card=' + tel);
+        },
+        'click #jumpStatus': function (e, value, row, index) {
+            iccid = row.iccid;
+            tel = row.tel;
+            var real_status = row.real_status;
+            layer_open('卡片实名详情', 'detailsAutonym.html?iccid=' + iccid + "&real_status=" + real_status + "&tel=" + tel);
+
+        }
+    };
+
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                search: false,
+                queryParamsType: "undefined",
+                queryParams: queryParams,//传递参数（*）
+                method: "post",
+                url: urlPrefix + '?r=sms/business/package/package-batch/get-all-card',
+                onRefresh: function () {
+                    $("#date_end").val("");
+                    $("#date_begin").val("");
+                    $("#agent_name").val("");
+                    $("#card_type").val("");
+                    $("#service_type").val("");
+                    $("#card").val("");
+                    $("#type").val("");
+                    $("#operator_type").val("");
+                    $("#statusAutonym").val("");
+                    $("#statusCard").val("");
+                },
+                columns: [{
+                    field: 'id',
+                    title: 'ID'
+                }, {
+                    field: 'iccid',
+                    title: 'ICCID',
+                    events: operateEvents,
+                    formatter: operateForJumpiccid
+                }, {
+                    field: 'tel',
+                    title: '接入号',
+                    events: operateEvents,
+                    formatter: operateForJumptel
+                }, {
+                    field: 'number',
+                    title: '虚拟号',
+                    events: operateEvents,
+                    formatter: operateForNumber
+                }, {
+                    field: 'amount',
+                    title: '卡片余额',
+                    events: operateEvents,
+                    formatter: operateForAmount
+                }, {
+                    field: 'sumflow',
+                    title: '总流量',
+                    formatter:sumflow
+                }, {
+                    field: 'useflow',
+                    title: '已用流量',
+                    formatter:useflow
+                }, {
+                    field: 'card_status',
+                    title: '卡状态',
+                    events: operateEvents,
+                    formatter: operateForStatus
+                }, {
+                    field: 'real_status',
+                    title: '实名状态',
+                    events: operateEvents,
+                    formatter: operateForreal_status
+                }, {
+                    field: 'operator_type',
+                    title: '所属运营商',
+                    formatter: operator_type
+                }, {
+                    field: 'aname',
+                    title: '代理商名称'
+                }, {
+                    field: 'pname',
+                    title: '基本套餐'
+                }, {
+                    field: 'oname',
+                    title: '供应商名称'
+                }, {
+                    field: 'cname',
+                    title: '卡片分类'
+                }, {
+                    field: 'type',
+                    title: '套餐分类',
+                    formatter: fortype
+                }, {
+                    field: 'addtime',
+                    title: '添加时间',
+                    formatter: operateForaddtime
+                }, {
+                    field: 'endtime',
+                    title: '结束时间',
+                    formatter: operateForEndtime
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+
+            function operateForaddtime(value, row, index) {
+                if (row.addtime == "0000-00-00 00:00:00") {
+                    return [
+                        ''
+                    ].join('');
+                } else {
+                    var newDate = /\d{4}-\d{1,2}-\d{1,2}/g.exec(row.addtime);
+                    return [newDate].join('')
+                }
+            }
+
+            function operateForEndtime(value, row, index) {
+                if (row.endtime == "0000-00-00 00:00:00") {
+                    return [
+                        ''
+                    ].join('');
+                } else {
+                    var newDate = /\d{4}-\d{1,2}-\d{1,2}/g.exec(row.endtime);
+                    return [newDate].join('')
+                }
+            }
+
+            function operateForAmount(value, row, index) {
+                return [
+                    '<a href="javascript:void(0);" id="jumpAmount" >' + row.amount +
+                    '</a>'
+                ].join('');
+            }
+
+            function sumflow(value, row, index) {
+                return [ToSize(row.sumflow)].join('');
+            }
+            function useflow(value, row, index) {
+                return [ToSize(row.useflow)].join('');
+            }
+
+            function operateFormatter(value, row, index) {
+
+                if (!btn_del && !btn_recharge) {
+                    return btnStr.join('');
+                } else if (!btn_del) {
+                    return btnRecharge.concat(btnStr).join('');
+                } else if (!btn_recharge&&type=='true') {
+                    return  btnStr.concat(btnDel).join('');
+                } else if (!btn_recharge) {
+                    return  btnStr.join('');
+                } else if (type=='true'&&flag=='true'){
+                    return  btnRecharge.concat(btnStr).concat(btnDel).join('');
+                } else if (flag=='true'){
+                    return  btnRecharge.concat(btnStr).join('');
+                }
+
+            }
+
+            function fortype(value, row, index) {
+                var type;
+                if (row.type == 1) {
+                    type = '月套餐'
+                } else if (row.type == 2) {
+                    type = '累积套餐'
+                } else if (row.type == 3) {
+                    type = '0月租套餐'
+                } else if (row.type == 4) {
+                    type = '空卡套餐'
+                } else if (row.type == 5) {
+                    type = '当月套餐'
+                } else {
+                    type = '未知套餐'
+                }
+                return [type].join('');
+            }
+
+            function operateForJumptel(value, row, index) {
+                if (iccid_flag) {
+                    return [
+                        '<a href="javascript:void(0);" id="jumpTel" >' + row.tel +
+                        '</a>'
+                    ].join('');
+                } else {
+                    return [row.tel].join('');
+                }
+            }
+
+            function operateForNumber(value, row, index) {
+                if (iccid_flag) {
+                    return [
+                        '<a href="javascript:void(0);" id="jumpNumber" >' + row.number +
+                        '</a>'
+                    ].join('');
+                } else {
+                    return [row.number].join('');
+                }
+            }
+
+            function operateForJumpiccid(value, row, index) {
+                if (iccid_flag) {
+                    return [
+                        '<a href="javascript:void(0);" id="jumpiccid" >' + row.iccid +
+                        '</a>'
+                    ].join('');
+                } else {
+                    return [row.iccid].join('');
+                }
+            }
+
+            function operateForreal_status(value, row, index) {
+                var real_status;
+                if (row.real_status == 1) {
+                    real_status = '未认证';
+                    return [
+                        '<span class="text-danger">' +
+                        real_status +
+                        '</span>'
+                    ].join('');
+                } else {
+                    real_status = '认证';
+                    if (real_status_flag) {
+                        return [
+                            '<a href="javascript:void(0);" id="jumpStatus" >' + real_status +
+                            '</a>'
+                        ].join('');
+                    } else {
+                        return [real_status].join('');
+                    }
+                }
+
+            }
+
+            function operator_type(value, row, index) {
+                var operator_type;
+                if (row.operator_type == 1) {
+                    operator_type = '移动'
+                } else if (row.operator_type == 2) {
+                    operator_type = '电信'
+                } else if (row.operator_type == 3) {
+                    operator_type = '联通'
+                }
+                return [
+                    operator_type
+                ].join('');
+            }
+
+            function operateForStatus(value, row, index) {
+                var card_status;
+                switch (row.card_status) {
+                    case '1':
+                        card_status = '待激活';
+                        break;
+                    case '2':
+                        card_status = '正常';
+                        break;
+                    case '3':
+                        card_status = '单向停机';
+                        break;
+                    case '4':
+                        card_status = '停机';
+                        break;
+                    case '5':
+                        card_status = '预销号';
+                        break;
+                    case '6':
+                        card_status = '销号';
+                        break;
+                    case '7':
+                        card_status = '过户';
+                        break;
+                    case '8':
+                        card_status = '休眠';
+                        break;
+                    case '9':
+                        card_status = '未知状态';
+                        break;
+                    default:
+                        card_status = '未知状态';
+                        break;
+                }
+                if (stop_flag) {
+                    return [
+                        '<a href="javascript:void(0);" id="jumpCard_status" >' + card_status +
+                        '</a>'
+                    ].join('');
+                } else {
+                    return [
+                        card_status
+                    ].join('');
+                }
+
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>

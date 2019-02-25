@@ -1,0 +1,514 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>权限管理</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/js/ztree/zTreeStyle/zTreeStyle.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/ztree/jquery.ztree.all.min.js"></script>
+
+</head>
+
+
+<body>
+<div class="main-box" style="width:95%">
+    <div class="msgWrap form">
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">操作</h4>
+                        <div class="alert alert_info">
+                            <strong>提示信息!</strong>
+                            <ol>
+                                <!--<li>智能添加</li>-->
+                            </ol>
+                        </div>
+                    </div>
+                    <form class="modal-body qx" id="signupForm">
+                        <div class="form-group hiddens">
+                            <label for="uname">名称:</label>
+                            <input type="text" name="uname" data-bind="value:uname" class="form-control"
+                                   id="uname">(必填)
+                        </div>
+                        <div class="form-group  hiddens">
+                            <label for="username">登陆账号:</label>
+                            <input type="text" name="username" data-bind="value:username"
+                                   class="form-control" id="username">(必填)
+                        </div>
+                        <div class="form-group  password hiddens">
+                            <label for="password">密码:</label>
+                            <input type="text" name="password" data-bind="value:password"
+                                   class="form-control" id="password">(必填)
+                        </div>
+                        <div class="form-group  hiddens">
+                            <label for="phone">手机号码:</label>
+                            <input type="text" name="phone" data-bind="value:phone"
+                                   class="form-control" id="phone">(必填)
+                        </div>
+                        <div class="form-group hiddens">
+                            <label>权限:</label>
+                            <ul id="treeDemo" class="ztree"></ul>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal"><span
+                                    class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消
+                            </button>
+                            <button type="button" id="btn_submit" class="btn btn-sm btn-primary"><span
+                                    class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <table id="tb_dept" data-bind="myBootstrapTable:$root">
+        </table>
+        <div id="tool_bar">
+            <button class=" btn btn-sm btn-primary" id="cardAdd" title="添加添加账号">添加账号</button>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var flag = 1;
+
+
+    var setting = {
+        check: {
+            enable: true
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            onClick: onClick
+        }
+    };
+    function onClick(e) {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+            type = e.data.type,
+            nodes = zTree.getSelectedNodes();
+        for (var i = 0, l = nodes.length; i < l; i++) {
+            zTree.checkNode(nodes[i], null, true);
+        }
+    }
+
+    var zNodes = [
+        {id: 1, pId: 0, name: "代理商管理"},
+        {id: 11, pId: 1, name: "代理商账号管理"},
+        {id: 110, pId: 11, name: "查看"},
+        {id: 111, pId: 11, name: "修改"},
+        {id: 12, pId: 1, name: "代理商充值"},
+        {id: 120, pId: 12, name: "查看"},
+        {id: 121, pId: 12, name: "修改"},
+        {id: 13, pId: 1, name: "代理商套餐管理"},
+        {id: 130, pId: 13, name: "查看"},
+        {id: 131, pId: 13, name: "修改"},
+        {id: 2, pId: 0, name: "卡片管理"},
+        {id: 21, pId: 2, name: "卡片信息管理"},
+        {id: 211, pId: 21, name: "导卡"},
+        {id: 212, pId: 21, name: "分卡"},
+        {id: 213, pId: 21, name: "批量激活"},
+        {id: 214, pId: 21, name: "卡片充值"},
+        {id: 215, pId: 21, name: "卡片修改"},
+        {id: 216, pId: 21, name: "操作记录"},
+        {id: 217, pId: 21, name: "批量删除"},
+        {id: 218, pId: 21, name: "卡片导出"},
+        {id: 219, pId: 21, name: "批量断网"},
+        {id: 210, pId: 21, name: "卡片删除"},
+        {id: 22, pId: 2, name: "实名认证"},
+        {id: 220, pId: 22, name: "查看"},
+        {id: 221, pId: 22, name: "修改"},
+        {id: 23, pId: 2, name: "流量池管理"},
+        {id: 230, pId: 23, name: "查看"},
+        {id: 231, pId: 23, name: "修改"},
+//        {id: 24, pId: 2, name: "代理池管理"},
+//        {id: 240, pId: 24, name: "查看"},
+//        {id: 241, pId: 24, name: "修改"},
+        {id: 3, pId: 0, name: "业务管理"},
+        {id: 31, pId: 3, name: "供应商账号管理"},
+        {id: 310, pId: 31, name: "查看"},
+        {id: 311, pId: 31, name: "修改"},
+        {id: 32, pId: 3, name: "套餐管理"},
+        {id: 320, pId: 32, name: "查看"},
+        {id: 321, pId: 32, name: "修改"},
+        {id: 33, pId: 3, name: "卡片分类"},
+        {id: 330, pId: 33, name: "查看"},
+        {id: 331, pId: 33, name: "修改"},
+        {id: 34, pId: 3, name: "流量查询"},
+        {id: 340, pId: 34, name: "查看"},
+        {id: 341, pId: 34, name: "修改"},
+        {id: 35, pId: 3, name: "套餐订购"},
+        {id: 350, pId: 35, name: "查看"},
+        {id: 351, pId: 35, name: "修改"},
+        {id: 36, pId: 3, name: "停复机"},
+        {id: 360, pId: 36, name: "查看"},
+        {id: 361, pId: 36, name: "修改"},
+        {id: 4, pId: 0, name: "财务管理"},
+        {id: 41, pId: 4, name: "订单查询"},
+        {id: 410, pId: 41, name: "查看"},
+        {id: 411, pId: 41, name: "修改"},
+        {id: 44, pId: 4, name: "余额查询"},
+        {id: 440, pId: 44, name: "查看"},
+        {id: 441, pId: 44, name: "修改"},
+        {id: 42, pId: 4, name: "佣金查询"},
+        {id: 420, pId: 42, name: "查看"},
+        {id: 421, pId: 42, name: "修改"},
+        {id: 43, pId: 4, name: "提现审核管理"},
+        {id: 430, pId: 43, name: "查看"},
+        {id: 431, pId: 43, name: "修改"},
+        {id: 5, pId: 0, name: "微信设置"},
+        {id: 51, pId: 5, name: "微信配置"},
+        {id: 510, pId: 51, name: "查看"},
+        {id: 511, pId: 51, name: "修改"},
+        {id: 52, pId: 5, name: "自定义菜单"},
+        {id: 520, pId: 52, name: "查看"},
+        {id: 521, pId: 52, name: "修改"},
+        {id: 53, pId: 5, name: "关键字回复"},
+        {id: 530, pId: 53, name: "查看"},
+        {id: 531, pId: 53, name: "修改"},
+        {id: 54, pId: 5, name: "粉丝管理"},
+        {id: 540, pId: 54, name: "查看"},
+        {id: 541, pId: 54, name: "修改"},
+        {id: 55, pId: 5, name: "微信支付"},
+        {id: 550, pId: 55, name: "查看"},
+        {id: 551, pId: 55, name: "修改"},
+        {id: 56, pId: 5, name: "短信设置"},
+        {id: 560, pId: 56, name: "查看"},
+        {id: 561, pId: 56, name: "修改"},
+        {id: 7, pId: 0, name: "短信管理"},
+        {id: 71, pId: 7, name: "指令模块"},
+        {id: 710, pId: 71, name: "查看"},
+        {id: 711, pId: 71, name: "修改"},
+        {id: 72, pId: 7, name: "短信发送管理"},
+        {id: 720, pId: 72, name: "查看"},
+        {id: 721, pId: 72, name: "修改"},
+        {id: 73, pId: 7, name: "短信接收管理"},
+        {id: 730, pId: 73, name: "查看"},
+        {id: 731, pId: 73, name: "修改"},
+        {id: 8, pId: 0, name: "其他"},
+        {id: 81, pId: 8, name: "API下载"},
+        {id: 810, pId: 81, name: "查看"},
+        {id: 811, pId: 81, name: "修改"},
+        {id: 83, pId: 8, name: "发布公告"},
+        {id: 830, pId: 83, name: "查看"},
+        {id: 811, pId: 83, name: "修改"},
+        {id: 82, pId: 8, name: "推广"},
+        {id: 820, pId: 82, name: "查看"},
+        {id: 821, pId: 82, name: "修改"}
+    ];
+    function Project(oDataModel) {
+        var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+        var nodes = treeObj.getNodes();
+        for (var b in nodes) {
+            for (var c in nodes[b]) {
+                if (c.toString() != "id"
+                    && c.toString() != "checked"
+                    && c.toString() != "open"
+                    && c.toString() != "pId"
+                    && c.toString() != "name") {
+                    if (c.toString() == "children") {
+                        for (var a in nodes[b][c]) {
+                            for (var d in nodes[b][c][a]) {
+                                if (d.toString() != "id"
+                                    && d.toString() != "checked"
+                                    && d.toString() != "open"
+                                    && d.toString() != "pId"
+                                    && d.toString() != "name"
+                                ) {
+                                    if (d.toString() == "children") {
+                                        for (var e in nodes[b][c][a][d]) {
+                                            for (var f in nodes[b][c][a][d][e]) {
+                                                if (f.toString() != "id"
+                                                    && f.toString() != "checked"
+                                                    && f.toString() != "open"
+                                                    && f.toString() != "pId"
+                                                    && f.toString() != "name"
+                                                    && f.toString() != "children"){
+                                                    delete nodes[b][c][a][d][e][f]
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        delete nodes[b][c][a][d]
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        delete nodes[b][c]
+                    }
+                }
+            }
+        }
+        oDataModel.text = JSON.stringify(nodes);
+    }
+
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateAdd();
+            this.DepartmentModel = {
+                uname: ko.observable(),
+                username: ko.observable(),
+                phone: ko.observable(),
+                setting: ko.observable(),
+                password: ko.observable()
+            };
+        },
+        //新增
+        operateAdd: function () {
+            $('#cardAdd').on("click", function () {
+                $('.hiddens').show();
+                $("#myModal").modal().on("shown.bs.modal", function () {
+                    var oEmptyModel = {
+                        uname: ko.observable(),
+                        username: ko.observable(),
+                        phone: ko.observable(),
+                        setting: ko.observable(),
+                        password: ko.observable(),
+                        ID: 1
+                    };
+                    $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+                    ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                    ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                    operate.operateSave();
+                }).on('hidden.bs.modal', function () {
+                    ko.cleanNode(document.getElementById("myModal"));
+                });
+            });
+        },
+        //保存数据
+        operateSave: function (index) {
+            $('#btn_submit').on("click", function () {
+                //取到当前的viewmodel
+                var oViewModel = operate.DepartmentModel;
+                //将Viewmodel转换为数据model
+                var oDataModel = ko.toJS(oViewModel);
+
+
+
+                if(oDataModel.ID==1){
+                    var funcName = "add";
+                    Project(oDataModel)
+                }else if(oDataModel.ID==0){
+                    var funcName = "update";
+                    Project(oDataModel);
+                    delete(oDataModel.password)
+                }else if(oDataModel.ID==3){
+                    var funcName = "update-password";
+                    if(!oDataModel.password){
+                        layer.msg('请输入密码',{time:2000});
+                        return
+                    }
+                }
+                $post(urlPrefix + "?r=sms/user/" + funcName,
+                    oDataModel,
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('保存成功',
+                                {time: 1000});
+                            $("#myModal").modal('hide');
+                            if (funcName === "update"||funcName === "update-password") {
+                                tableInit.myViewModel.update(index, oDataModel)
+                            } else {
+                                tableInit.myViewModel.refresh()
+                            }
+                        } else {
+                            layer.msg('操作失败',
+                                {time: 1000})
+                        }
+                    }, function () {
+                        layer.msg("操作失败", {time: 2000})
+                    });
+            })
+        }
+    };
+
+    window.operateEvents = {
+        //删除
+        'click #btn_delete': function (e, value, row, index) {
+            layer.confirm('你确定要删除吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=sms/user/delete",
+                    {id: row.id},
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('删除成功', {time: 1000});
+                            tableInit.myViewModel.remove(row.id);
+                        } else {
+                            layer.msg('删除失败', {time: 1000})
+                        }
+                    }, function () {
+                        layer.msg("删除失败", {time: 2000})
+                    });
+            });
+        },
+        //修改密码
+        'click #btn_password': function (e, value, row, index) {
+            $('.hiddens').hide();
+            $(".password").show();
+            row.password= '';
+            $("#myModal").modal().on("shown.bs.modal", function () {
+                var oEmptyModel = {
+                    uname: ko.observable(),
+                    username: ko.observable(),
+                    phone: ko.observable(),
+                    setting: ko.observable(),
+                    password: ko.observable(),
+                    ID: 3
+                };
+                ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                //将选中该行数据有数据Model通过Mapping组件转换为viewmodel
+                row.ID = 3;
+                ko.utils.extend(operate.DepartmentModel, row);
+                ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                operate.operateSave(index);
+            }).on('hidden.bs.modal', function () {
+                //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                ko.cleanNode(document.getElementById("myModal"));
+            });
+        },
+        //编辑
+        'click #btn_edit': function (e, value, row, index) {
+            $('.hiddens').show();
+            $(".password").hide();
+            $("#myModal").modal().on("shown.bs.modal", function () {
+                var oEmptyModel = {
+                    uname: ko.observable(),
+                    username: ko.observable(),
+                    phone: ko.observable(),
+                    setting: ko.observable(),
+                    password: ko.observable(),
+                    ID: 0
+                };
+                ko.utils.extend(operate.DepartmentModel, oEmptyModel);
+                //将选中该行数据有数据Model通过Mapping组件转换为viewmodel
+                row.ID = 0;
+                ko.utils.extend(operate.DepartmentModel, row);
+//                $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+                if(!row.text){
+                    $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+                }else{
+                    $.fn.zTree.init($("#treeDemo"), setting, JSON.parse(row.text));
+                }
+                ko.applyBindings(operate.DepartmentModel, document.getElementById("myModal"));
+                operate.operateSave(index);
+            }).on('hidden.bs.modal', function () {
+                //关闭弹出框的时候清除绑定(这个清空包括清空绑定和清空注册事件)
+                ko.cleanNode(document.getElementById("myModal"));
+            });
+        }
+    };
+    function secData(){
+        data = {
+            name: $.trim($("#name").val()),
+            pageSize: 10,
+            pageNumber: 1
+        };
+    }
+    function queryParams(params) {
+        secData();
+        data.pageSize=params.pageSize;
+        data.pageNumber=params.pageNumber;
+        return data;
+    }
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+
+        //2、注册增删改事件
+        operate.operateInit();
+
+
+    });
+    //初始化表格
+    var tableInit = {
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                toolbar: '#tool_bar',                //工具按钮用哪个容器
+                queryParams: queryParams,//传递参数（*）
+                method: "post",
+                url: urlPrefix + '?r=sms/user/get-all',
+                columns: [{
+                    field: 'id',
+                    title: 'id'
+                }, {
+                    field: 'username',
+                    title: '账号'
+                }, {
+                    field: 'uname',
+                    title: '名称'
+                }, {
+                    field: 'addtime',
+                    title: '添加时间',
+                    align: 'center'
+                },{
+                    field: 'phone',
+                    title: '手机',
+                    align: 'center'
+                },{
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+
+            function operateFormatter(value, row, index) {
+                return [
+                    '<button id="btn_edit" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                    '<span class="" aria-hidden="true"></span>修改' +
+                    '</button>',
+                    '<button id="btn_password" type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                    '<span class="" aria-hidden="true"></span>修改密码' +
+                    '</button>',
+                    '<button id="btn_delete" type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                    '<span class="" aria-hidden="true"></span>删除' +
+                    '</button>'
+                ].join('');
+            }
+
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>

@@ -1,0 +1,20 @@
+.tx{
+    padding-top: 30%;
+}
+.weui-msg__icon-area img{
+    width: 94px!important;
+}
+.weui-msg__icon-area{
+    margin-bottom: 0!important;
+}
+.weui-form-preview__value{
+    font-size: 16px!important;
+}
+.weui-form-preview__hd{
+    padding-top: 0!important;
+    padding-bottom: 0!important;
+    line-height: 34px;
+}
+.hidden{
+    display: none!important;
+}

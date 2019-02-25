@@ -1,0 +1,28 @@
+.img{
+    padding-bottom: 10px;
+    vertical-align: baseline!important;
+}
+.bgfc{
+    margin-left: 35px;
+}
+#detail th,#detail td{
+    text-align: left!important;
+}
+select{
+    height: 30px;
+    line-height: 30px;
+    border-radius: 3px;
+    outline: none;
+    font-size: 13px;
+    border: 1px solid #DBD6D6;
+}
+#textbask{
+    height: 40px;
+    line-height: 40px;
+    border-radius: 3px;
+    outline: none;
+    font-size: 13px;
+    border: 1px solid #DBD6D6;
+    text-indent: 3px;
+    margin-left: 4px;
+}

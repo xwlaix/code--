@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>卡片分类</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+
+</head>
+
+
+<body>
+<div class="main-box" style="width:95%">
+    <div class="msgWrap form">
+        <div class="form-group">
+            <label for="names">卡片分类名称:</label>
+            <input type="text" name="name" data-bind="value:name" class="form-control" id="names"
+                   placeholder="卡片分类名称" style="width: 180px;">
+            <button type="button" id="search" class="btn btn-sm btn-primary  search keydownBtn">搜索</button>
+        </div>
+        <table id="tb_dept" data-bind="myBootstrapTable:$root">
+        </table>
+    </div>
+</div>
+</body>
+<script>
+    var flag = 1;
+    //加载table数据
+    function ajaxRequest(params) {
+        $get(urlPrefix + '?r=sms/business/card-class/get-all',
+            function (res) {
+                params.success({
+                    data: res.data
+                });
+                if(res.code==0){
+                    layer.msg(res.msg,{time:2000})
+                }
+            })
+
+    }
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateSec();
+            this.DepartmentModel = {
+                name: ko.observable(),
+                operator_type: ko.observable()
+            };
+        },
+        //搜索
+        operateSec: function () {
+            $('#search').on("click", function () {
+                if (!flag) {
+                    return false
+                }
+                flag = 0;
+                var name = $.trim($("#names").val());
+                $post(urlPrefix + "?r=sms/business/card-class/get",
+                    {name: name},
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('搜索成功',
+                                {time: 1000});
+                            tableInit.myViewModel.load(res.data);
+                        } else {
+                            layer.msg('没有这个卡片分类',
+                                {time: 1000})
+                        }
+                        flag = 1;
+                    })
+            });
+        }
+    };
+
+
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+    });
+    //初始化表格
+    var tableInit = {
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                ajax: ajaxRequest,
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                columns: [{
+                    field: 'id',
+                    title: '卡片分类id'
+                }, {
+                    field: 'name',
+                    title: '卡片分类名称'
+                }]
+            });
+
+            function operateForType(value, row, index) {
+                var operator_type = row.operator_type;
+                var str;
+                switch (operator_type) {
+                    case '1' :
+                        str = '移动';
+                        break;
+                    case '3' :
+                        str = '联通';
+                        break;
+                    case '2' :
+                        str = '电信';
+                        break;
+                    default:
+                        break;
+                }
+                return [str].join('');
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>

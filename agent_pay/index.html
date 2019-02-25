@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>微信安全支付</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="../tpl/common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../tpl/static/css/kuyuMobile/weiPayPhone.css">
+    <link rel="stylesheet" href="../tpl/common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../tpl/common/js/jquery-weui/lib/weui.min.css">
+
+    <script src="../tpl/common/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="../tpl/static/js/Department.js"></script>
+    <script src="../tpl/common/js/jquery-weui/js/jquery-weui.min.js"></script>
+    <script type="text/javascript">
+        var flag = 0;
+        /** 有跳转性质的，写在页面加载之前 **/
+        if ( !getUrlParam('code')){
+        	sessionStorage.setItem("aid", getUrlParam('aid'));
+        	sessionStorage.setItem("oid", getUrlParam('oid'));
+
+            // 转授权链接
+            $post(
+            	'/?r=home/setting/get-pay-link', 
+            	{url: document.location.href, id: getUrlParam('aid')}, 
+            	function (res) {
+	               window.location.href = res.data.url
+            });
+        }
+    </script>
+</head>
+<body>
+	
+
+<div class="wrap">
+    <img src="../tpl/static/img/wechat.jpg" class="center-block"/>
+    <div class="text-center num"><span id="money"></span>元</div>
+    <div class="text">
+        <div class="text-left ">订单编号：<span id="orderID"></span></div>
+        <div class="text-left">订单类型:微信支付</div>
+    </div>
+    <button id="pay" class="btn btn-block btn-success text-center">微信支付</button>
+</div>
+
+<div class="body-wrap" style="background:white;position: fixed;height: 100%;width: 100%;left: 0;top: 0;"></div>
+
+<script type="text/javascript">
+    var openid, orderID, oid, money, uid,payFlag, order_type = sessionStorage.getItem('order_type'),func;
+    oid = sessionStorage.getItem('oid');
+    flag = sessionStorage.getItem('flag');
+    if (order_type != 'account') {
+        order_type = 'agentflow';
+        func = 'get'
+    } else {
+        func = 'get-account'
+        order_type = 'agentaccount';
+    }
+    if (flag == 'true') {
+        $("#pay").text("余额支付")
+    } else if (flag != 'false' && flag != null) {
+        $("#pay").text("微信支付  " + flag + "元")
+    }else {
+        $("#pay").text("微信支付")
+    }
+    $(function () {
+        sessionStorage.setItem("need-refresh", true);
+        /**
+         * 获取参数
+         */
+        $post(urlPrefix+"?r=home/order/"+func,
+            {id: oid},
+            function (res) {
+                openid = res.data.openid;
+                orderID = res.data.orderID;
+                money = res.data.money;
+                uid = res.data.uid;
+                $("#money").text(money);
+                $("#orderID").text(orderID);
+                $(".body-wrap").hide();
+                if (res.data.status==3||res.data.status==2) {
+                    $.alert("这笔订单已经支付完成", function () {
+                        window.location.href = urlPrefix + '/coolfish/tpl/main/personal4/index.html'
+                    });
+                }
+            }
+        );
+
+
+    });
+
+
+    /**
+     * 支付操作
+     */
+    pay = function () {
+        $post(urlPrefix+"?r=home/order/pay-for-agent", {
+                uid: uid,
+                body: "商品描述",
+                amount: money,
+                openid: openid,
+                orderID: orderID,
+                code: getUrlParam('code'),
+                order_type: order_type,
+                aid: sessionStorage.getItem('aid'),
+                oid: sessionStorage.getItem('oid')
+            },
+            function (data) {
+                if (data.code == 1) {
+                    if (data.data = '余额抵扣') {
+                        sessionStorage.setItem("pay", 'true');
+                        $.alert("余额支付成功", function () {
+                            window.location.href = urlPrefix + '/coolfish/tpl/main/personal4/home.html'
+                        });
+                    }
+                    $("#pay").text('支付成功');
+                }else if (data.code == 0){
+                    $.toptip(data.msg, 2000, 'error');
+                    $.toptip(data.msg.orderID[0], 2000, 'error');
+                    payFlag = 0;
+                    $("#pay").text('支付');
+                }
+                jsApiCall(data, urlPrefix + "/coolfish/tpl/main/personal4/home.html")
+            })
+    };
+
+    $("#pay").click(function () {
+        if (payFlag == 1) {
+            $.toptip('请不要重复支付', 2000, 'error');
+            return false
+        }
+        $("#pay").text('支付中...');
+        pay();
+    });
+
+    /**
+     * 申请支付操作
+     * @param      {(Function|string)}  jsApiParameters  The js api parameters
+     * @param      {<type>}             returnurl        The returnurl
+     */
+    jsApiCall = function (jsApiParameters, returnurl) {
+        console.log(jsApiParameters);
+        jsApiParameters = JSON.parse(jsApiParameters);
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            jsApiParameters,
+            function (res) {
+                WeixinJSBridge.log(res.err_msg);
+                if (res.err_msg == 'get_brand_wcpay_request:ok') {
+                    sessionStorage.setItem("pay", 'true');
+        			sessionStorage.setItem('order_type','') ;
+                    payFlag = 1;
+                    $("#pay").text('支付');
+                    window.location.href = returnurl;
+                }
+            }
+        );
+    }
+
+</script>
+</body>
+</html>

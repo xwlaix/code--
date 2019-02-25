@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>批量修改</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico" />
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/ajaxfileupload.js"></script>
+</head>
+<body>
+<!--中间部分start!-->
+<div class="main-box">
+    <div id="main-box-index">
+        <!--中间部分_右侧end!-->
+        <div class="alert alert_info">
+            <strong>提示信息!</strong>
+            <ol>
+                <li>操作步骤:第一步：下载模板，按模板格式上传</li>
+                <li>操作步骤:第二步：点EXCEL导入</li>
+                <li>操作步骤:第三步：确定导入</li>
+                <li>操作步骤:第四步：返回</li>
+                <li ><a href="javascript:down()">模板格式下载</a></li>
+                <li class="text-sum">每次操作最多50个</li>
+            </ol>
+        </div>                                                               
+        <div class="cLineB">
+            <div  id="topTab">
+                <div class="form-group">
+                    <div class="bg-primary excel text-center">
+                        <label for="file1">选择EXCEL</label>
+                        <input type="file" class="hidden" name="file" id="file1">
+                    </div>
+                    <button type="button" class="btn btn-sm btn-success import">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    function down() {
+        window.open(urlPrefix + '?r=sms/card-replace/down-save', '_self')
+    }
+    $(".import").on('click',function () {
+        var file = $("input[type='file']").val();
+        layer.msg("暂未开通",{time:2000})
+        return
+        if(file){
+            var index = layer.load(2,  {
+                shade: [0.1, '#fff'] //0.1透明度的白色背景
+            });
+            ajaxFileUpload('?r=sms/business/package/package-card/upload-add',"file1",
+                function (res)  //服务器成功响应处理函数
+                {
+                    parent.layer.closeAll();
+                }
+            );
+        }
+        else{
+            layer.msg("请上传excel",{time:2000});
+            return false
+        }
+    });
+</script>
+</html>
+

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <script src="https://a.alipayobjects.com/g/datavis/g2-mobile-all/2.1.22/index.js"></script>
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/mobileCommon.js"></script>
+    <script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+</head>
+<body>
+<div style="width:100%">
+    <div class="weui-cells weui-cells_radio">
+        <label class="weui-cell weui-check__label active" for="x11">
+            <div class="weui-cell__bd">
+                <p data-bind="1">七天数据</p>
+            </div>
+            <div class="weui-cell__ft">
+                <input type="radio" class="weui-check" name="radio1" id="x11">
+                <span class="weui-icon-checked"></span>
+            </div>
+        </label>
+        <label class="weui-cell weui-check__label" for="x12">
+            <div class="weui-cell__bd">
+                <p  data-bind="2">半年数据</p>
+            </div>
+            <div class="weui-cell__ft">
+                <input type="radio" class="weui-check" name="radio1" id="x12">
+                <span class="weui-icon-checked"></span>
+            </div>
+        </label>
+    </div>
+    <div class="weui-panel weui-panel_access">
+        <div class="weui-panel__hd">最近七天充值金额</div>
+        <canvas id="c1" style="width:100%;"></canvas>
+        <div class="weui-panel__hd">
+            最近七天佣金收入
+        </div>
+        <canvas id="c2" style="width:100%;"></canvas>
+    </div>
+    <div class="weui-footer">
+        <p class="weui-footer__text">仅供粗略查看，不作为参考凭证</p>
+    </div>
+</div>
+<script>
+    $('.weui-check__label').click(function () {
+        $(this).addClass('active').siblings().removeClass("active")
+    });
+    var type = $.trim($('.active').find("p").data('bind'))
+    GM.Global.pixelRatio = 2;
+    var Util = GM.Util;
+    var data = [
+        {"time": '2016-08-08 00:00:00',"tem": 1},
+        {"time": '2016-08-08 00:10:00',"tem": 2},
+        {"time": '2016-08-08 00:30:00',"tem": 1},
+        {"time": '2016-08-09 00:35:00',"tem": 50},
+        {"time": '2016-08-09 01:00:00',"tem": 20},
+        {"time": '2016-08-09 01:20:00',"tem": 26},
+        {"time": '2016-08-10 01:40:00',"tem": 28}
+    ];
+
+    var chartDay = new GM.Chart({
+        id: 'c1'
+    });
+    var chartMonth = new GM.Chart({
+        id: 'c2'
+    });
+
+    var defs = {
+        time: {
+            type: 'timeCat',
+            mask: 'mm-dd',
+            tickCount: 7 ,
+            range:[0,1]
+            //设置坐标轴刻度线个数
+        },
+        tem: {
+            tickCount: 5,
+            min: 0
+        }
+    };
+
+    //配置刻度文字大小，供PC端显示用(移动端可以使用默认值20px)
+    chartDay.axis('tem', {
+        label: {
+            fontSize: 14
+        }
+    });
+    chartDay.axis('time', {
+        label: {
+            fontSize: 14
+        }
+    });
+    chartMonth.axis('tem', {
+        label: {
+            fontSize: 14
+        }
+    });
+    chartMonth.axis('time', {
+        label: {
+            fontSize: 14
+        }
+    });
+
+    chartDay.source(data, defs);
+    chartDay.line().position('time*tem').color('pink');
+    chartDay.render();
+    chartMonth.source(data, defs);
+    chartMonth.line().position('time*tem').color('pink');
+    chartMonth.render();
+
+</script>
+
+</body>
+</html>
+          

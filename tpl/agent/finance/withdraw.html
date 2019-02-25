@@ -1,0 +1,409 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>提现管理</title>
+    <link rel="stylesheet" href="../../static/css/homeAgent.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/bootstrap-table/tableExport.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script>
+        $get(urlPrefix + "?r=ems/agent/get-info", function (res) {
+            type = res.data.type;
+            if (res.data.type == 3) {
+                $(".moveHidden").remove();
+            }
+
+        });
+    </script>
+    <style>
+        .btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="l-tab-content_tab">
+    <div class="l-tab-content-item" tabid="index">
+        <div class="home_tab cf">
+            <div class="home-charts panel">
+                <div class="header cf moveHidden">
+                    <div class="title left">
+                        <div class="tab">
+                            <ul>
+                                <li id="0" class="cur ">提现申请</li>
+                                <li id="1">提现审核</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="home-myCharts">
+                    <div class="home-stock">
+                        <div class="main-box ">
+                            <div id="tool_bar">
+                                <button type="button" id="add" class="btn btn-sm btn-primary">申请提现
+                                </button>
+                            </div>
+                            <table id="request" data-bind="myBootstrapTable:$root">
+                            </table>
+                        </div>
+                    </div>
+                    <div class="home-stock moveHidden" style="display: none;">
+                        <div class="main-box">
+                            <div class="from-groups clearfix">
+                                <div class="form-group">
+                                    <label for="status">提现状态:</label>
+                                    <select name="status" id="status" >
+                                        <option class="operator_type" selected="selected" value="">请选择提现状态</option>
+                                        <option class="operator_type" value="1">未审核</option>
+                                        <option class="operator_type" value="2">通过</option>
+                                        <option class="operator_type" value="3">拒绝</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="names">代理商名称:</label>
+                                    <input type="text" name="name" data-bind="value:name" class="form-control" id="names"
+                                           placeholder="代理商名称" style="width: 180px;">
+                                    <button type="button" id="search" class="btn btn-sm btn-primary keydownBtn search">搜索
+                                    </button>
+                                </div>
+                            </div>
+                            <table id="audit" data-bind="myBootstrapTable:$root">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var myDate = new Date(), month = myDate.getMonth(), commission,flag=0; //获取当前月份(0-11,0代表1月)
+    $(".tab ul li").click(function () {
+        var This = $(this);
+        This.addClass('cur').siblings().removeClass('cur');
+        $(".home-myCharts").children().eq(This.attr("id")).show().siblings().hide();
+    });
+    $post(urlPrefix + "?r=ems/data/get-agent-commission", {type: 'month'}, function (res) {
+        commission = res.data[month + '月']
+    });
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.operateSec();
+            this.operateAdd();
+            this.DepartmentModel = {
+                name: ko.observable()
+            };
+        },
+        //搜索
+        operateSec: function () {
+            $('#search').on("click", function () {
+                var name = $.trim($("#names").val()),status = $("#status").val();
+                $post(urlPrefix + "?r=ems/finance/withdrawals/get-all",
+                    {
+                        pageSize: 10,
+                        pageNumber: 1,
+                        aname: name,
+                        status: status
+                    },
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('搜索成功',
+                                {time: 1000});
+                            $("#audit").bootstrapTable("load",res.data)
+                        } else {
+                            layer.msg('操作失败',
+                                {time: 1000})
+                        }
+                    })
+            });
+        },
+        operateAdd: function () {
+            $('#add').on("click", function () {
+                $postAsync(urlPrefix + '?r=ems/finance/withdrawals/get-data', {type: 'allMoney'}, function (res) {
+                    commission = res.data
+                });
+                layer.confirm("可提现金额为：" + commission+'元', {
+                    btn: ['确定', '取消']
+                }, function () {
+                    if (commission == 0) {
+                        layer.closeAll();
+                        return false
+                    }else if(flag == 0) {
+                        flag = 1;
+                        $get(urlPrefix + "?r=ems/finance/withdrawals/add",
+                            function (res) {
+                                layer.msg(res.msg, {time: 2000});
+                                if (res.code == 1) {
+                                    $("#request").bootstrapTable("refresh");
+                                }else{
+                                    flag = 0;
+                                }
+                            })
+                    }else{
+                        layer.msg('请不要重复申请', {time: 2000});
+                        flag = 0;
+                    }
+
+                });
+
+            });
+        }
+
+    };
+
+    //加载table数据
+    function audit(params) {
+        queryData = {
+            pageSize: params.pageSize,
+            pageNumber: params.pageNumber,
+            aname: $("#names").val(),
+            status: $("#status").val()
+        };
+        return queryData;
+    }
+
+    window.operateEvents = {
+        //通过
+        'click #btn_pass': function (e, value, row, index) {
+            layer.confirm('你确定要通过吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=ems/finance/withdrawals/update",
+                    {id: row.id, status: row.status = 2, reason: row.reason},
+                    function (res) {
+                        layer.msg(res.msg, {time: 1000});
+                        if (res.code == 1) {
+                            tableInit.myViewModel.refresh();
+                        }
+                    });
+            });
+        },
+        //拒绝
+        'click #btn_refuse': function (e, value, row) {
+            layer.prompt({
+                    title: '拒绝原因',
+                    formType: 0,
+                    area: ['150px', '30px']
+                }, function (reason, index) {
+                    if (!reason) {
+                        layer.msg("请填写拒绝理由", {time: 2000})
+                    }
+                    var data = {
+                        status: row.status = 3,
+                        reason: row.reason = reason,
+                        id: row.id
+                    };
+                    layer.close(index);
+                    $post(urlPrefix + '?r=ems/finance/withdrawals/update',
+                        data,
+                        function (res) {
+                            layer.msg(res.msg, {time: 1000});
+                            if (res.code == 1) {
+                                tableInit.myViewModel.refresh();
+                            }
+                        }
+                    )
+                }
+            )
+        }
+    };
+    //初始化
+    $(function () {
+        //1、初始化表格
+        request.Init();
+        //2、注册增删改事件
+        operate.operateInit();
+        //1、初始化表格
+        tableInit.Init();
+    });
+    //初始化表格
+    var tableInit = {
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                search: false,
+                queryParams: audit,//传递参数（*）
+                method: "post",
+                url: urlPrefix + '?r=ems/finance/withdrawals/get-all',
+                onRefresh: function () {
+                    $("#names").val("");
+                },
+                columns: [{
+                    field: 'id',
+                    title: 'id',
+                    formatter: indexFormatter
+                }, {
+                    field: 'aname',
+                    title: '代理商名称'
+                }, {
+                    field: 'addtime',
+                    title: '申请时间'
+                }, {
+                    field: 'amount',
+                    title: '提现金额（元）'
+                }, {
+                    field: 'status',
+                    title: '提现状态',
+                    formatter: operateForstatus
+                }, {
+                    field: 'reason',
+                    title: '失败原因'
+                }, {
+                    field: 'approvaltime',
+                    title: '审批时间',
+                    formatter: Approvaltime
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+
+            function indexFormatter(value, row, index) {
+                return index + 1;
+            }
+
+            function operateFormatter(value, row, index) {
+                if (row.status == 1) {
+                    return [
+                        '<button id="btn_pass" type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class="" aria-hidden="true"></span>通过' +
+                        '</button>',
+                        '<button id="btn_refuse" type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+                        '<span class="" aria-hidden="true"></span>拒绝' +
+                        '</button>'
+                    ].join('');
+                } else if (row.status == 2) {
+                    return [
+                        '<span class="text-success" aria-hidden="true">已通过</span>'
+                    ].join('');
+                } else {
+                    return [
+                        '<span class="text-danger" aria-hidden="true">已拒绝</span>'
+                    ].join('');
+                }
+            }
+
+            function operateForstatus(value, row, index) {
+                if (row.status == 1) {
+                    return [
+                        '<span class="text-info" aria-hidden="true">未审核</span>'
+                    ].join('');
+                } else if (row.status == 2) {
+                    return [
+                        '<span class="text-success" aria-hidden="true">通过</span>'
+                    ].join('');
+                } else {
+                    return [
+                        '<span class="text-danger" aria-hidden="true">拒绝</span>'
+                    ].join('');
+                }
+
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("audit"));
+        }
+    };
+    var request = {
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                ajax: ajaxRequest,
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                columns: [{
+                    field: 'id',
+                    title: 'id'
+                }, {
+                    field: 'addtime',
+                    title: '申请时间'
+                }, {
+                    field: 'amount',
+                    title: '提现金额（元）'
+                }, {
+                    field: 'status',
+                    title: '提现状态',
+                    formatter: operateForstatus
+                }, {
+                    field: 'reason',
+                    title: '失败原因'
+                }, {
+                    field: 'approvaltime',
+                    title: '审批时间',
+                    formatter: Approvaltime
+                }]
+            });
+
+            function operateForstatus(value, row, index) {
+                if (row.status == 1) {
+                    return [
+                        '<span class="text-info" aria-hidden="true">未审核</span>'
+                    ].join('');
+                } else if (row.status == 2) {
+                    return [
+                        '<span class="text-success" aria-hidden="true">通过</span>'
+                    ].join('');
+                } else {
+                    return [
+                        '<span class="text-danger" aria-hidden="true">拒绝</span>'
+                    ].join('');
+                }
+
+            }
+
+
+
+            ko.applyBindings(this.myViewModel, document.getElementById("request"));
+
+        }
+    };
+    function Approvaltime(value, row, index) {
+        if (row.approvaltime == "0000-00-00 00:00:00") {
+            return [
+                ''
+            ].join('');
+        }else{
+            return [row.approvaltime].join('');
+        }
+
+    }
+    //加载table数据
+    function ajaxRequest(params) {
+        $get(urlPrefix + '?r=ems/finance/withdrawals/get',
+            function (res) {
+                params.success({
+                    data: res.data.rows
+                });
+                if (res.code == 0) {
+                    layer.msg(res.msg, {time: 2000})
+                }
+            })
+
+    }
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+</script>

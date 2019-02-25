@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>批量实名认证</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/ajaxfileupload.js"></script>
+</head>
+<body>
+<!--中间部分start!-->
+<div class="main-box" style="width:95%">
+    <div id="main-box-index">
+        <!--中间部分_右侧end!-->
+        <div class="alert alert_info">
+            <strong>提示信息!</strong>
+            <ol>
+                <li class="text-danger">每次批量不要过500张卡</li>
+            </ol>
+        </div>
+        <div class="cLineB">
+            <div id="addAuto">
+                <div class="form-textarea">
+                    <label for="card">卡号:</label>
+                    <textarea name="" id="card" cols="50" rows="10" placeholder="请填写要实名的卡号，中间请以英文“,”隔开！"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="name">实名姓名(企业名称):</label>
+                    <input type="text" name="file" id="name" placeholder="请填写实名认证的姓名">
+                </div>
+                <div class="form-group">
+                    <label for="phone">实名电话(企业联系人电话):</label>
+                    <input type="text" name="phone" id="phone" placeholder="请填写实名认证的电话">
+                </div>
+                <div class="form-group">
+                    <label for="cardNo">实名身份证(企业组织结构代码):</label>
+                    <input type="text" name="cardNo" id="cardNo" placeholder="请填写实名认证的身份证">
+                </div>
+                <div class="form-group">
+                    <label>实名身份证(企业营业执照)正面:</label>
+                    <a href="javascript:" class="a-upload">
+                        <input type="file" name="img" id="file1">点击这里上传正面
+                    </a>
+                    <img src="" id="img1" alt="" style="width: 300px;">
+                </div>
+                <div class="form-group">
+                    <label>实名身份证(企业营业执照)反面:</label>
+                    <a href="javascript:" class="a-upload">
+                        <input type="file" name="img" id="file2">点击这里上传反面
+                    </a>
+                    <img src="" id="img2" alt="" style="width: 300px;">
+                    <button type="button" class="btn btn-sm btn-primary confirm">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    //改变上传文件内容后上传
+    $("#file1").change(function () {
+        ajaxFileUpload('?r=sms/card/celebrity/upload-img',"file1",
+            function (res)  //服务器成功响应处理函数
+            {
+                $("#img1").attr("src", res.data.url);
+            })
+    });
+    $("#file2").change(function () {
+        ajaxFileUpload('?r=sms/card/celebrity/upload-img',"file2",
+            function (res)  //服务器成功响应处理函数
+            {
+                $("#img2").attr("src", res.data.url);
+            })
+    });
+    //批量实名请求
+    $(".confirm").click(function () {
+        var card = $.trim($("#card").val()),
+            name = $.trim($("#name").val()),
+            phone = $.trim($("#phone").val()),
+            img1 = $("#file1").val(),
+            img2 = $("#file2").val(),
+            cardNo = $.trim($("#cardNo").val());
+//            reg = /^1[3|4|5|7|8][0-9]{9}$/;
+        if (!card) {
+            layer.tips('请输入卡号', '#card', {
+                tips: [3, 'red'],
+                time: 2000
+            });
+            return false
+        }
+        if (!name) {
+            layer.tips('请输入实名姓名(企业名称)', '#name', {
+                tips: [2, 'red'],
+                time: 2000
+            });
+            return false
+        }
+        if (!phone) {
+            layer.tips('请输入实名电话(企业联系人电话)', '#phone', {
+                tips: [2, 'red'],
+                time: 2000
+            });
+            return false
+        }
+        if (!cardNo) {
+            layer.tips('请输入实名身份证(企业组织结构代码)', '#cardNo', {
+                tips: [2, 'red'],
+                time: 2000
+            });
+            return false
+        }
+//        if (!reg.test(phone)) {
+//            layer.tips('请输入正确手机号码', '#phone', {
+//                tips: [3, 'red'],
+//                time: 2000
+//            });
+//            return false
+//        }
+
+        if (!img1) {
+            layer.tips('请上传身份证(企业营业执照)正面', '#file1', {
+                tips: [2, 'red'],
+                time: 2000
+            });
+            return false
+        }
+        if (!img2) {
+            layer.tips('请上传身份证(企业营业执照)反面', '#file2 ', {
+                tips: [2, 'red'],
+                time: 2000
+            });
+            return false
+        }
+//        if (!(/(^\d{15}$)|(^\d{17}([0-9]|X)$)/.test(cardNo))) {
+//            layer.tips('请输入正确的实名身份证', '#cardNo', {
+//                tips: [3, 'red'],
+//                time: 2000
+//            });
+//            return false;
+//        }
+        $post(urlPrefix + '?r=sms/card/celebrity/add',
+            {card: card, name: name, phone: phone, cardNo: cardNo},
+            function (res) {
+                if (res.code == 1) {
+                    parent.$("#addStatus").val("true");
+                    parent.layer.closeAll();
+                } else {
+                    layer.msg(res.msg);
+                }
+
+            },function(){layer.msg("操作失败",{time:2000})})
+    });
+</script>
+</html>
+

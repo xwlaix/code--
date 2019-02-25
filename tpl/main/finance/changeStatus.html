@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>批量修改订单状态</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../common/js/Select2/select2.min.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/ajaxfileupload.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../common/js/Select2/select2.min.js"></script>
+    <script src="../../common/js/qrcode.js"></script>
+
+</head>
+<body>
+<!--中间部分start!-->
+<div class="main-box" style="width:95%">
+    <div id="main-box-index">
+        <!--中间部分_右侧end!-->
+        <div class="alert alert_info">
+            <strong>提示信息!</strong>
+            <ol>
+                <li class="text-sum">批量操作</li>
+                <!--<li>操作步骤:第一步：下载模板，按模板格式上传</li>-->
+                <!--<li>操作步骤:第二步：点EXCEL导入</li>-->
+                <!--<li>操作步骤:第三步：确定导入</li>-->
+                <!--<li>操作步骤:第四步：返回</li>-->
+                <!--<li ><a href="javascript:down()">模板格式下载</a></li>-->
+            </ol>
+        </div>
+        <div class="cLineB">
+            <div id="addPackage">
+                <label class="label_title">批量修改订单状态:</label>
+                <div class="form-textarea" style="margin-left: 0!important;">
+                    <label for="card">订单id号:</label>
+                    <textarea name="" id="card" cols="50" rows="10" placeholder="请填写要修改的订单id号，一行一个！"></textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-info btn-sm " id="orderPackage" style="vertical-align: bottom" title="提交">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    //批量订购同一个套餐
+    $('#orderPackage').on('click', function () {
+        var index = layer.load(2, {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        var data = {};
+        var cardid = $.trim($("#card").val());
+        if (!cardid) {
+            layer.tips('请输入订单id号', '#card', {
+                tips: [2, 'red'],
+                time: 2000
+            });
+            layer.close(index);
+            return false
+        }
+        data = {
+            orderIDs: cardid
+        };
+        $post(urlPrefix + '?r=sms/finance/order/updata-all', data, function (res) {
+            if (res.code == 1) {
+                layer.closeAll();
+                layer.msg(res.msg,
+                    {time: 2000});
+            }else{
+                layer.close(index);
+                layer.msg(res.msg,{time:2000})
+            }
+        },function(){layer.close(index);});
+    });
+
+</script>
+</html>
+

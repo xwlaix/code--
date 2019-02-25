@@ -1,0 +1,100 @@
+
+<template>
+  <view class="book-sorts">
+    <view class="weui-cells__title" style="height: 48rpx">
+      <span class="font_32 bold color_6">{{library.name}}分类列表</span>
+      <button class="weui-btn btn-blue_l" @tap="add({{library.id}})" type="primary" size="mini" style="float:right">添加分类</button>
+    </view>
+    <view class="weui-cells__title"></view>
+    <view class="weui-cells weui-cells_after-title">
+      <block wx:for="{{sorts}}" wx:key="index">
+        <navigator url="/pages/library/sort?id={{item.id}}" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+          <view class="weui-cell__bd">{{item.name}}</view>
+          <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+        </navigator>
+      </block>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { service } from '../../config.js'
+  import http from '../../mixins/http'
+  import base from '../../mixins/base'
+  import user from '../../mixins/user'
+  import ShareMessage from '../../mixins/ShareMessage'
+
+  export default class bookSort extends wepy.page {
+    mixins = [base, http, user, ShareMessage]
+    config = {
+      navigationBarTitleText: '图书分类',
+      enablePullDownRefresh: false
+    }
+    data = {
+      loading: false,
+
+      // 图书分类
+      sorts: [],
+      library_id: 0,
+      library: {}
+    }
+
+    computed = {
+    }
+
+    onLoad(options) {
+      this.library_id = options && +options.library_id
+    }
+
+    onShow(options) {
+      // 初始化页面数据
+      this.initPageData()
+    }
+
+    onPullDownRefresh() {
+      this.initPageData()
+    }
+
+    // 初始化页面数据
+    initPageData() {
+      // 获取分类列表
+      this.$get({url: service.libraries + '/' + this.library_id + '/sorts'}, {
+        success: ({code, data}) => {
+          this.sorts = data.sorts
+          this.library = data.library
+        },
+        fail: ({code, data}) => {
+          // 失败了什么也不做
+        },
+        complete: () => {
+          this.loading = false
+        }
+      })
+    }
+
+    methods = {
+      add(libraryId) {
+        wx.navigateTo({url: '/pages/library/sort?library_id=' + libraryId})
+      },
+      typing (type, e) {
+        if (this.isDefined(this[type])) {
+          this[type] = e.detail.value
+        }
+      }
+    }
+  }
+</script>
+
+<style lang="less">
+@import "../../styles/custom/fn.less";
+.weui-cell{
+  position: inherit;
+  box-shadow: 1rpx 1rpx 12rpx #d3d3d3;
+  margin-top: 12rpx;
+}
+.weui-cells__title{
+  margin-bottom: 44rpx;
+}
+
+</style>

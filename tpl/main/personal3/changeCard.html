@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+
+    <title>换卡</title>
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../static/css/register.css">
+    <link rel="stylesheet" href="../../static/css/fonticon.css">
+    <link rel="stylesheet" href="../../static/css/changePackage.css">
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+    <script src="../../static/js/mobileCommon.js"></script>
+    <script>
+        if (window.location.search.indexOf("code") == -1) {
+            // 转授权链接
+            $post('?r=home/setting/change-url', {url: document.location.href, id: getUrlParam('id')}, function (res) {
+                if (res.code == 0) {
+                    return
+                }
+                // window.location.href = res.data.url
+            });
+        }
+    </script>
+</head>
+
+<body>
+<!--总内容外层盒子-->
+<div class="TotalContentBox">
+    <!--头部提示内容-->
+    <div class="Authentication-top">
+        换卡
+    </div>
+    <!--认证部分-->
+    <div class="Authentication-forms">
+        <div class="ietmOBX">
+            <span class="name">原卡号</span>
+            <input id="oldcard" class="text" type="text" value="" placeholder="请输入原ICCID或者接入号">
+        </div>
+        <div class="ietmOBX">
+            <span class="name">套餐</span>
+            <input id="package" class="text" type="text" value="" placeholder="请输入原套餐">
+        </div>
+        <div class="ietmOBX">
+            <span class="name">姓名</span>
+            <input id="uname" class="text" type="text" placeholder="请与实名认证的保持一致">
+        </div>
+        <div class="ietmOBX">
+            <span class="name">手机号码</span>
+            <input id="phone" class="text" type="text" placeholder="请与实名认证的保持一致">
+        </div>
+        <div class="ietmOBX">
+            <span class="name">省市区</span>
+            <input id="city-picker" class="text" type="text" placeholder="请选择省、市、区">
+        </div>
+        <div class="ietmOBX">
+            <span class="name">详细地址</span>
+            <input id="detailArea" class="text" type="text" placeholder="请输入详细地址">
+        </div>
+    </div>
+    <!--身份证上传部分-->
+    <div class="UploadID-BOX">
+        <div class="ietmOBX">
+            <label for="remake" class="remake">备注</label>
+            <textarea name="" id="remake" cols="30" rows="4" placeholder="如有其他需求，请填写备注。"></textarea>
+            <div class="text-center">
+                提交申请后30天未收到货，请联系客服。
+            </div>
+            <div class="Authentication-footer add">
+                <p>提交</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</body>
+
+<script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="../../common/js/jquery-weui/js/city-picker.min.js"></script>
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+    var city,
+        cardNo = sessionStorage.getItem("cardNo");
+    $("#oldcard").val(cardNo);
+    $("#city-picker").cityPicker({
+        title: "请选择收货地址",
+        onChange: function (picker, values, displayValues) {
+            city = displayValues
+        }
+    });
+    $(".add").click(function () {
+        var This = $(this);
+        var kahao = $.trim($("#oldcard").val());
+        var username = $.trim($("#uname").val());
+        var phone = $.trim($("#phone").val());
+        var detailArea = $.trim($("#detailArea").val());
+        var remake = $.trim($("#remake").val());
+        var package = $.trim($("#package").val());
+        //验证卡号,不为空&全部是数字小于20位通过
+        if (!kahao) {
+            $.toptip('请输入您的原卡号', 2000, 'error');
+            return (false)
+        }
+        if (!package) {
+            $.toptip('请输入您的套餐', 2000, 'error');
+            return (false)
+        }
+        //验证名字不为空&小于8位 通过
+        if (!username) {
+            $.toptip('请输入您的名字', 2000, 'error');
+            return (false)
+        }
+        //验证手机号
+        if (!phone) {
+            $.toptip('请输入手机号码', 2000, 'error');
+            return (false)
+        }
+        var reg = /^1[3|4|5|7|8][0-9]\d{4,8}$/;
+        if (!reg.test(phone)) {
+            $.toptip('手机号码格式不对!', 2000, 'error');
+            return false;
+        }
+      
+        if (!city) {
+            $.toptip('请选择省市区', 2000, 'error');
+            return
+        }
+        if (!detailArea) {
+            $.toptip('请输入详细地址', 2000, 'error');
+            return
+        }
+        //验证身份证
+        if (This.hasClass('active')) return false;
+        This.addClass('active');
+        This.text('提交中...');
+        var url = "?r=wms/extension/replace";
+        $post(url, {
+                uid: getUrlParam('id'),
+                uname: username,
+                phone: phone,
+                oldcard: kahao,
+                address: city+detailArea,
+                base: remake,
+                package: package,
+                code:getUrlParam('code')
+            },
+            function (res) {
+                This.removeClass('active');
+                if (res.code == 1) {
+                    $.alert(res.data, function () {
+                        WeixinJSBridge.call('closeWindow');
+                    });
+                } else {
+                    $.toptip(res.msg, 2000, 'error');
+                    This.text('提交');
+                }
+            });
+    });
+
+</script>
+</html>

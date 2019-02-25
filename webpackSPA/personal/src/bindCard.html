@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no" name="viewport">
+        <meta content="telephone=no" name="format-detection"/>
+    </head>
+    <title>
+        流量卡查询
+    </title>
+    <style>
+        .weui-toast.weui_loading_toast.weui-toast--visible{
+            margin-left:0;
+            top:50%;
+        }
+    </style>
+    <body class="kuyu" id="bindCardPage">
+        <div class="wrap">
+            <div class="logo">
+                <img id="logo_img" src="">
+            </div>
+            <div class="bindCardMain">
+                <div class="cardNoArea">
+                    <label>
+                        卡号
+                    </label>
+                    <span class="icon-saoyisao" id="scanQRCode">
+                    </span>
+                    <div>
+                        <input id="card_no" placeholder="请输入流量卡号" type="text"/>
+                    </div>
+                </div>
+                <div class="FuzzySearch" style="display: none;">
+                    <ul class="list">
+                        <li class="card">
+                        </li>
+                    </ul>
+                </div>
+                <input id="bindCard" type="button" value="查询"/>
+                <div class="tips">
+                    点击输入卡号右侧 "扫一扫" 图标，可直接扫码查询
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

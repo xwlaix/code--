@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>模块</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico" />
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../static/css/module.css">
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../static/js/Department.js"></script>
+</head>
+<body>
+<div class="header">
+    <div class="header-log">
+        <div class="header-right hidden-xs">
+            <span class="layout">
+                <a href="javascript:logout()"><span class="fa-sign-out fa">&nbsp; 退出</span></a>
+            </span>
+            <span class="changepsw">
+                <a><span class="fa fa-key">&nbsp; 修改密码</span></a>
+            </span>
+            <span class="message">
+                    <a><span class="fa fa-envelope">&nbsp; 消息</span></a>
+            </span>
+
+            <span class="account">
+                <span class="fa fa-user">&nbsp; 深圳酷鱼互动有限公司</span>
+            </span>
+
+        </div>
+    </div>
+
+</div>
+<div class="wrap">
+    <div class="rows">
+        <div class="col-sm-4 col-md-3" id="1">
+            <div class="thumbnail">
+                <a href="../index.html?module=Agent">
+                    <div class="caption">
+                        <i class="fa fa-sitemap fa-4x"></i>
+                        <h3>代理商管理</h3>
+                        <p>极致体验，便捷途径</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-3" id="2">
+            <div class="thumbnail">
+                <a href="../index.html?module=Card">
+                    <div class="caption">
+                        <i class="fa fa-credit-card fa-4x"></i>
+                        <h3>卡片管理</h3>
+                        <p>极致体验，便捷途径</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-3" id="3">
+            <div class="thumbnail">
+                <a href="../index.html?module=Business">
+                    <div class="caption">
+                        <i class="fa fa-bank fa-4x"></i>
+                        <h3>业务管理</h3>
+                        <p>极致体验，便捷途径</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-3" id="4">
+            <div class="thumbnail">
+                <a href="../index.html?module=Finance">
+                    <div class="caption">
+                        <i class="fa fa-balance-scale fa-4x"></i>
+                        <h3>财务管理</h3>
+                        <p>极致体验，便捷途径</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-3" id="5">
+            <div class="thumbnail">
+                <a href="../index.html?module=wechat">
+                    <div class="caption">
+                        <i class="fa fa-wechat fa-4x"></i>
+                        <h3>微信设置</h3>
+                        <p>极致体验，便捷途径</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-3" id="7">
+            <div class="thumbnail">
+                <a href="../index.html?module=Service">
+                    <div class="caption">
+                        <i class="fa fa-volume-control-phone fa-4x"></i>
+                        <h3>短信管理</h3>
+                        <p>极致体验，便捷途径</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-3" id="6">
+            <div class="thumbnail">
+                <a href="../index.html?module=Analyze">
+                    <div class="caption">
+                        <i class="fa fa-bar-chart fa-4x"></i>
+                        <h3>数据分析</h3>
+                        <p>极致体验，便捷途径</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-3" id="8">
+            <div class="thumbnail">
+                <a href="../index.html?module=API">
+                    <div class="caption">
+                        <i class="fa  fa-cogs fa-4x"></i>
+                        <h3>API集成</h3>
+                        <p>极致体验，便捷途径</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var oneArr=[],twoArr=[];
+    $get(urlPrefix + "?r=sms/user/get-data", function (res) {
+        var nodes = JSON.parse(res.data.text);
+        for (var b in nodes) {
+            if (!nodes[b]["checked"]) {
+                oneArr.push(nodes[b]["id"]);
+            }
+        }
+        for (var e in oneArr){
+            $("#"+oneArr[e]).remove()
+        }
+    });
+    //检测是否登陆
+    !function () {
+        var tag = getCookie("name");
+        if (tag == "") {
+            alert("登陆超时");
+            window.location.href = "../login.html";
+            return false;
+        }else{
+            var arr=tag.split("=");
+            $(".user").text(arr[1])
+        }
+    }();
+//        退出登陆
+    function logout() {
+        layer.confirm('您确定要退出吗？', {
+            btn: ['确定', '取消'], //按钮
+            shade: false //不显示遮罩
+        }, function () {
+            clearCookies();
+            $get(urlPrefix+"?r=sms/logout",function(){
+                location.href = '../login.html';
+            })
+        });
+    }
+</script>
+</html>

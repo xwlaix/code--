@@ -1,0 +1,298 @@
+.fixed-table-footer .table-hover{
+    border-bottom:1px solid #ddd!important;
+}
+.text-sum{
+    color:red!important;
+}
+.label_title{
+    font-size: 18px;
+}
+.orderPackageMore{
+    margin-top: 50px!important;
+}
+.change-box label{
+    width: 125px;
+}
+/*清除浮动*/
+.clearfix:after {
+    content: " ";
+    display: block;
+    clear: both;
+    height: 0;
+}
+.clearfix {
+    zoom: 1;
+}
+.changepsw label{
+    width: 75px;
+}
+.change-box{
+    margin:6%;
+}
+/*特殊input单位*/
+#flow,#usetime,#sort{
+    width: 127px!important;
+    margin-left: 20px!important;
+}
+/*记录列表*/
+.header_info {
+    font-family: "黑体";
+    font-weight: 500;
+    color: #0084cd;
+}
+.header_info div ,.header_info span a{
+    display: inline-block;
+    font-size: 15px;
+    margin-top: 12px;
+    white-space: nowrap;
+    color: #0084cd;
+}
+.header_info span a:hover{
+    text-underline: none;
+}
+.header_info span {
+    font-size: 16px;
+    color: red;
+    vertical-align: baseline;
+    padding-right: 4px;
+}
+/*输入框后的按钮*/
+#btn_sec,#search,#secAutonym,#exportCondition,#exportCard,#gprsSec,#exportPackage,#btn_affirm,#orderCondition,#exportOrder{
+    vertical-align: bottom;
+}
+
+.sec{
+    margin: 1px 89px 0 141px;
+}
+.keydownBtn{
+    vertical-align: middle;
+}
+.roll-nav.roll-right.J_tabExit:hover .fa.fa-sign-out.piclogo{
+    color: #c00;
+}
+#bsubmit{
+    vertical-align: bottom;
+}
+/*导卡分卡button*/
+#topTab .form-group button.excel {
+    padding: 0;
+}
+#topTab .form-group button {
+    margin-right: 10px;
+}
+#addAuto{
+    margin-left: 5%;
+}
+#addAuto .form-group #card{
+    padding: 5px;
+    border: 1px solid #D7D7D7;
+    border-radius: 3PX;
+}
+/*候选框去色*/
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px white inset;
+}
+/*代理网址*/
+.dls_url{
+    color: #0084cd;
+    text-decoration: none;
+}
+.dls_url:hover{
+    text-decoration: none;
+}
+/*from-group间距*/
+.form-group{
+    margin-top: 5px;
+    margin-right: 15px!important;
+}
+.pay_link span{
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+.form-group.code div{
+    display: inline-block;
+}
+.form-group.code div div{
+    display: inline-block;
+    width: 80px;
+    white-space: nowrap;
+    text-align: center;
+}
+/*agentAccount*/
+.from-agentRadio label{
+    width: 98px!important;
+}
+#industry{
+    margin-left: 32px!important;
+}
+.agentAgent .form-group label{
+    width: 130px;
+}
+/*bpackage*/
+.bPackage_label .form-group label{
+    width: 98px;
+}
+/*cardkind*/
+.cardkind label{
+    width: 75px;
+}
+/*serviceProvider*/
+.serviceProvider .form-group label{
+    width: 85px;
+}
+.operator_type{
+    width: 28px!important;
+}
+.dyMenu_add .form-group label{
+    width: 63px;
+}
+.keywords_add .form-group label{
+    width: 53px;
+}
+.wxpay_add .form-group label{
+    width: 125px;
+}
+.excel label{
+    width: 76px;
+    height: 25px;
+    line-height: 30px;
+}
+.account_add .form-group label{
+    width: 97px;
+}
+#rechargeForm label{
+    width: 60px;
+}
+.addFlowList label{
+    width: 86px;
+}
+.msgWrap .form-group label{
+    white-space: nowrap;
+}
+#addAuto label{
+    width: 77px;
+}
+/*td下的button*/
+#tb_dept button{
+    margin-right: 5px;
+    vertical-align: initial;
+}
+/*搜索浮动*/
+.msgWrap .autonym-group .form-group,.card-group .form-group,.from-groups .form-group{
+    float: left;
+    margin-bottom: 15px;
+}
+.special {
+    height: 30px;
+    line-height: 30px;
+}
+.special label{
+    padding-left: 10px;
+}
+.sce_group .form-group{
+    margin-top: 0!important;
+    margin-bottom: 0!important;
+}
+.agentPool label{
+    width: 120px;
+}
+.box-title img{
+    width: 150px;
+    padding: 15px 15px 0 15px;
+    float: left;
+}
+.box-title div{
+    float: left;
+    margin-top: 23px;
+}
+.erweima img{
+    width: 260px;
+    padding: 25px;
+}
+.order span{
+    color: #ff6600;
+}
+/*输入框*/
+
+.form-textarea{
+    margin-left: 5%;
+    margin-bottom: 15px;
+}
+.form-group input[type="text"]{
+    height: 30px !important;
+}
+.form input[type="text"]{
+    float: none !important;
+}
+.form-group input{
+    vertical-align: middle;
+    margin: 0!important;
+}
+input[type="text"],input[type="number"] {
+    background-color: #fff;
+    width: 150px;
+    border: 1px solid #D7D7D7;
+    border-radius: 3PX;
+    padding: 0 2px;
+    line-height: 14PX;
+    font-size: 12px;
+    display: inline-block;
+    box-sizing: border-box;
+    padding-left: 5px;
+}
+
+#card_type,#type{
+    width: 150px;
+}
+
+/*下拉选择框*/
+.card-group .form-group select{
+    width: 118px;
+    height: 30px;
+    line-height: 30px;
+}
+select {
+    border: 1px solid #D7D7D7;
+    padding: 4px 6px 6px 4px;
+    border-radius: 3px;
+}
+
+/*table选项下拉框*/
+.dropdown-menu{
+    width: 133px;
+}
+#tool_bar span{
+    margin-right: 12px;
+    font-weight: 700;
+}
+
+
+/*alert提示框*/
+
+.alert_info{
+    font-size: 12px;
+    background: rgba(248, 184, 58,0.2);
+}
+.alert_info:hover{
+    background: rgba(248, 184, 58,0.3);
+}
+/*label搜索输入宽度*/
+input[type=radio]+label{
+    width: 45px!important;
+    white-space: nowrap;
+}
+.qx label{
+    width: 80px;
+    vertical-align: top;
+}
+#treeDemo{
+    width: 80%;
+    display: inline-block;
+}
+
+
+

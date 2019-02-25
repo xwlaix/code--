@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+
+    <title>变更套餐</title>
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../static/css/register.css">
+    <link rel="stylesheet" href="../../static/css/fonticon.css">
+    <link rel="stylesheet" href="../../static/css/changePackage.css">
+
+</head>
+
+<body>
+<!--总内容外层盒子-->
+<div class="TotalContentBox">
+    <!--头部提示内容-->
+    <div class="Authentication-top">
+        变更套餐
+    </div>
+    <!--认证部分-->
+    <div class="Authentication-forms">
+        <div class="ietmOBX">
+            <span class="name">卡号</span>
+            <input id="kahao" class="text" type="text" value="" placeholder="请输入卡号(接入号)">
+        </div>
+        <div class="ietmOBX user-register-Pro hide">
+            <div class="user-register" id="textinfo"></div>
+        </div>
+        <div class="ietmOBX">
+            <span class="name">联系人</span>
+            <input id="username" class="text" type="text" placeholder="请与实名认证的保持一致">
+        </div>
+        <div class="ietmOBX">
+            <span class="name">手机号码</span>
+            <input id="phone" class="text" type="text" placeholder="请与实名认证的保持一致">
+        </div>
+    </div>
+    <!--身份证上传部分-->
+    <div class="UploadID-BOX">
+        <div class="ietmOBX">
+            <span class="name">套餐类型</span>
+            <ul id="type1">
+                <li class="item" data-id="9">11G包月</li>
+                <li class="item" data-id="6">3G包月</li>
+                <li class="item" data-id="8">6G包月</li>
+                <li class="item" data-id="7">4G包月</li>
+                <li class="item" data-id="10">1G包月</li>
+                <li class="item" data-id="11">500M包月</li>
+                <li class="item" data-id="12">700M包月</li>
+                <li class="item" data-id="13">2G包月</li>
+                <li class="item" data-id="14">电信99元不限量</li>
+            </ul>
+            <label for="remake" class="remake">备注</label>
+            <textarea name="" id="remake" cols="30" rows="4" placeholder="修改套餐仅限包月卡，一月仅一次，本月修改次月生效（电信99元不限量套餐仅限电信用户升级）。"></textarea>
+            <div class="Authentication-footer add">
+                <p>提交</p>
+            </div>
+            <div class="order Authentication-footer">
+                <p>我的订单</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</body>
+<script src="../../common/js/jquery-3.1.1.min.js"></script>
+<script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+<script src="../../static/js/mobileCommon.js"></script>
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+    var seeId = sessionStorage.getItem("id"),
+        cardNo = sessionStorage.getItem("cardNo");
+    $("#kahao").val(cardNo);
+    $('.item').click(function(){
+        $(this).addClass('active').siblings().removeClass('active')
+    });
+  
+    $(".order").click(function(){
+        location.href = "changeList.html";
+    })
+
+    $(".add").click(function () {
+        var This = $(this);
+        var kahao = $.trim($("#kahao").val());
+        var username = $.trim($("#username").val());
+        var phone = $.trim($("#phone").val());
+        var packageID = $('#type1 .item.active').attr('data-id');
+        //验证卡号,不为空&全部是数字小于20位通过
+        if (!kahao) {
+            $.toptip('请输入您的卡号', 2000, 'error');
+            return (false)
+        }
+        //验证名字不为空&小于8位 通过
+        if (!username) {
+            $.toptip('请输入您的名字', 2000, 'error');
+            return (false)
+        }
+        //验证手机号
+        if (!phone) {
+            $.toptip('请输入手机号码', 2000, 'error');
+            return (false)
+        }
+        var reg = /^1[3|4|5|7|8][0-9]\d{4,8}$/;
+        if (!reg.test(phone)) {
+            $.toptip('手机号码格式不对!', 2000, 'error');
+            return false;
+        }
+        //套餐id
+        if (!packageID) {
+            $.toptip('请选择要变更的套餐', 2000, 'error');
+            return (false)
+        }
+        //验证身份证
+        if (This.hasClass('active')) return false;
+        This.addClass('active');
+        This.text('提交中...');
+        var url = "?r=wms/personal/update-celebrity";
+        $post(url, {name: username, phone: phone, card: kahao, packageID: packageID},
+            function (res) {
+                This.removeClass('active');
+                if (res.code == 1) {
+                    location.href = "home.html";
+                } else {
+                    $.toptip(res.msg, 2000, 'error');
+                    This.text('提交');
+                }
+            });
+    });
+
+</script>
+</html>

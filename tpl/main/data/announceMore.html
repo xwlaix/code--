@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>发布公告</title>
+    <link rel="stylesheet" href="../../common/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/Department.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/My97DatePicker/WdatePicker.js"></script>
+
+</head>
+<body>
+<!--中间部分start!-->
+<div class="main-box">
+    <div id="main-box-index">
+        <div class="msgWrap form">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">新增公告</h4>
+                        </div>
+                        <form class="modal-body keywords_add" id="signupForm">
+                            <div class="form-group">
+                                <label for="title">标题:</label>
+                                <input type="text" name="title" data-bind="value:tetle" class="form-control" id="title" placeholder="标题">
+                            </div>
+                            <div class="form-group">
+                                <label for="content">内容:</label>
+                                <textarea name="text" id="content" cols="50" data-bind="value:content" rows="10" style="border: 1px solid #D7D7D7" placeholder="内容"></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消</button>
+                                <button type="button" id="btn_submit" class="btn btn-primary btn-sm" ><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="card-group clearfix">
+                <div class="form-group">
+                    <label for="date_begin" class="span_title" title="时间">时间：</label>
+                    <input id="date_begin" class="Wdate form-control" name="starttime" type="text"
+                           onFocus="var date_begin=$dp.$('date_end');
+                                   WdatePicker({onpicked:function(){date_end.focus();},
+                                   maxDate:'#F{$dp.$D(\'date_end\')}'})"/>
+                    <label for="date_end" style="display:-moz-inline-box;display:inline-block;width: 8px;text-align:right;">~</label>
+                    <input id="date_end" class="Wdate form-control" name="endtime" type="text"
+                           onFocus="WdatePicker({minDate:'#F{$dp.$D(\'date_begin\')}'})"/>
+                </div>
+                <div class="form-group">
+                    <label for="titles">标题:</label>
+                    <input type="text" name="title" class="form-control" id="titles">
+                    <button class=" btn btn-info btn-sm keydownBtn" id="exportCondition" title="搜索">搜索</button>
+
+                </div>
+            </div>
+            <table id="tb_dept" data-bind="myBootstrapTable:$root">
+            </table>
+
+        </div>
+    </div>
+</div>﻿
+</body>
+<script type="text/javascript">
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.exportCondition();
+            this.DepartmentModel = {
+                tetle: ko.observable(),
+                content: ko.observable(),
+                url: ko.observable(),
+                sort: ko.observable()
+            };
+        },
+
+        //搜索
+        exportCondition: function () {
+            $('#exportCondition').on('click', function () {
+                secData();
+                $post(urlPrefix + "?r=sms/notice/get-all",
+                    data,
+                    function (res) {
+                        layer.msg(res.msg,
+                            {time: 2000});
+                        if (res.code == 1) {
+                            tableInit.myViewModel.load(res.data);
+                        }
+                    });
+            })
+        }
+    };
+    function secData() {
+        data = {
+            starttime: $.trim($("#date_begin").val()),
+            endtime: $.trim($("#date_end").val()),
+            tetle: $.trim($("#titles").val()),
+            pageSize: 10,
+            pageNumber: 1
+        };
+    }
+    function queryParams(params) {
+        secData();
+        data.pageSize = params.pageSize;
+        data.pageNumber = params.pageNumber;
+        return data;
+    }
+    window.operateEvents = {
+        //删除
+        'click #btn_look': function (e, value, row, index) {
+            layer_open('查看公告','announce.html?id='+row.id)
+        },
+        'mouseenter .show': function (e, value, row, index) {
+            var that = this;
+            layer.tips(row.content, that, {
+                tips: 1 //还可配置颜色
+            });
+        }
+    };
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+
+        //2、注册增删改事件
+        operate.operateInit();
+
+    });
+    //初始化表格
+    var tableInit = {
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+               	search: false,
+                queryParams: queryParams,//传递参数（*）
+                method: "post",
+                url: urlPrefix + '?r=sms/notice/get-all',
+                onRefresh: function () {
+                    $("#date_end").val("");
+                    $("#date_begin").val("");
+                    $("#titles").val("");
+                },
+                columns: [ {
+                    field: 'id',
+                    title: 'id'
+                }, {
+                    field: 'tetle',
+                    title: '标题'
+                },{
+                    field: 'addtime',
+                    title: '添加时间'
+                }, {
+                    field: 'content',
+                    title: '内容',
+                    formatter:forContent,
+                    events: operateEvents
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }]
+            });
+
+            function forContent(value, row, index) {
+                return ['<span class="text-success show" >' + cutstr(row.content, 30) +
+                '</span>'].join('');
+            }
+            function operateFormatter(value, row, index) {
+                return [
+                    '<button id="btn_look" type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>'+
+                    '<span class=" " aria-hidden="true"></span>查看'+
+                    '</button>'
+                ].join('');
+            }
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+    //操作
+</script>
+
+</html>

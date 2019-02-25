@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+    <script src="../../static/js/mobileCommon.js"></script>
+    <script src="../../static/js/jquery.cookie.js"></script>
+
+    <link rel="stylesheet" href="../../static/css/mtV2.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../static/css/fonticon.css">
+
+    <title>流量卡查询</title>
+</head>
+
+<body id="bindCardPage">
+<div class="wrap">
+    <div class="logo" style="padding-top: 42%!important;">
+        <img id="logo_img" src="../../static/img/logo_simple.png" style="width: 63%">
+    </div>
+    <div class="bindCardMain">
+        <div class="cardNoArea">
+            <label>卡号</label>
+            <span id="scanQRCode" class="icon-saoyisao"></span>
+            <div>
+                <input type="text" id="card_no" placeholder="请输入流量卡号"/>
+            </div>
+
+        </div>
+        <div class="FuzzySearch" style="display: none;">
+            <ul class="list">
+                <li class="card"></li>
+            </ul>
+        </div>
+        <input type="button" id="bindCard" value="查询"/>
+        <div class="tips">点击输入卡号右侧 "扫一扫" 图标，可直接扫码查询</div>
+    </div>
+</div>
+</body>
+
+<script src="../../common/js/transparency.min.js"></script>
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript">
+    //解析cookie，渲染到历史
+    function listLoad() {
+        if ($.cookie('kahao')) {
+            list = $.cookie('kahao').split(",");
+            obj = [];
+            for (i in list) {
+                if (i < list.length) {
+                    obj.push({card: list[i]});
+                }
+            }
+            $('.list').render(obj);
+        }
+    }
+    function load(res){
+        if (res.data.card_status == 1) {card_status = '待激活'}
+        if (res.data.card_status == 2) {card_status = '正常'}
+        if (res.data.card_status == 3) {card_status = '单向停机'}
+        if (res.data.card_status == 4) {card_status = '停机'}
+        if (res.data.card_status == 5) {card_status = '预销号'}
+        if (res.data.card_status == 6) {card_status = '销号'}
+        if (res.data.card_status == 7) {card_status = '过户'}
+        if (res.data.card_status == 8) {card_status = '休眠'}
+        if (res.data.card_status == 9) {card_status = '未知状态'}
+        if (res.data.card_status == 0) {card_status = '未知状态'}
+        sessionStorage.setItem("fid", res.data.fid);
+        sessionStorage.setItem("sid", res.data.sid);
+        sessionStorage.setItem("tid", res.data.tid);
+        sessionStorage.setItem("cardid", res.data.id);
+        sessionStorage.setItem("type", res.data.type);
+        sessionStorage.setItem("iccid", res.data.iccid);
+        sessionStorage.setItem("amount", res.data.amount);
+        sessionStorage.setItem("card_status", card_status);
+        sessionStorage.setItem("card_type", res.data.card_type);
+        sessionStorage.setItem("operatorid", res.data.operatorid);
+        sessionStorage.setItem("operator_type", res.data.operator_type);
+        sessionStorage.setItem("status", res.data.real_status);
+        window.location.href = 'simpleIndex.html?card='+cardNo;
+    }
+    listLoad();
+    var id = getUrlParam('id'),cardNo,  kahao = getUrlParam("kahao"),card_status,flag=0;
+    sessionStorage.setItem("id", id);
+
+
+    /** 加载过程中事件 **/
+    //配置jssdk
+    $post('?r=home/setting/get-jsapi-conf', {uid: 50, url: document.location.href}, function (res) {
+        if (res.code == 0) {
+            return
+        }
+        wx.config({
+            appId: res.data.appId,             // 必填，公众号的唯一标识
+            timestamp: res.data.timestamp,     // 必填，生成签名的时间戳
+            nonceStr: res.data.nonceStr,       // 必填，生成签名的随机串
+            signature: res.data.signature,     // 必填，签名，见附录1
+            jsApiList: ["scanQRCode", 'onMenuShareQZone',      //分享到QZone
+                'onMenuShareWeibo',      //分享到微博
+                'onMenuShareQQ',         //分享到QQ
+                'onMenuShareAppMessage', //分享到朋友
+                'onMenuShareTimeline']  //分享给朋友圈]           // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        })
+    });
+
+    /** 加载后事件 **/
+    $(function () {
+        $('#card_no').on({
+            click: function () {
+                if ($.cookie('kahao')) {
+                    $(".FuzzySearch").show();
+                }
+            }
+        });
+        $('ul').on("click", "li", function () {
+            var liValue = $(this).text();
+            $("#card_no").val(liValue);
+            $(".FuzzySearch").hide();
+        });
+        // 查询按钮点击
+        $("#bindCard").click(function () {
+            cardNo = $.trim($("#card_no").val());
+            if (!cardNo) {
+                $.toptip('请输入流量卡号', 2000, 'error');
+                return false;
+            }
+            else {
+                if(flag==1){
+                    $.toptip('查询中...', 2000, 'success');
+                    return
+                }
+                flag=1;
+                $("#bindCard").val('查询中...');
+                var arr = [], cookArr = [];
+                if ($.cookie('kahao')) {
+                    cookArr = $.cookie('kahao').split(",");
+                }
+                arr.push(cardNo);
+                var c = arr.concat(cookArr);
+                if (c.unique3().length > 10) {
+                    c.pop()
+                }
+                $.cookie('kahao', c.unique3());
+                sessionStorage.setItem("cardNo", cardNo);
+                $post('?r=wms/personal/card-bind', {card: cardNo, uid: 50, code: getUrlParam("code")}, function (res) {
+                    if(res.code==1){
+                        if(id==res.data.uid){
+                            load(res)
+                        }else {
+                            $get('?r=wms/personal/get-card', function (res) {
+                                load(res)
+                            });
+                        }
+                        flag=0;
+                    }
+                    $("#bindCard").val('查询');
+                });
+            }
+        });
+        // 扫描按钮点击
+        $("#scanQRCode").click(function () {
+            wx.scanQRCode({
+                needResult: 1,                          // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+                scanType: ["qrCode", "barCode"],        // 可以指定扫二维码还是一维码，默认二者都有
+                success: function (res) {
+                    var result = res.resultStr;         // 当needResult 为 1 时，扫码返回的结果
+                    result = result.substring(result.indexOf(',') + 1);
+                    $('#card_no').val(result);
+                    $("#bindCard").click()
+                }
+            });
+        })
+
+    });
+</script>
+<script src="../../static/js/WXShareSimple.js?v2.4"></script>
+</html>

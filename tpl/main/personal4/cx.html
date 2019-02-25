@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0">
+    <title>
+        卡片激活
+    </title>
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../static/css/jh.css">
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../static/js/mobileCommon.js"></script>
+    <script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+    <script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+    <script>
+        /** 有跳转性质的，写在页面加载之前 **/
+        if (window.location.search.indexOf("code") == -1) {
+            // 转授权链接
+            $post('?r=home/setting/change-url', {url: document.location.href, id: getUrlParam('id')}, function (res) {
+                if (res.code == 0) {
+                    return
+                }
+//                window.location.href = res.data.url
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="weui-cells weui-cells_form">
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">卡号</label></div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" type="text" id="cardNo" placeholder="请输入卡号">
+        </div>
+    </div>
+</div>
+<a href="javascript:;" class="weui-btn  conf" style="">确认激活</a>
+
+</body>
+<script>
+    var flag=0,cardNo=sessionStorage.getItem("cardNo"),uid;
+    if(cardNo){
+        $('#cardNo').val(cardNo)
+    }
+    $(".conf").click(function () {
+        cardNo = $.trim($("#cardNo").val());
+        uid = getUrlParam('id')||sessionStorage.getItem("id");
+        sessionStorage.setItem("id", uid);
+        if (!cardNo) {
+            $.toptip('请输入卡号', 2000, 'error');
+            return
+        }
+        $(".conf").text('激活中...');
+        if (flag == 1) {
+            $.toptip('正在激活', 2000, 'success');
+            return
+        }
+        flag = 1;
+        $post('?r=wms/personal/add-activate-card',
+            {card: cardNo, uid: uid},
+            function (res) {
+                if (res.code == 1) {
+                    sessionStorage.setItem("cardNo", cardNo);
+                    $post('?r=wms/personal/card-bind', {
+                        card: cardNo,
+                        uid: uid,
+                        code: getUrlParam("code")
+                    }, function (res) {
+                        if(res.code==0){return}
+                        if (res.data.card_status == 1) {
+                            card_status = '待激活'
+                        }
+                        if (res.data.card_status == 2) {
+                            card_status = '正常'
+                        }
+                        if (res.data.card_status == 3) {
+                            card_status = '单向停机'
+                        }
+                        if (res.data.card_status == 4) {
+                            card_status = '停机'
+                        }
+                        if (res.data.card_status == 5) {
+                            card_status = '预销号'
+                        }
+                        if (res.data.card_status == 6) {
+                            card_status = '销号'
+                        }
+                        if (res.data.card_status == 7) {
+                            card_status = '过户'
+                        }
+                        if (res.data.card_status == 8) {
+                            card_status = '休眠'
+                        }
+                        if (res.data.card_status == 9) {
+                            card_status = '未知状态'
+                        }
+                        if (res.data.card_status == 0) {
+                            card_status = '未知状态'
+                        }
+                        sessionStorage.setItem("fid", res.data.fid);
+                        sessionStorage.setItem("sid", res.data.sid);
+                        sessionStorage.setItem("tid", res.data.tid);
+                        sessionStorage.setItem("cardid", res.data.id);
+                        sessionStorage.setItem("type", res.data.type);
+                        sessionStorage.setItem("iccid", res.data.iccid);
+                        sessionStorage.setItem("amount", res.data.amount);
+                        sessionStorage.setItem("card_status", card_status);
+                        sessionStorage.setItem("card_type", res.data.card_type);
+                        sessionStorage.setItem("operatorid", res.data.operatorid);
+                        sessionStorage.setItem("operator_type", res.data.operator_type);
+                        if (res.data.real_status == 2) {
+                            sessionStorage.setItem("real_status", '已认证')
+                        }
+                        if (res.data.real_status == 1) {
+                            sessionStorage.setItem("real_status", '未认证')
+                        }
+                        location.href = 'home.html'
+                    });
+                } else {
+                    flag=0;
+                    $.toptip(res.msg, 2000, 'error');
+                }
+                $(".conf").text('确认激活');
+            })
+    })
+</script>
+</html>

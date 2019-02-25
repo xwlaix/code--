@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../static/css/wxMobileV2.css">
+    <link rel="stylesheet" href="../../static/css/fonticon.css">
+    <title>用户中心</title>
+
+</head>
+<body ontouchstart>
+<div class="TotalContentBox">
+    <div class="weui-panel weui-panel_access info_title">
+        <div class="weui-panel__bd top-info-content">
+            <div class="weui-media-box weui-media-box_appmsg top-info-content">
+                <div class="weui-media-box__hd logo_img logo-join">
+                    <img class="weui-media-box__thumb headimgurl" src="">
+                </div>
+                <div class="weui-media-box__bd logo_content">
+                    <p class="weui-media-box__desc"><span class="nickname"></span></p>
+                    <p class="weui-media-box__desc spec">id：<span class="id"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="weui-flex info_home">
+        <div class="weui-flex__item ">
+            <div class="number sum"></div>
+            <div>卡片总数</div>
+        </div>
+        <div class=" weui-flex__item ">
+            <div class="number nowAc"></div>
+            <div>剩余佣金（元）</div>
+        </div>
+        <div class=" weui-flex__item ">
+            <div class="number sumAc"></div>
+            <div>总佣金（元）</div>
+        </div>
+    </div>
+    <div class="hengxian"></div>
+    <!--九宫格列表开始-->
+    <div class="weui-grids list_content">
+        <a href="" class="weui-grid js_grid" id="tg">
+            <img src="../../static/img/self.png" alt="">
+            <p>专属海报</p>
+        </a>
+        <a href="rechargeList.html" class="weui-grid js_grid">
+            <img src="../../static/img/order.png" alt="">
+            <p>我的订单</p>
+        </a>
+        <a href="cardCenter.html" class="weui-grid js_grid">
+            <img src="../../static/img/cardCenter.png" alt="">
+            <p>卡片管理</p>
+        </a>
+        <a href="withdraw.html" class="weui-grid js_grid">
+            <img src="../../static/img/tx.png">
+            <p>提现管理</p>
+        </a>
+        <a href="" class="weui-grid js_grid">
+            <img src="../../static/img/money.png">
+            <p>盈利模式</p>
+        </a>
+        <a href="" class="weui-grid js_grid">
+            <img src="../../static/img/kefu.png">
+            <p>一对一客服</p>
+        </a>
+        <a href="cardList.html" class="weui-grid js_grid">
+            <img src="../../static/img/cardOrder.png">
+            <p>卡片订单</p>
+        </a>
+    </div>
+    <!--九宫格结束-->
+    <!--页脚开始-->
+</div>
+<script src="../../common/js/jquery-3.1.1.min.js"></script>
+<script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+<script src="../../static/js/mobileCommon.js"></script>
+<script>
+    if (sessionStorage.getItem("needFresh")) {
+        $(".id").text(sessionStorage.getItem("aid"));
+        $(".sum").text(sessionStorage.getItem("sum"));
+        $('.nickname').text(sessionStorage.getItem("nickname"));
+        $('.headimgurl').attr('src', sessionStorage.getItem("headimgurl"));
+        $(".nowAc").text(parseFloat(sessionStorage.getItem("nowAc")).toFixed(2));
+        $(".sumAc").text(parseFloat(sessionStorage.getItem("sumAc")).toFixed(2));
+        $("#tg").attr('href', 'tg.html?aid=' + sessionStorage.getItem("aid"));
+    } else {
+        $get('?r=wms/personal/get-wx-info', function (res) {
+            if (res.code == 0) {
+                return
+            }
+            sessionStorage.setItem("needFresh", true);
+            sessionStorage.setItem("nickname", res.data.nickname);
+            sessionStorage.setItem("headimgurl", res.data.headimgurl);
+            $('.nickname').text(res.data.nickname);
+            $('.headimgurl').attr('src', res.data.headimgurl)
+        });
+        $get('?r=wms/agent/get-my-info', function (res) {
+            if (res.code == 0) {
+                return
+            }
+            $(".id").text(res.data.id);
+            $("#tg").attr('href', 'tg.html?aid=' + res.data.id);
+            sessionStorage.setItem("amount", res.data.amount);
+            sessionStorage.setItem("aid", res.data.id);
+        });
+        $post("?r=wms/agent/get-count-card", {pageSize: 1, pageNumber: 1}, function (res) {
+            $(".sum").text(res.data.total);
+            sessionStorage.setItem("sum", res.data.total);
+        });
+        $post("?r=wms/agent/get-agent-commission", {pageSize: 1, pageNumber: 1}, function (res) {
+            $(".nowAc").text(res.data.nowAc);
+            $(".sumAc").text(res.data.sumAc);
+            sessionStorage.setItem("nowAc", res.data.nowAc);
+            sessionStorage.setItem("sumAc", res.data.sumAc);
+        })
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+ /* wmx80_css  */
+ 
+ body,
+ h1,
+ h2,
+ h3,
+ h4,
+ h5,
+ h6,
+ p,
+ ul,
+ ol,
+ li,
+ form,
+ img,
+ dl,
+ dt,
+ dd,
+ table,
+ th,
+ td,
+ blockquote,
+ fieldset,
+ div,
+ strong,
+ label,
+ em {
+     margin: 0;
+     padding: 0;
+     border: 0;
+ }
+ 
+ ul,
+ ol,
+ li {
+     list-style: none;
+ }
+ 
+ input,
+ button,
+ textarea {
+     margin: 0;
+     font-size: 12px;
+     font-family: microsoft yahei, arial, helvetica, sans-serif arial, helvetica, sans-serif;
+ }
+ 
+ body {
+     font: 1rem "寰蒋闆呴粦";
+     margin: 0;
+     color: #515567;
+     background: #ebebeb;
+ }
+ 
+ table {
+     border-collapse: collapse;
+     border-spacing: 0;
+ }
+ 
+ a {
+     text-decoration: none;
+     outline: none;
+     color: #515567;
+ }
+ 
+ img {
+     -webkit-transition: all 400ms ease-out;
+     -mozilla-transition: all 400ms ease-out;
+     -ms-transition: all 400ms ease-out;
+     -o-transition: all 400ms ease-out;
+     transition: all 400ms ease-out;
+ }
+ 
+ a:hover {
+     text-decoration: none;
+     -moz-transition: color .4s linear;
+     -webkit-transition: color .4s linear;
+     transition: color .35s linear;
+ }
+ 
+ a,
+ img,
+ button,
+ input,
+ textarea {
+     -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+     -webkit-appearance: none;
+ }
+ 
+ .none {
+     display: none
+ }
+ 
+ *:focus {
+     outline: none;
+     -moz-outline: none;
+ }
+ 
+ i,
+ em,
+ ins {
+     font-style: normal;
+     text-decoration: none
+ }
+ 
+ nav,
+ footer,
+ section,
+ header,
+ article {
+     display: block;
+ }
+ 
+ .fl {
+     float: left
+ }
+ 
+ .fr {
+     float: right
+ }
+ 
+ .pr {
+     position: relative
+ }
+ 
+ .pa {
+     position: absolute
+ }
+ 
+ .oh {
+     overflow: hidden
+ }
+ 
+ .clearfix {
+     *zoom: 1;
+ }
+ 
+ .clearfix:before,
+ .clearfix:after {
+     display: table;
+     content: "";
+     line-height: 0;
+ }
+ 
+ .clearfix:after {
+     clear: both;
+ }
+ 
+ input[type="submit"],
+ input[type="reset"],
+ input[type="button"],
+ button {
+     -webkit-appearance: none;
+ }
+ 
+ ::-webkit-scrollbar {
+     width: 10px;
+     height: 10px;
+ }
+ 
+ ::-webkit-scrollbar-track {
+     background: #f1f1f1;
+ }
+ 
+ ::-webkit-scrollbar-track:hover {
+     background: #eee;
+ }
+ 
+ ::-webkit-scrollbar-thumb {
+     border-radius: 10px;
+     background: #b9b9b9;
+ }
+ 
+ ::-webkit-scrollbar-thumb:hover {
+     background: #747474;
+ }
+ 
+ ::-webkit-scrollbar-thumb:active {
+     background: #555;
+ }
+ 
+ img,
+ a {
+     display: block;
+ }
+
+ @font-face {
+  font-family: xiaoluti;
+  src: url("http://res.yaoyue365.com/sys/fonts/5XVTJfDb.ttf");
+}
+@font-face {
+  font-family: yuanhei;
+  src: url("http://res.yaoyue365.com/sys/fonts/17jUBw5i.ttf");
+}
+@font-face {
+  font-family: kaiti;
+  src: url("http://res.yaoyue365.com/sys/fonts/mCN638YF.ttf");
+}
+@font-face {
+  font-family: fangsong;
+  src: url("http://res.yaoyue365.com/sys/fonts/eaNhq6iV.ttf");
+}
+@font-face {
+  font-family: shouxiehaibaoti;
+  src: url("http://res.yaoyue365.com/sys/fonts/fnqHYu8i.ttf");
+}
+
+@font-face {
+  font-family: pangyaer;
+  src: url("http://res.yaoyue365.com/sys/fonts/WdH3j82h.ttf");
+}
+@font-face {
+  font-family: qiaoqiaoti;
+  src: url("http://res.yaoyue365.com/sys/fonts/fEgCpJZv.ttf");
+}
+@font-face {
+  font-family: xiyuanti;
+  src: url("http://res.yaoyue365.com/sys/fonts/B4ydZmkC.ttf");
+}
+@font-face {
+  font-family: jialiliti;
+  src: url("http://res.yaoyue365.com/sys/fonts/gT14VcPb.ttf");
+}
+@font-face {
+  font-family: taotaoti;
+  src: url("http://res.yaoyue365.com/sys/fonts/3APGuTX5.ttf");
+}
+
+@font-face {
+  font-family: nanati;
+  src: url("http://res.yaoyue365.com/sys/fonts/bvs8XSmY.ttf");
+}
+@font-face {
+  font-family: nuoyeti;
+  src: url("http://res.yaoyue365.com/sys/fonts/UadfkSxE.ttf");
+}
+@font-face {
+  font-family: xiaoyuti;
+  src: url("http://res.yaoyue365.com/sys/fonts/k2ieDFgT.ttf");
+}
+@font-face {
+  font-family: qipaoti;
+  src: url("http://res.yaoyue365.com/sys/fonts/1qv5gJcw.ttf");
+}
+@font-face {
+  font-family: yingxiang;
+  src: url("http://res.yaoyue365.com/sys/fonts/vZPdHUVb.ttf");
+}
+
+@font-face {
+  font-family: tianzhengti;
+  src: url("http://res.yaoyue365.com/sys/fonts/MNeqZiRI.ttf");
+}
+@font-face {
+  font-family: runhangti;
+  src: url("http://res.yaoyue365.com/sys/fonts/SmPJWMu3.ttf");
+}
+@font-face {
+  font-family: qingcong;
+  src: url("http://res.yaoyue365.com/sys/fonts/wrbIFB7m.ttf");
+}
+@font-face {
+  font-family: xihe;
+  src: url("http://res.yaoyue365.com/sys/fonts/WC48az0G.ttf");
+}
+@font-face {
+  font-family: wukelili;
+  src: url("http://res.yaoyue365.com/sys/fonts/4Q21Zxkc.ttf");
+}
+
+@font-face {
+  font-family: fangmeng;
+  src: url("http://res.yaoyue365.com/sys/fonts/7CISxaBq.ttf");
+}
+@font-face {
+  font-family: growing;
+  src: url("http://res.yaoyue365.com/sys/fonts/CGwVca8Z.ttf");
+}
+@font-face {
+  font-family: marshmallow;
+  src: url("http://res.yaoyue365.com/sys/fonts/VjT34FUI.ttf");
+}
+@font-face {
+  font-family: jianxin;
+  src: url("http://res.yaoyue365.com/sys/fonts/6cD4jaqA.ttf");
+}
+@font-face {
+  font-family: wanwan;
+  src: url("http://res.yaoyue365.com/sys/fonts/9y43DjWM.ttf");
+}
+
+@font-face {
+  font-family: zhijiaodai;
+  src: url("http://res.yaoyue365.com/sys/fonts/p48SYXMa.ttf");
+}
+@font-face {
+  font-family: huaban;
+  src: url("http://res.yaoyue365.com/sys/fonts/YkS40DZ2.ttf");
+}
+@font-face {
+  font-family: degula;
+  src: url("http://res.yaoyue365.com/sys/fonts/FWE1PmRv.ttf");
+}
+@font-face {
+  font-family: guiqi;
+  src: url("http://res.yaoyue365.com/sys/fonts/UDpqkQVN.ttf");
+}
+@font-face {
+  font-family: liulianbabab;
+  src: url("http://res.yaoyue365.com/sys/fonts/SjAy36xv.ttf");
+}
+
+@font-face {
+  font-family: guangrongzhanfang;
+  src: url("http://res.yaoyue365.com/sys/fonts/5H8uwfVW.ttf");
+}
+@font-face {
+  font-family: huanyebojue;
+  src: url("http://res.yaoyue365.com/sys/fonts/1sQRGkj9.ttf");
+}
+@font-face {
+  font-family: tiantianquan;
+  src: url("http://res.yaoyue365.com/sys/fonts/UVQ2F5tB.ttf");
+}
+@font-face {
+  font-family: bansong;
+  src: url("http://res.yaoyue365.com/sys/fonts/HQ1u5Bjx.ttf");
+}
+@font-face {
+  font-family: mitaoxiaogongju;
+  src: url("http://res.yaoyue365.com/sys/fonts/yDk0iw76.ttf");
+}
+@font-face {
+  font-family: mangguodidi;
+  src: url("http://res.yaoyue365.com/sys/fonts/PB7eVXW6.ttf");
+}

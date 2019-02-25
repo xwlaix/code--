@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no"/>
+    <link rel="stylesheet" href="../../common/js/jquery-weui/css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../common/js/jquery-weui/lib/weui.min.css">
+    <link rel="stylesheet" href="../../static/css/mtV2.css"/>
+    <link rel="stylesheet" href="../../static/css/wxMobileV2.css"/>
+    <link rel="stylesheet" href="../../static/css/record.css?v1.0"/>
+    <title> 消费充值记录 </title>
+
+</head>
+<body class="record">
+<!--上拉刷新开始-->
+<div class="weui-pull-to-refresh__layer">
+    <div class='weui-pull-to-refresh__arrow'></div>
+    <div class='weui-pull-to-refresh__preloader'></div>
+    <div class="down">下拉刷新</div>
+    <div class="up">释放刷新</div>
+    <div class="refresh">正在刷新</div>
+</div>
+<!--上拉刷新结束-->
+<!--列表开始-->
+<div id="template">
+    <div class="weui-cells detail ">
+        <div class="weui-cell ">
+            <div class="weui-cell__bd info ">
+                <p class="text-center ">账户余额<span class="amount"></span>元</p>
+            </div>
+            <div class="weui-cell__bd info">
+                <p class="text-center ">总计消费<span class="sum"></span>元</p>
+            </div>
+        </div>
+    </div>
+    <div class="weui-cells detail ">
+        <div class="weui-cell ">
+            <div class="weui-cell__bd">
+                <p class="text-center info">变动时间</p>
+            </div>
+            <div class="weui-cell__bd">
+                <p class="text-center info">账户变动金额</p>
+            </div>
+            <div class="weui-cell__bd ">
+                <p class="text-center ">账户变动原因</p>
+            </div>
+        </div>
+    </div>
+    <div class="weui-cells margin_top" id="rows">
+
+    </div>
+</div>
+<!--标题开始-->
+<div class="weui-loadmore">
+    <i class="weui-loading"></i>
+    <span class="weui-loadmore__tips">正在加载</span>
+</div>
+<!--标题结束-->
+<div class="content hidden">
+    <div class="weui-panel__bd">
+        <div class="weui-media-box weui-media-box_appmsg">
+            <div class="weui-media-box__bd">
+                <h4 class="weui-media-box__title text-center wx-title">暂无充值记录</h4>
+            </div>
+        </div>
+    </div>
+</div>
+<!--列表结束-->
+</body>
+<script type="text/html" id="normal">
+    {{each rows as value index}}
+    <div class="weui-cell">
+        <div class="weui-cell__bd ">
+            <p class="text-center addtime">{{value.addtime}}</p>
+        </div>
+        <div class="weui-cell__bd">
+            <p class="text-center "><span class="money">{{value.money}}</span></p>
+        </div>
+        <div class="weui-cell__bd ">
+            <p class="text-center remarks">{{value.remarks}}</p>
+        </div>
+    </div>
+    {{/each}}
+</script>
+<script src="../../common/js/jquery-3.1.1.min.js"></script>
+<script src="../../static/js/mobileCommon.js"></script>
+<script src="../../common/js/jquery-weui/js/jquery-weui.min.js"></script>
+<script src="../../common/js/jquery-weui/lib/fastclick.js"></script>
+<script src="../../common/js/artTemplate.js"></script>
+
+<script type="text/javascript">
+    var page = 1, sum = 0, flag = 0, loading = false,
+        amount=parseFloat(sessionStorage.getItem("amount")).toFixed(2);
+    $(".amount").text(amount);
+    function load(res,flag){
+        for (i = 0; i < res.data.rows.length; i++) {
+            res.data.rows[i].addtime = /\d{4}-\d{1,2}-\d{1,2}/g.exec(res.data.rows[i].addtime)[0];
+            if (res.data.rows[i].type == 1) {
+                if (!res.data.rows[i].remarks) {
+                    res.data.rows[i].remarks = "充值"
+                }
+                res.data.rows[i].money = Math.abs(+res.data.rows[i].money);
+            } else {
+                if (!res.data.rows[i].remarks) {
+                    res.data.rows[i].remarks = "扣费"
+                }
+                if(flag=='true'){sum += Math.abs(+res.data.rows[i].money)}
+                res.data.rows[i].money = -Math.abs(+res.data.rows[i].money);
+            }
+        }
+        if(flag=='true'){$(".sum").text(sum.toFixed(2));}
+        $("#rows").append($(template('normal', res.data)));
+        $(".weui-loadmore").addClass('hidden');
+    }
+    $(document.body).infinite().on("infinite", function () {
+        if (flag == 1) {
+            $(document.body).destroyInfinite();
+            return false
+        }
+        if(loading) return;
+        loading = true;
+        page += 1;
+        $(".weui-loadmore").removeClass('hidden');
+        $(".content").addClass('hidden');
+        $post("?r=wms/personal/get-card-account", {pageSize: 10, pageNumber: 1 * page},
+            function (res) {
+                loading = false;
+                if (res.code == 1) {
+                    load(res);
+                    if (res.data.total <= 10 * page) {
+                        flag = 1;
+                        $(".content").addClass('hidden');
+                        $(".weui-loadmore").addClass('hidden');
+                    }else{
+                        $(".content").removeClass('hidden');
+                    }
+                }
+            },
+            function () {
+                $(document.body).destroyInfinite();
+                $(".weui-loadmore").addClass('hidden');
+
+            }
+        )
+    });
+    $(document.body).pullToRefresh().on("pull-to-refresh", function () {
+        if (flag == 1) {
+            $(document.body).pullToRefreshDone();
+            return false
+        }
+        page += 1;
+        $post("?r=wms/personal/get-card-account", {pageSize: 10, pageNumber: 1 * page},
+            function (res) {
+                $(document.body).pullToRefreshDone();
+                if (res.code == 1) {
+                    load(res);
+                    if (res.data.total <= 10 * page) {
+                        flag = 1;
+                        $(".content").addClass('hidden');
+                        $(".weui-loadmore").addClass('hidden');
+                    }
+                }
+            },
+            function () {
+                $(document.body).pullToRefreshDone();
+            }
+        )
+    });
+    $('.wx-title').click(function(){
+        $(".weui-loadmore").removeClass('hidden');
+        $(".content").addClass('hidden');
+        page += 1;
+        $post("?r=wms/personal/get-card-account", {pageSize: 10, pageNumber: 1 * page},
+            function (res) {
+                if (res.code == 1) {
+                    load(res);
+                    if (res.data.total <= 10 * page) {
+                        flag = 1;
+                        $(".content").addClass('hidden');
+                        $(".weui-loadmore").addClass('hidden');
+                    }else{
+                        $(".content").removeClass('hidden');
+                    }
+                }
+            }
+        )
+    });
+    $post("?r=wms/personal/get-card-account", {pageSize: 10, pageNumber: 1},
+        function (res) {
+            if (res.code == 0) {
+                $(".content").removeClass('hidden');
+                $(".weui-loadmore").addClass('hidden');
+                return false
+            }
+            if (res.data.total > 10) {
+                $get("?r=wms/personal/get-card-account", function (res) {
+                    for (i = 0; i < res.data.rows.length; i++) {
+                        if (res.data.rows[i].type == 2) {
+                            sum += Math.abs(+res.data.rows[i].money)
+                        }
+                    }
+                    $(".sum").text(sum.toFixed(2));
+                });
+                load(res);
+                $(".content").removeClass('hidden');
+                $('.wx-title').text("加载更多");
+                $(".weui-loadmore").addClass('hidden');
+            } else {
+                flag = 1;
+                $(".weui-loadmore").addClass('hidden');
+                if (res.code == 1) {
+                    load(res,'true');
+                    if (res.data.total == 0) {
+                        $(".content").removeClass('hidden');
+                    }
+                }
+            }
+
+        },
+        function () {
+            $.toptip('操作失败', 'error');
+        }
+    )
+
+</script>
+</html>

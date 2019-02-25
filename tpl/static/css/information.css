@@ -1,0 +1,554 @@
+@charset "utf-8";
+body, div, h1, h2, h3, h4, h5, h6, p, ul, ol, li, input {
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    background: #ffFFFF;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    font-size: 12px
+}
+
+a:link {
+    color: #0088cc;
+}
+
+a:visited {
+    color: #0088cc;
+}
+
+/*a:hover { 
+font-size: 12px; 
+color: #8fc31f; 
+} */
+/*==================content===================*/
+.content {
+    width: 100%;
+    height: auto;
+    float: left;
+}
+
+.RightContent {
+    margin-bottom: 50px;
+    float: left;
+    color: #0084cd;
+    width: 100%;
+}
+
+
+.ConWrap {
+    float: left;
+    width: 100%;
+    margin-top: 20px;
+}
+#agentType, #agentNum, #agentArea {
+    font-size: 16px;
+    font-weight: bold;
+    display: inline-block;
+    width: 32%;
+}
+
+.picard {
+    background: url(img/card.png) no-repeat;
+    height: 21px;
+    width: 25px;
+    background-size: contain;
+    display: inline-block;
+    float: left;
+    padding-left: 8px;
+    margin-top: 4px;
+}
+
+#picard1 {
+    height: 46px;
+    width: 46px;
+    display: inline-block;
+    float: left;
+    padding-left: 5px;
+}
+
+#picard2 {
+    background: url(img/globle.png) no-repeat;
+    height: 20px;
+    width: 25px;
+    background-size: contain;
+    display: inline-block;
+    float: left;
+    padding-left: 5px;
+    margin-top: 4px;
+}
+
+#picard3 {
+    background: url(img/message.png) no-repeat;
+    height: 25px;
+    width: 25px;
+    background-size: contain;
+    display: inline-block;
+    float: left;
+    padding-left: 5px;
+}
+
+#simcard p {
+    float: left;
+}
+
+#GPRScard p:nth-of-type(1), #messagecard p:nth-of-type(1), .basicinform p:nth-of-type(1) {
+    float: left;
+    width: 88%;
+    height: 30px;
+    line-height: 30px;
+}
+
+#simcard2, #simcard3 {
+    display: inline-block;
+    width: 31%;
+}
+
+
+#GPRScard, #messagecard, .basicinform {
+    padding-top: 35px;
+    font-size: 12px;
+    font-weight: bold;
+    width: 100%;
+    float: left;
+}
+.basicinform{
+    padding-top: 0;
+}
+#container, #container2, #container3 {
+    padding-top: 30px;
+    margin: 0 auto;
+}
+
+
+#container4, #container5 {
+    min-height: 350px;
+    padding-top: 20px;
+    display: inline-block;
+}
+
+.gridtable {
+    width: 700px;
+    margin-top: 30px;
+}
+
+.gridtable tr {
+    height: 40px;
+}
+
+.gprsMost, #gprsLeast {
+    float: right;
+    padding-top: 30px;
+}
+
+.gprsMost h4, #gprsLeast h4 {
+    text-align: center;
+}
+
+#messagecard p {
+    float: left;
+}
+
+.tel {
+    color: #808080;
+}
+
+.title1, .title2 {
+    color: #4d4d4d;
+    font-size: 18px;
+}
+
+.underline, .underline2 {
+    height: 1px;
+    background: #ccc;
+    display: inline-block;
+    float: right;
+    margin-top: -8px;
+}
+
+.title th {
+    color: #4d4d4d;
+    font-size: 14px;
+}
+
+.title th:nth-of-type(1) {
+    padding-left: 20px;
+}
+
+.title th:nth-of-type(2) {
+    padding-right: 20px;
+}
+
+/*==================footer====================*/
+#footer {
+    width: 100%;
+    height: 240px;
+    float: left;
+}
+
+#footerup {
+    width: 100%;
+    height: 206px;
+    float: left;
+    background: #003859;
+    color: #fff;
+}
+
+#footerup ul {
+
+    float: left;
+    font-size: 12px;
+    margin-left: 40px;
+}
+
+#footerup ul li {
+    margin-top: 30px;
+}
+
+#Headname2 {
+    width: 130px;
+    height: 40px;
+    float: left;
+    margin: 32px 0 0 8px;
+    cursor: pointer;
+}
+
+
+#Headname2 p:nth-of-type(1) {
+    font-weight: bold;
+    font-size: 18px;
+    color: #0080c7;
+    letter-spacing: 1px;
+}
+
+#Headname2 p:nth-of-type(2) {
+    font-weight: bold;
+    font-size: 12px;
+    color: #0080c7;
+    letter-spacing: 1px;
+    padding-left: 2px;
+}
+
+#footerdown {
+    width: 100%;
+    height: 34px;
+    line-height: 34px;
+    float: left;
+    background: #001b2b;
+    color: #006199;
+    text-align: center;
+    font-size: 12px;
+}
+
+.rank td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+/*==================媒体查询====================*/
+@media screen and (max-width: 800px) {
+    #logo2 {
+        margin-left: 0px;
+    }
+
+    .gridtable {
+        width: 350px;
+    }
+
+
+    #container4, #container5 {
+        width: 100%;
+    }
+
+    .gprsMost, #gprsLeast {
+        width: 85%;
+        margin: 12.5% 0;
+    }
+
+    #container, #container2, #container3 {
+        width: 300px;
+        min-height: 300px;
+    }
+    .underline {
+        width: 85%;
+    }
+
+    .underline2 {
+        width: 88%;
+    }
+}
+
+@media screen and (min-width: 800px) and (max-width: 900px) {
+    #logo2 {
+        margin-left: 0px;
+    }
+
+    .gridtable {
+        width: 370px;
+    }
+
+    #container4, #container5 {
+        width: 49%;
+    }
+
+    .gprsMost, #gprsLeast {
+        margin-right: 25px;
+        float: right;
+    }
+
+    #container, #container2, #container3 {
+        width: 300px;
+        min-height: 300px;
+    }
+
+    .underline {
+        width: 87%;
+    }
+
+    .underline2 {
+        width: 90%;
+    }
+}
+
+@media screen and (min-width: 900px) and (max-width: 1024px) {
+    #logo2 {
+        margin-left: 0px;
+    }
+
+    .gridtable {
+        width: 388px;
+    }
+
+
+    #container4, #container5 {
+        width: 53%;
+    }
+
+    .gprsMost, #gprsLeast {
+        margin-right: 28px;
+        float: right;
+    }
+
+    #container, #container2, #container3 {
+        width: 300px;
+        min-height: 300px;
+    }
+
+    .underline {
+        width: 89%;
+    }
+
+    .underline2 {
+        width: 91%;
+    }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1150px) {
+    #logo2 {
+        margin-left: 40px;
+    }
+
+    .gridtable {
+        width: 440px;
+    }
+
+
+
+    #container4, #container5 {
+        width: 53%;
+    }
+
+    .gprsMost, #gprsLeast {
+        margin-right: 30px;
+        float: right;
+    }
+
+    #container, #container2, #container3 {
+        width: 350px;
+        min-height: 350px;
+    }
+
+    .underline {
+        width: 89%;
+    }
+
+    .underline2 {
+        width: 92%;
+    }
+}
+
+@media screen and (min-width: 1150px) and (max-width: 1280px) {
+    #logo2 {
+        margin-left: 40px;
+    }
+
+    .gridtable {
+        width: 470px;
+    }
+
+
+    #container4, #container5 {
+        width: 54%;
+    }
+
+    .gprsMost, #gprsLeast {
+        margin-right: 45px;
+        float: right;
+    }
+
+    #container, #container2, #container3 {
+        width: 350px;
+        min-height: 350px;
+    }
+
+    .underline {
+        width: 91%;
+    }
+
+    .underline2 {
+        width: 93%;
+    }
+}
+
+@media screen and (min-width: 1280px) and (max-width: 1440px) {
+    #logo2 {
+        margin-left: 150px;
+    }
+
+    .gridtable {
+        width: 550px;
+    }
+
+
+    #container4, #container5 {
+        width: 52%;
+    }
+
+    .gprsMost, #gprsLeast {
+        width: 48%;
+        float: right;
+    }
+
+    #container, #container2, #container3 {
+        width: 380px;
+        min-height: 380px;
+    }
+
+    .underline {
+        width: 92%;
+    }
+
+    .underline2 {
+        width: 93.5%;
+    }
+}
+
+@media screen and (min-width: 1440px) and (max-width: 1680px) {
+    #logo2 {
+        margin-left: 180px;
+    }
+
+    .gridtable {
+        width: 620px;
+    }
+
+    #container4, #container5 {
+        width: 50%;
+    }
+
+    .title2 {
+        padding-left: 210px;
+    }
+
+    .title1 {
+        padding-left: 90px;
+    }
+
+    .gprsMost, #gprsLeast {
+        margin-right: 70px;
+        float: right;
+    }
+
+    #container, #container2, #container3 {
+        width: 400px;
+        min-height: 400px;
+    }
+
+    .underline {
+        width: 93%;
+    }
+
+    .underline2 {
+        width: 94.5%;
+    }
+}
+
+@media screen and (min-width: 1680px) and (max-width: 1920px) {
+    #logo2 {
+        margin-left: 360px;
+    }
+
+    .gridtable {
+        width: 700px;
+    }
+
+
+    #container4, #container5 {
+        width: 46%;
+    }
+
+    .title2 {
+        padding-left: 260px;
+    }
+
+    .title1 {
+        padding-left: 110px;
+    }
+
+    .gprsMost, #gprsLeast {
+        margin-right: 110px;
+        float: right;
+    }
+
+    #container, #container2, #container3 {
+        width: 400px;
+        min-height: 400px;
+    }
+
+    .underline {
+        width: 94%;
+    }
+
+    .underline2 {
+        width: 95.2%;
+    }
+}
+
+@media screen and (min-width: 1920px) and (max-width: 3000px) {
+
+    .underline {
+        width: 94%;
+    }
+
+    .underline2 {
+        width: 94.5%;
+    }
+
+    #container4, #container5 {
+        width: 58%;
+    }
+}

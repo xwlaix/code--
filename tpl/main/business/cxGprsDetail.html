@@ -1,0 +1,374 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>查询流量</title>
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../common/js/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+    <link rel="stylesheet" href="../../common/css/accordion.css?v1.1">
+    <link rel="stylesheet" href="../../static/css/homeAgent.css">
+    <script src="../../common/js/jquery-3.1.1.min.js"></script>
+    <script src="../../common/js/bootstrap.min.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table.js"></script>
+    <script src="../../common/js/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+    <script src="../../common/js/knockout/knockout.min.js"></script>
+    <script src="../../common/js/knockout/knockout.mapping.js"></script>
+    <script src="../../common/js/knockout/knockout.bootstraptable.js"></script>
+    <script src="../../common/js/layer/layer.js"></script>
+    <script src="../../common/js/My97DatePicker/WdatePicker.js"></script>
+    <script src="../../common/js/artTemplate.js"></script>
+    <script src="../../static/js/Department.js?v1.0"></script>
+</head>
+
+
+<body>
+<div class="l-tab-content_tab">
+    <div class="l-tab-content-item" tabid="index">
+        <div class="home_tab">
+            <div class="home-charts panel">
+                <div class="header">
+                    <div class="title left">
+                        <div class="tab">
+                            <ul>
+                                <li id="0" class="cur">当月套餐</li>
+                                <li id="1">下周期套餐</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-group clearfix ">
+                    <div class="form-group sameBody">
+                        <label for="accessNumber">卡号:</label>
+                        <input id="accessNumber" class="form-control" name="accessNumber" type="text"/>
+                        <button class="btn btn-primary btn-sm keydownBtn" id="gprsSec" title="搜索">搜索</button>
+                        <button class="btn btn-info btn-sm " id="changeFlow" title="修改阈值">修改阈值</button>
+                    </div>
+                </div>
+                <div id="tool_bar" class="clearfix">
+                    <span class="emptyCard text-sum"></span>
+                </div>
+                <div class="home-myCharts">
+                    <div class="home-stock">
+                        <div class="home-stock-warp">
+                            <table id="tb_dept" data-bind="myBootstrapTable:$root">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script id="parent" type="text/html">
+    <span>接入号：<span id="tel">{{tel}}</span></span>
+    <span>总流量：{{sumflow}}</span>
+    <span>剩余总流量：{{restflow}}</span>
+    <span>已用流量：{{useflow}}</span>
+    <span>卡状态：{{cardstatus}}</span>
+    <span>到期日期：{{endtime}}</span>
+    {{if isOffnet}}
+    <span>是否已达量断网：{{isOffnet}}</span>
+    <span>断网阈值：{{threshold}}</span>
+    {{/if}}
+</script>
+
+<script type="text/javascript">
+    var type = getUrlParam("type"), card = getUrlParam("card"), tel = getUrlParam("tel"), oname = getUrlParam('oname'),
+        cardtype;
+    if (oname != '中琛源') {
+        $(".header").addClass('hidden')
+    }
+    $(".tab ul li").click(function () {
+        var This = $(this);
+        This.addClass('cur').siblings().removeClass('cur');
+        if (This.attr("id") == 0) {
+            cx('cur')
+        } else {
+            $('#gprsSec').click()
+        }
+    });
+    btn = '<button id="unsubscribe" type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalTable" style="margin-right:15px;>' +
+        '<span class="" aria-hidden="true"></span>退订' +
+        '</button>';
+    //加载流量明细
+    //    1待激活，2正常，3单向停机，4停机，5预销号，6销号，7过户，8休眠，9未知状态
+    function list(res) {
+        $("#tool_bar").empty();
+        var parent, cardstatus;
+        switch (res.data.cardstatus) {
+            case 1:
+                cardstatus = '待激活';
+                break;
+            case 2:
+                cardstatus = '正常';
+                break;
+            case 3:
+                cardstatus = '单向停机';
+                break;
+            case 4:
+                cardstatus = '停机';
+                break;
+            case 5:
+                cardstatus = '预销号';
+                break;
+            case 6:
+                cardstatus = '销号';
+                break;
+            case 7:
+                cardstatus = '过户';
+                break;
+            case 8:
+                cardstatus = '休眠';
+                break;
+            case 9:
+                cardstatus = '未知状态';
+                break;
+            default:
+                break;
+        }
+        res.data.cardstatus = cardstatus;
+        res.data.tel = tel;
+        res.data.threshold = ToSize(res.data.threshold, 'M');
+        if (res.data.isOffnet == 2) {
+            res.data.isOffnet = '是'
+        } else if (res.data.isOffnet == 1) {
+            res.data.isOffnet = '否'
+        }
+        parent = $(template('parent', res.data));
+        parent.appendTo(tool_bar);
+        cardtype = res.data.type;
+        endtime = res.data.endtime;
+    }
+
+    var operate = {
+        //初始化按钮事件
+        operateInit: function () {
+            this.gprsSec();
+            this.changeFlow();
+            this.DepartmentModel = {
+                uid: ko.observable(),
+                name: ko.observable(),
+                ID: ko.observable(),
+                number: ko.observable()
+            };
+        },
+
+        //查询流量
+        changeFlow: function () {
+            $("#changeFlow").on('click', function () {
+                layer.prompt({
+                    title: '填写修改的阈值,单位为GB',
+                    formType: 0,
+                    area: ['150px', '30px']
+                }, function (flow, index) {
+                    if (isNaN(flow)) {
+                        layer.msg('请输入正确的阈值');
+                        flag = 1;
+                        return false
+                    }
+                    var data = {
+                        flow: accMul(flow, 1024),
+                        cardid: row.id
+                    };
+                    layer.close(index);
+                    $post(urlPrefix + '?r=sms/card/change-flow',
+                        data,
+                        function (res) {
+                            layer.msg(res.msg, {time: 1000});
+                        }
+                    )
+                })
+            })
+
+        },
+        //查询流量
+        gprsSec: function () {
+            $('#gprsSec').on('click', function () {
+                cx()
+                $post(urlPrefix + '?r=sms/card/get-all',
+                    {card: $.trim($("#accessNumber").val())},
+                    function (res) {
+                        if (res.code == 1) {
+                            tel = res.data.rows["0"].tel;
+                            $("#tel").text(res.data.rows["0"].tel)
+                        }
+                    }
+                );
+            })
+        }
+    };
+
+    function cx(flag) {
+        var index = layer.load(2, {
+            shade: [0.1, '#fff'] //0.1透明度的白色背景
+        });
+        card = $.trim($("#accessNumber").val());
+        if (!card) {
+            layer.msg("请输入卡号", {time: 2000});
+            layer.close(index);
+            return
+        }
+//        $post(urlPrefix + "?r=sms/card/get-all", data,
+//            function (res) {
+//                layer.msg(res.msg,
+//                    {time: 2000});
+//                if (res.code == 1) {
+//                    tableInit.myViewModel.load(res.data);
+//                }
+//            }, function () {
+//                layer.msg("操作失败", {time: 2000})
+//            });
+        $post(urlPrefix + "?r=sms/business/main/get-info", {card: card},
+            function (res) {
+                layer.close(index);
+                layer.msg(res.msg, {time: 1000});
+                if (res.code == 1) {
+                    list(res);
+                    if (flag == 'cur') {
+                        tableInit.myViewModel.load(res.data.flowlist);
+                    } else {
+                        tableInit.myViewModel.load(res.data.flowlist);
+                    }
+                } else if (res.msg == '该卡为空卡') {
+                    $('.emptyCard').text(res.msg)
+                } else {
+                    $('.emptyCard').hide()
+                }
+            }, function () {
+                layer.msg("查询失败", {time: 2000});
+                layer.close(index)
+            })
+    }
+
+    function ajaxRequest(params) {
+        $post(urlPrefix + '?r=sms/business/main/get-info', {card: card},
+            function (res) {
+                if (!card) {
+                    params.success({data: []});
+                    return false
+                } else {
+                    layer.msg(res.msg, {time: 2000});
+                }
+                if (res.code == 1) {
+                    list(res);
+                    params.success({data: res.data.flowlist});
+                    $("#accessNumber").val(card);
+                }
+                else if (res.msg == '该卡为空卡') {
+                    params.success({data: []});
+                    $("#accessNumber").val(card);
+                    $('.emptyCard').text(res.msg)
+                } else {
+                    params.success({data: []});
+                    $("#accessNumber").val(card);
+                    $('.emptyCard').hide()
+                }
+            }, function () {
+                params.success({data: []});
+            })
+    }
+
+    //    cardid: iccid或tel
+    //    packageid：套餐id
+    //    type：订购/退购 1订购 0退购
+    //    source： 来源
+    //    remark： 备注
+    window.operateEvents = {
+        'click #unsubscribe': function (e, value, row, index) {
+            layer.confirm('你确定要退订吗？', {
+                btn: ['确定', '取消']
+            }, function () {
+                $post(urlPrefix + "?r=sms/business/main/update-package",
+                    {card: iccid, packageid: row.packageid, type: 0, source: '', remark: ''},
+                    function (res) {
+                        if (res.code == 1) {
+                            layer.msg('退订成功', {time: 1000});
+                        } else {
+                            layer.msg('退订失败', {time: 1000});
+                        }
+                    }, function () {
+                        layer.msg("退订失败", {time: 2000})
+                    });
+            });
+        }
+    };
+    //初始化
+    $(function () {
+        //1、初始化表格
+        tableInit.Init();
+
+        //2、注册增删改事件
+        operate.operateInit();
+
+
+    });
+    //初始化表格
+    var tableInit = {
+
+        Init: function () {
+            //绑定table的viewmodel
+            this.myViewModel = new ko.bootstrapTableViewModel({
+                toolbar: '#tool_bar',                //工具按钮用哪个容器
+                ajax: ajaxRequest,
+                search: false,
+                sidePagination: "client",           //分页方式：client客户端分页，server服务端分页（*）
+                columns: [{
+                    field: 'packageid',
+                    title: '套餐ID'
+                }, {
+                    field: 'packagename',
+                    title: '套餐列表'
+                }, {
+                    field: 'useflow',
+                    title: '已用流量'
+                }, {
+                    field: 'restflow',
+                    title: '剩余流量'
+                }, {
+                    field: 'sumflow',
+                    title: '总流量'
+                }, {
+                    field: 'endtime',
+                    title: '到期时间'
+                }
+//                , {
+//                    field: 'operate',
+//                    title: '操作',
+//                    align: 'center',
+//                    events: operateEvents,
+//                    formatter: operateFormatter
+//                }
+                ]
+            });
+
+            function operateFormatter(value, row, index) {
+                if (cardtype != 3) {
+                    return [btn].join('');
+                }
+                else {
+                    return ["<span class='text-danger'>无法退订</span>"].join('')
+                }
+            }
+
+            ko.applyBindings(this.myViewModel, document.getElementById("tb_dept"));
+
+        }
+
+    };
+
+    init: function n(element, valueAccessor, allBindingsAccessor, viewModel) {
+        //这里的oParam就是绑定的viewmodel
+        var oViewModel = valueAccessor();
+        var $ele = $(element).bootstrapTable(oViewModel.params);
+        //给viewmodel添加bootstrapTable方法
+        oViewModel.bootstrapTable = function () {
+            return $ele.bootstrapTable.apply($ele, arguments);
+        }
+    }
+
+</script>
+</html>
